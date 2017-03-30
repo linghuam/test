@@ -1,0 +1,16 @@
+.submenu_glxs{}
+.submenu_glxs label{cursor:pointer;}
+.submenu_glxs > .submenu_glxs_li{padding:5px;}
+/*.submenu_glxs > .submenu_glxs_li > .arrowImg:before,
+.submenu_glxs > .submenu_glxs_li > .arrowImg:after{display: table; content: " "; clear:both;}*/
+.submenu_glxs > .submenu_glxs_li > .arrowImg{float:right;margin-top:5px;}
+.submenu_glxs > .submenu_glxs_li:not(.active):hover{background-color:#2276c2;}
+.submenu_glxs > .submenu_glxs_li.active{background-color:#02408B;border-radius:12px;}
+.submenu_glxs > .submenu_glxs_li >ul{padding-right: 0;}
+.submenu_glxs > .submenu_glxs_li >ul>li>input{float:right;}
+
+.submenu_glxs .shipStateList label,
+.submenu_glxs .shipSourceList label{display: inline-block; width: 100px; overflow: hidden;}
+
+.submenu_glxs .shipFlagList label,
+.submenu_glxs .shipTypeList label{display:inline;}

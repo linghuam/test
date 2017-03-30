@@ -1,0 +1,54 @@
+/*引入字体图标*/
+@import url('default.icon.css');
+html,body{width:100%;height: 100%; min-width:1000px;overflow:hidden}
+html * ,body *{font-family:'Microsoft YaHei';text-shadow:none;outline:none;}
+html a:focus,body a:focus{outline:none !important}
+
+/*内容不可选中*/
+.disableSelect{-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+
+/*面板*/
+.menupanel{position: absolute; left: 15px; top: 140px; z-index: 1000;} 
+.mappanel{position: absolute;top:60px;left:0;right:0;bottom:0;margin:0;padding:0;}
+
+/*头部导航栏*/
+.navbar{min-height: 60px;margin-bottom: 0;border:none;border-radius: 0;font-size:12px;font-weight:normal;}
+.navbar{background-color: #244474; /* fallback color if gradients are not supported */ /* background-image: -webkit-linear-gradient(top, #244474 0%,#426394 100%);*/ /* For Chrome 25 and Safari 6, iOS 6.1, Android 4.3 */ /* background-image:    -moz-linear-gradient(top, #244474 0%,#426394 100%); *//* For Firefox (3.6 to 15) */ /* background-image:      -o-linear-gradient(top, #244474 0%,#426394 100%);*/ /* For old Opera (11.1 to 12.0) */ background-image:linear-gradient(to bottom, #244474 0%,#244474 100%); /* Standard syntax; must be last */ }
+
+.navbar-header{margin-top: 3px;}
+
+.navbar-left{margin-top:12px;}
+.navbar-left input.form-control {width:290px;height:35px;}
+.navbar-left img{position: relative;left:-22px;}
+.navbar-left select.searchType{width: 66px; height: 36px; border-radius: 6px;}
+
+.navbar-right {margin-top:12px;}
+.navbar-right li{margin-left:5px;height:32px;padding:0 4px;}
+.navbar-right label{width:70px;height:25px;padding-top:4px;line-height:25px;text-align:center;font-size:15px;font-weight:bold;color:#fff;cursor:pointer;}
+.navbar-right li.menu_item:hover{background-color:#2276c2;}
+.navbar-right .menu_item.active{background-color:#2276c2;}
+.navbar-right .menu_item_mode{border: 1px solid #2276c2;padding:0;}
+.navbar-right .menu_item_mode label{height:32px;}
+.navbar-right .split_img img{height:32px;}
+/*菜单栏*/
+.menupanel .menu_main_panel{background-color:#244474;border-radius: 0 0px 0px 0;cursor: pointer;}
+.menupanel .menu_main_panel ul{list-style: none;padding:10px;}
+.menupanel .menu_main_panel ul>li{padding:10px;margin-bottom: 10px;background-color:#23538c;border-radius:6px;}
+.menupanel .menu_main_panel .menu_item.active{background-color:#2276c2;}
+.menupanel .menu_main_panel .menu_item:hover{background-color:#2276c2;}
+
+.menupanel .menu_sub_panel{position:absolute;top:0;left:70px;width:160px;max-width:400px;border-radius: 0 6px 6px 0;background-color:#244474;cursor:pointer;}
+.menupanel .menu_sub_panel ul{list-style: none;padding:15px;color:white;}
+.menupanel .menu_sub_panel ul>li{margin-bottom: 10px;cursor: pointer;}
+.menupanel .menu_sub_panel .menu_item.active{background-color:#2276c2;}
+.menupanel .menu_sub_panel .menu_item:hover{background-color:#2276c2;}
+
+/*右键菜单*/
+/*.context-menu-root{z-index: 99999 !important;}*/
+
+/*其它*/
+.msg{height:20px;color:#2276c2;}
+.Wdate{height:30px !important;width:146px;} 
+.btnDiv{text-align: center;}
+.btnDiv button{width:140px;height:30px; background-color:#2276c2; font-family:Microsoft Yahei;font-size:14px;color:#fff;padding:0;margin-right:10px;outline:none;border:none;} 
+.btnDiv button:hover{background-color:#095596;}

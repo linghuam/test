@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Login</title>
+<link rel="stylesheet" type="text/css" href="/library/bootstrap/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="/library/bootstrap/css/bootstrap-theme.css">
+<link rel="stylesheet" href="/themes/css/func.login.css"/>
+<script src="/library/jquery/jquery.js"></script>
+<script src="/project/project.config.js"></script>
+</head>
+<body>
+    <!--登录页面-->
+    <div class="container login">  
+         <div class="text-center">
+              <div class="login_logo"><img src="/themes/images/userLogin/loginLOGO.png" alt=""/></div>  
+              <div class="login_input_div">
+                  <input type="text" class="form-control" id="login_username" placeholder="请输入用户名" autocomplete="off"/>
+                  <p class="login_error username_error_prompt"></p>
+              </div>
+             <div class="login_input_div">
+                 <input type="password" class="form-control" id='login_password' placeholder="请输入密码" autocomplete="off"/>
+                 <p class="login_error password_error_prompt"></p>
+             </div>
+             <div class="login_input_div">
+                 <button  class="form-control  login_btn_div" onclick="loginclick()">登&nbsp;&nbsp;&nbsp;录</button>
+             </div>
+         </div>
+    </div>
+</body>
+<script>
+$(document).ready(function() {
+
+    $('#login_username').focus();
+
+    var  keynum;
+    var e = e || window.event;
+    document.onkeypress = function(e) {
+        if(window.event) // IE
+        {
+            keynum = e.keyCode
+        }
+        else if(e.which) // Netscape/Firefox/Opera
+        {
+            keynum = e.which
+        }
+        if(keynum==13){
+            var uname=$('#login_username').val();
+            var upsw=$('#login_password').val();
+            loginFun(uname,upsw)
+        }
+    };
+    
+  
+});
+
+function loginclick(){  
+    var userNameObj=$('#login_username').val();
+    var passwordObj=$('#login_password').val();
+    loginFun(userNameObj,passwordObj);  
+}
+
+function saveLoginInfo(data){
+    var userInfo = {};
+    userInfo.userName = data.msg.userName;
+    window.sessionStorage.setItem("userInfo",JSON.stringify(userInfo));
+}
+
+/**
+ * 登录验证
+ * @param userName 用户名
+ * @param password 密码
+ */
+function loginFun(userName,password){
+    $('.username_error_prompt').html('');
+    $('.password_error_prompt').html('');  
+    if(userName==""){
+        $('.username_error_prompt').html('请输入用户名');
+        $('.username_error_prompt').focus();
+    }else if( password==""){
+        $('.password_error_prompt').html('请输入密码');
+        $('.password_error_prompt').focus();
+    }else{
+        var url = Project_ParamConfig.ServiceUrl + "user/login.do";
+        var modetype = Project_ParamConfig.CurrentMode;
+        $.ajax({
+            url:url,
+            data:{userName:userName,password:password,type:modetype},
+            type:'POST',
+            dataType: "json",
+            success:function(data){
+                if(data.state == 1){
+                    saveLoginInfo(data);
+                    window.location.href="index.html";
+                }else if(data.state == -1) {
+                    $('.username_error_prompt').html(data.msg.result);                   
+                }else{
+                    $('.password_error_prompt').html(data.msg.result);
+                }
+            }
+        })
+    }
+
+}
+</script>
+</html>

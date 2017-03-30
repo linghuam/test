@@ -1,0 +1,1 @@
+define("layout/contextmenu",["leaflet","layout/base","core/namespace"],function(e){e.ICT.Layout.ContextMenu=e.ICT.Layout.extend({initialize:function(){e.ICT.Layout.prototype.initialize.call(this)}})});

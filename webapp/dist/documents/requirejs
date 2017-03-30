@@ -1,0 +1,17 @@
+【"baseUrl + paths"模式】
+baseUrl的值
+{   
+    1、如果在[require.config]中配置了baseUrl。
+       则baseUrl值为用户给定的值。
+	2、如果没有在[require.config]中配置baseUrl。
+	   a.如果定义了[data-main],则baseUrl值为data-main属性值的顶层值。
+	   b.如果没有定义[data-main],则baseUrl值为引入requirejs页面的路径值。
+
+}
+
+原文：
+RequireJS loads all code relative to a baseUrl. The baseUrl is normally set to the same directory as the script used in a data-main attribute for the top level script to load for a page. The data-main attribute is a special attribute that require.js will check to start script loading. This example will end up with a baseUrl of scripts:
+<!--This sets the baseUrl to the "scripts" directory, and
+    loads a script that will have a module ID of 'main'-->
+<script data-main="scripts/main.js" src="scripts/require.js"></script>
+Or, baseUrl can be set manually via the RequireJS config. If there is no explicit config and data-main is not used, then the default baseUrl is the directory that contains the HTML page running RequireJS.

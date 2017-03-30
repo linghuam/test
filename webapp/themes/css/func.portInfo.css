@@ -1,0 +1,48 @@
+.ict_portInfo_popupContainer {}
+.ict_portInfo_popupContainer > .leaflet-popup-close-button{top:4px !important;right:2px !important;}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper{width:320px;height:440px;padding:0;}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content{width:100% !important;margin:0;}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div{}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div > .portInfo_title{width:100%;height:35px;line-height:35px;text-align:center;border-top-left-radius:12px;border-top-right-radius:12px;background-color:#244474;color:#fff;font-size:16px;font-family:"Microsoft YaHei";}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div > .portInfo_table_div{padding:10px;border:solid 1px #eae9e9;}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div > .portInfo_table_div table{width:100%;}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div > .portInfo_table_div table tr{height:25px;}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div > .portInfo_table_div table tr:nth-child(odd)>td {background-color:rgb(229, 239, 253);}  
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div > .portInfo_table_div table td{text-align:left;padding-left:4px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div > .port_stastic{padding:10px;padding-top:0;}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div > .port_stastic > p{margin:10px 0;}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div > .port_stastic > input.Wdate{width:130px;height:26px;}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div > .msg{height:16px;margin:5px 0;color:#2276c2;margin-top:0;padding-left:10px;}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div > .btnDiv{text-align:center;}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div > .btnDiv > button{width:112px;height:26px;background-color:#2276c2;color:#fff;text-align:center;outline:none;}
+.ict_portInfo_popupContainer > .leaflet-popup-content-wrapper > .leaflet-popup-content > .portInfo_Div > .btnDiv > button:hover{background-color:#095596;}
+
+
+/*统计*/
+.port_stastic_container{position: relative;}
+.port_stastic_container > .titleDiv{position:relative;}
+.port_stastic_container > .titleDiv > .nav{width:126px;margin-left:auto;margin-right:auto;list-style: none;clear:both;border:1px solid #244474;}
+.port_stastic_container > .titleDiv > .nav > li{width:50%;position: relative;display: block;float: left;}
+.port_stastic_container > .titleDiv > .nav > li > a{position: relative;display:block;text-decoration: none;padding:5px 10px;color: #244474;background-color: #fff;}
+.port_stastic_container > .titleDiv > .nav >li.active > a{color: #fff; background-color: #244474;}
+
+.port_stastic_container .stasticChartDiv {}
+.port_stastic_container .stasticChartDiv > .stastic_chart_enter{width:100%;;height:200px;border:solid 1px silver;}
+.port_stastic_container .stasticChartDiv > .stastic_chart_out{width:100%;height:200px;border:solid 1px silver;}
+
+.port_stastic_container .stasticTableDiv{}
+.port_stastic_container .stasticTableDiv > .stastic_table_enter{width:100%;height:200px;}
+.port_stastic_container .stasticTableDiv > .stastic_table_out{width:100%;height:220px;}
+
+.port_stastic_container .stasticTableDiv table{table-layout: auto;border-collapse: collapse;width:100%;}
+.port_stastic_container .stasticTableDiv table tr img{padding-right:5px;}
+.port_stastic_container .stasticTableDiv table th,
+.port_stastic_container .stasticTableDiv table td{border-top:1px solid silver ;border-bottom:1px solid silver ;text-align:center;}
+.port_stastic_container .stasticTableDiv table>thead>tr>th{padding:10px 0;}
+.port_stastic_container .stasticTableDiv table>tbody>tr>td{padding:15px 0;}
+.port_stastic_container .stasticTableDiv table>thead>tr>th:first-child,
+.port_stastic_container .stasticTableDiv table>tbody>tr>td:first-child{border-left:1px solid silver;}
+.port_stastic_container .stasticTableDiv table>thead>tr>th:last-child,
+.port_stastic_container .stasticTableDiv table>tbody>tr>td:last-child{border-right:1px solid silver;}
+.port_stastic_container .stasticTableDiv table tr:not(.splitTr){background-color:#F5F6FA;}
+.port_stastic_container .stasticTableDiv table tr.splitTr>td{border:none !important;padding:0 !important;line-height: 10px;}
