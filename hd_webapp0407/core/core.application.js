@@ -6,16 +6,16 @@
 *@extends ICT.BaseObject
 */
 define("core/application", [
-    "leaflet",
-    "leaflet/fix",
-    "core/namespace",
-    "core/baseobject",
+    // "leaflet",
+    // "leaflet/fix",
+    // "core/namespace",
+    // "core/baseobject",
     "core/map",
-    "core/pool",
-    "data/ajax",
-    "data/localStorage",
-    "data/sessionStorage",
-    "func/base",
+    // "core/pool",
+    // "data/ajax",
+    // "data/localStorage",
+    // "data/sessionStorage",
+    // "func/base",
     "layout/base",
     "layout/menu",
     "layout/toppanel",
@@ -23,7 +23,7 @@ define("core/application", [
     "func/userLogin",
     "plugins/my97DatePicker"
 
-], function (L) {
+], function () {
     
     L.ICT.Application = L.ICT.BaseObject.extend({
 
@@ -93,7 +93,7 @@ define("core/application", [
 
             try {            
                 this.options = options;
-                this.pool = new L.ICT.Pool();
+                // this.pool = new L.ICT.Pool();
                 this.util = new L.ICT.Util.Base();                                    
                 this.localStorage = new L.ICT.LocalStorage();
                 this.sessionStorage = new L.ICT.SessionStorage();

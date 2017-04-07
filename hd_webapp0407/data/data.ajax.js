@@ -1,10 +1,7 @@
 ﻿/*
 * ajax请求模块
 */
-define("data/ajax",[
-    "leaflet",
-    "core/namespace"
-],function(L){
+define("data/ajax",function(){
 
 /*
 *数据请求

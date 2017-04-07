@@ -149,18 +149,21 @@ require.config({
 
 
 //*****************************加载后执行-start***********************************//
-require([
-    "jquery",
-    "leaflet",
-    "bootstrap",
-    "core/application"
-], function () {
-    $(document).ready(function () {       
-        L.ICT.App = new L.ICT.Application(Project_ParamConfig);
-        L.ict.app = L.ICT.App;
-        L.ict.app.init();
-
+console.time("1");
+require(["jquery","leaflet","bootstrap"], function () {
+    console.timeEnd("1");
+    console.time("2");
+    require(["leaflet/fix","core/namespace","core/baseobject","data/ajax", "data/localStorage", "data/sessionStorage"],function(){
+        console.timeEnd("2");
+        console.time("3");
+        require(["core/application"],function(){
+            console.timeEnd("3");
+            console.time("4");
+            L.ICT.App = new L.ICT.Application(Project_ParamConfig);
+            L.ict.app = L.ICT.App;
+            L.ict.app.init();
+            console.timeEnd("4");
+        });
     });
-
 });
 //*****************************加载后执行-end***********************************//
