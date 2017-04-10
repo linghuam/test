@@ -57,8 +57,8 @@ paths:{
 },
 
 shim: {
-  // 'funcc':{ deps: ['css!css/c']},
-  // 'funcd':{deps:['css!css/d']},
-  // 'funce':{ deps: ['css!css/e','css!css/f']}
+  'funcc':{ deps: ['css!css/c']},
+  'funcd':{deps:['css!css/d']},
+  'funce':{ deps: ['css!css/e','css!css/f']}
 }
 }) 

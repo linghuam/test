@@ -7,6 +7,9 @@ normalize.js
 css.js
 css!css/c
 func/c.js
+css!css/d
 func/d.js
+css!css/e
+css!css/f
 func/e.js
 main.js

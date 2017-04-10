@@ -1,3 +1,3 @@
-define('funcc',['css!css/c'],function(){
+define('funcc',[],function(){
 	console.log("func/c");
 });
