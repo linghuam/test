@@ -34,7 +34,7 @@
 //项目构建文件
 //node r.js -o build.js
 ({ 
-appDir: 'www',   //项目根目录
+appDir: './',   //项目根目录
 dir: './dist',  //输出目录，全部文件打包后要放入的文件夹（如果没有会自动新建的）
  baseUrl: '.',   //相对于appDir，代表要查找js文件的起始文件夹，下文所有文件路径的定义都是基于这个baseUrl的
  map:{'*':{'css':'css'}},
@@ -42,7 +42,7 @@ modules: [                      //要优化的模块
     { name:'main'}  //说白了就是各页面的入口文件，相对baseUrl的路径，也是省略后缀“.js”
 ], 
 
-fileExclusionRegExp: /(^example)|(.git)|(node_modules)|(bower_components)$/,    //过滤，匹配到的文件将不会被输出到输出目录去
+fileExclusionRegExp: /^(r|build)\.js|.*\.scss$/,    //过滤，匹配到的文件将不会被输出到输出目录去
 
 optimizeCss: 'standard', 
 
