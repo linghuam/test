@@ -1,0 +1,12 @@
+
+main.js
+----------------
+core/a.js
+core/b.js
+normalize.js
+css.js
+css!css/c
+func/c.js
+func/d.js
+func/e.js
+main.js
