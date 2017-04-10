@@ -44,7 +44,7 @@ modules: [                      //要优化的模块
 
 fileExclusionRegExp: /(^example)|(.git)|(node_modules)|(bower_components)$/,    //过滤，匹配到的文件将不会被输出到输出目录去
 
-optimizeCss: 'none', 
+optimizeCss: 'standard', 
 
 removeCombined: true,   //如果为true，将从输出目录中删除已合并的文件
 
