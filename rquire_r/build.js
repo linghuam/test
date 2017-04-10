@@ -3,7 +3,7 @@
 appDir: './',   //项目根目录
 dir: './dist',  //输出目录，全部文件打包后要放入的文件夹（如果没有会自动新建的）
 
-baseUrl: './project',   //相对于appDir，代表要查找js文件的起始文件夹，下文所有文件路径的定义都是基于这个baseUrl的
+ baseUrl: './project',   //相对于appDir，代表要查找js文件的起始文件夹，下文所有文件路径的定义都是基于这个baseUrl的
  optimizeCss: "none",
   map: {
     '*': {
