@@ -37,4 +37,8 @@
         }
     });
 
+    L.canvastilelayer = function(url,options){
+        return new  L.CanvasTileLayer(url,options);
+    }
+
 })();
