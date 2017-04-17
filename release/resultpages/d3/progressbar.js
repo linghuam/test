@@ -1,1 +1,115 @@
-d3.helper=d3.helper||{},d3.helper.progressbar=function(e){function t(e){return e.clientWidth||(e.getComputedTextLength?e.getComputedTextLength():e.innerText?e.innerText.length:e.textContent?e.textContent.length:0)}function n(e){var n=100,r=20,i={x:3,y:3},s=e.append("rect").attr("x",0).attr("y",0).style("fill","rgba(0, 0, 0, .4)").style("stroke","rgba(0, 0, 0, .8)"),o=e.append("g"),u=o.append("rect").attr("x",i.x).attr("y",i.y).style("fill","rgba(51, 173, 255, .8)").style("stroke","none"),a=o.append("text").attr("fill","#CEEBFF"),f=100,l=0,c;e.hide=function(){e.style("display","none")},e.show=function(){return e.style("display",null),e},e.max=function(){return arguments.length?(f=parseInt(arguments[0]),e.pos(l),e):f},e.pos=function(){if(!arguments.length)return l;l=parseInt(arguments[0]),l>f&&(l=f);var r=(n-i.x*2)*l/(f||1);r-i.x<t(a.node())?(c=c||e.textPosition(),a.style("text-anchor","start")):c&&e.textPosition(c);var s=e.textPosition(),o=[0,0];switch(s){case"middle":o=[(r-i.x)/2,0];break;case"end":o=[r-i.x,0]}return a.attr("transform","translate("+o+")"),u.attr("width",r),e},e.label=function(){return arguments.length?(a.text(arguments[0]),e):a.text()},e.textPosition=function(){return arguments.length?(a.style("text-anchor",arguments[0]),c=null,e):a.style("text-anchor")},e.width=function(){return arguments.length?(s.attr("width",n=parseInt(arguments[0])),e.pos(l),e):n},e.height=function(){return arguments.length?(s.attr("height",r=parseInt(arguments[0])),u.attr("height",r-i.y*2),a.attr("dy",r-i.y*2),e):r},e.step=function(){return e.pos(l+(parseInt(arguments[0])||1))},e.textPosition("start").width(n).height(r)}return e.call(n)};
+/**
+ * Created by ww on 2016/11/15.
+ */
+d3.helper = d3.helper || {};
+
+d3.helper.progressbar = function(selection) {
+    function displayLength(node) {
+        return node.clientWidth
+            || (node.getComputedTextLength
+                    ? node.getComputedTextLength()
+                    : node.innerText
+                    ? node.innerText.length
+                    : node.textContent
+                    ? node.textContent.length
+                    : 0
+            );
+    }
+
+    function progress(g) {
+        var w = 100, h = 20
+            , pp = {x:3, y:3}
+            , bar = g.append("rect")
+                .attr("x", 0)
+                .attr("y", 0)
+                .style("fill", "rgba(0, 0, 0, .4)")
+                .style("stroke", "rgba(0, 0, 0, .8)")
+            , subg = g.append("g")
+            , prog = subg.append("rect")
+                .attr("x", pp.x)
+                .attr("y", pp.y)
+                .style("fill", "rgba(51, 173, 255, .8)")
+                .style("stroke", "none")
+            , label = subg.append("text").attr("fill", "#CEEBFF")
+            , max = 100
+            , pos = 0
+            , ta
+            ;
+
+        g.hide = function() {
+            g.style("display", "none");
+        };
+        g.show = function() {
+            g.style("display", null);
+            return g;
+        };
+        g.max = function() {
+            if (!arguments.length) return max;
+            max = parseInt(arguments[0]);
+            g.pos(pos);
+            return g;
+        };
+        g.pos = function() {
+            if (!arguments.length) return pos;
+            pos = parseInt(arguments[0]);
+
+            if (pos > max)
+                pos = max;
+
+            var ww = (w - pp.x * 2) * pos/(max || 1);
+
+            if (ww - pp.x < displayLength(label.node())) {
+                ta = ta || g.textPosition();
+                label.style("text-anchor", "start");
+            }
+            else if (ta) {
+                g.textPosition(ta);
+            }
+            var t = g.textPosition(),
+                tr = [0, 0];
+
+            switch (t) {
+                case "middle" :
+                    tr = [(ww - pp.x) / 2, 0];
+                    break;
+                case "end":
+                    tr = [ww - pp.x, 0];
+                    break;
+            }
+            label.attr("transform", "translate(" + tr + ")");
+            prog.attr("width", ww);
+            return g;
+        };
+        g.label = function() {
+            if (!arguments.length) return label.text();
+            label.text(arguments[0]);
+            return g;
+        };
+        g.textPosition = function() {
+            if (!arguments.length) return label.style("text-anchor");
+            label.style("text-anchor", arguments[0]);
+            ta = null;
+            return g;
+        };
+        g.width = function() {
+            if (!arguments.length) return w;
+            bar.attr("width", w = parseInt(arguments[0]));
+            g.pos(pos);
+            return g;
+        };
+        g.height = function() {
+            if (!arguments.length) return h;
+            bar.attr("height", h = parseInt(arguments[0]));
+            prog.attr("height", h - pp.y * 2);
+            label.attr("dy", h - pp.y * 2);
+            return g;
+        };
+        g.step = function() {
+            return g.pos(pos + (parseInt(arguments[0]) || 1));
+        };
+
+        g.textPosition("start").width(w).height(h);
+    }
+
+    return selection.call(progress);
+};

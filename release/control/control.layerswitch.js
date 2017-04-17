@@ -1,1 +1,88 @@
-define("control/layerswitch",["leaflet","core/namespace"],function(e){e.ICT.Control.LayerSwitch=e.Control.extend({includes:e.Mixin.Events,initialize:function(t){e.setOptions(this,t),this.changeLayers=Project_ParamConfig.changeLayers},onAdd:function(e){return this._map=e,this._initLayout(),this._initEvts(),this._container},onRemove:function(e){},getBaseLayerById:function(e){for(var t=0;t<this.changeLayers.length;t++)if(this.changeLayers[t].id==e)return this.changeLayers[t].layer},hideAllBaseLayer:function(){for(var e=0;e<this.changeLayers.length;e++){var t=this.changeLayers[e].layer;t.setOpacity(0)}},showBaseLayer:function(e){var t=this.getBaseLayerById(e);t.options.opacity===0&&(this.hideAllBaseLayer(),t.setOpacity(1),this.fire("baseLayerChangeEvent",{curBaseLayer:t}))},_initLayout:function(){var t="ict-leaflet-control-layers",n=this._container=e.DomUtil.create("div",t),r=[];r.push("<ul>");for(var i=0,s=this.changeLayers.length;i<s;i++)this.changeLayers[i].active?Project_ParamConfig.lang==="zh"?r.push('<li class="active" data-id="'+this.changeLayers[i].id+'"><a>'+this.changeLayers[i].name+"</a></li>"):r.push('<li class="active" data-id="'+this.changeLayers[i].id+'"><a>'+this.changeLayers[i].name_en+"</a></li>"):Project_ParamConfig.lang==="zh"?r.push('<li data-id="'+this.changeLayers[i].id+'"><a>'+this.changeLayers[i].name+"</a></li>"):r.push('<li data-id="'+this.changeLayers[i].id+'"><a>'+this.changeLayers[i].name_en+"</a></li>");r.push("</ul>"),r=r.join(""),n.innerHTML=r},_initEvts:function(){var e=this;$(this._container).find("ul>li").on("click",function(t){t.stopPropagation(),$(this).addClass("active").siblings().removeClass("active");var n=$(this).data("id");e.showBaseLayer(n)})}})});
+/*
+*底图切换控件
+*/
+
+define("control/layerswitch",[
+	"leaflet",
+	"core/namespace"
+
+],function(L){
+  
+   L.ICT.Control.LayerSwitch = L.Control.extend({
+
+       includes:L.Mixin.Events,
+       
+       initialize:function(options){
+          L.setOptions(this,options);
+          this.changeLayers = Project_ParamConfig.changeLayers;
+       },
+
+       onAdd:function(map){
+         this._map = map;
+       	 this._initLayout();
+       	 this._initEvts();    
+         return this._container;
+       },
+
+       onRemove:function(map){
+
+       },
+
+       getBaseLayerById:function(layerid){
+          for(var i=0;i<this.changeLayers.length;i++){
+            if(this.changeLayers[i].id == layerid){
+              return this.changeLayers[i].layer;
+            }
+          }
+       },
+
+       hideAllBaseLayer:function(){
+          for(var i=0;i<this.changeLayers.length;i++){
+             var layer = this.changeLayers[i].layer;
+             layer.setOpacity(0);
+          }         
+       },
+
+       showBaseLayer:function(layerid){
+           var curLayer = this.getBaseLayerById(layerid);
+           if(curLayer.options.opacity === 0){
+              this.hideAllBaseLayer();
+              curLayer.setOpacity(1);
+              this.fire("baseLayerChangeEvent",{curBaseLayer:curLayer});
+           }
+       },
+
+       _initLayout:function(){
+       	  var className = 'ict-leaflet-control-layers',
+       	      container = this._container = L.DomUtil.create('div',className),
+              innerhtml = [];
+          innerhtml.push('<ul>');
+          for(var i=0,len=this.changeLayers.length;i<len;i++){
+            if(this.changeLayers[i].active){
+               if(Project_ParamConfig.lang === 'zh') {innerhtml.push('<li class="active" data-id="'+this.changeLayers[i].id+'"><a>'+this.changeLayers[i].name+'</a></li>');}
+               else {innerhtml.push('<li class="active" data-id="'+this.changeLayers[i].id+'"><a>'+this.changeLayers[i].name_en+'</a></li>');}
+            } else {
+               if(Project_ParamConfig.lang === 'zh') {innerhtml.push('<li data-id="'+this.changeLayers[i].id+'"><a>'+this.changeLayers[i].name+'</a></li>');}
+               else {innerhtml.push('<li data-id="'+this.changeLayers[i].id+'"><a>'+this.changeLayers[i].name_en+'</a></li>');}
+            }
+              
+          }
+          innerhtml.push('</ul>');
+          innerhtml = innerhtml.join("");
+          container.innerHTML = innerhtml;
+       	  
+       },
+
+       _initEvts:function(){
+          var self = this;
+          $(this._container).find("ul>li").on("click",function(event){
+             event.stopPropagation();
+             $(this).addClass("active").siblings().removeClass("active");
+             var layerid = $(this).data("id");
+             self.showBaseLayer(layerid);
+          });
+       }
+
+   });
+
+});

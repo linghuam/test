@@ -15,4 +15,1995 @@
  * Date: 2017-01-21T11:53:09.617Z
  */
 
-(function(e){typeof define=="function"&&define.amd?define(["jquery"],e):typeof exports=="object"?e(require("jquery")):e(jQuery)})(function(e){function p(e){var t=e.split(/\s+/),n=[];for(var r=0,i;i=t[r];r++)i=i.charAt(0).toUpperCase(),n.push(i);return n}function d(t){return t.id&&e('label[for="'+t.id+'"]').val()||t.name}function v(t,n,r){return r||(r=0),n.each(function(){var n=e(this),i=this,s=this.nodeName.toLowerCase(),o,u;s==="label"&&n.find("input, textarea, select").length&&(o=n.text(),n=n.children().first(),i=n.get(0),s=i.nodeName.toLowerCase());switch(s){case"menu":u={name:n.attr("label"),items:{}},r=v(u.items,n.children(),r);break;case"a":case"button":u={name:n.text(),disabled:!!n.attr("disabled"),callback:function(){return function(){n.click()}}()};break;case"menuitem":case"command":switch(n.attr("type")){case undefined:case"command":case"menuitem":u={name:n.attr("label"),disabled:!!n.attr("disabled"),icon:n.attr("icon"),callback:function(){return function(){n.click()}}()};break;case"checkbox":u={type:"checkbox",disabled:!!n.attr("disabled"),name:n.attr("label"),selected:!!n.attr("checked")};break;case"radio":u={type:"radio",disabled:!!n.attr("disabled"),name:n.attr("label"),radio:n.attr("radiogroup"),value:n.attr("id"),selected:!!n.attr("checked")};break;default:u=undefined}break;case"hr":u="-------";break;case"input":switch(n.attr("type")){case"text":u={type:"text",name:o||d(i),disabled:!!n.attr("disabled"),value:n.val()};break;case"checkbox":u={type:"checkbox",name:o||d(i),disabled:!!n.attr("disabled"),selected:!!n.attr("checked")};break;case"radio":u={type:"radio",name:o||d(i),disabled:!!n.attr("disabled"),radio:!!n.attr("name"),value:n.val(),selected:!!n.attr("checked")};break;default:u=undefined}break;case"select":u={type:"select",name:o||d(i),disabled:!!n.attr("disabled"),selected:n.val(),options:{}},n.children().each(function(){u.options[this.value]=e(this).text()});break;case"textarea":u={type:"textarea",name:o||d(i),disabled:!!n.attr("disabled"),value:n.val()};break;case"label":break;default:u={type:"html",html:n.clone(!0)}}u&&(r++,t["key"+r]=u)}),r}e.support.htmlMenuitem="HTMLMenuItemElement"in window,e.support.htmlCommand="HTMLCommandElement"in window,e.support.eventSelectstart="onselectstart"in document.documentElement;if(!e.ui||!e.widget)e.cleanData=function(t){return function(n){var r,i,s;for(s=0;n[s]!=null;s++){i=n[s];try{r=e._data(i,"events"),r&&r.remove&&e(i).triggerHandler("remove")}catch(o){}}t(n)}}(e.cleanData);var t=null,n=!1,r=e(window),i=0,s={},o={},u={},a={selector:null,appendTo:null,trigger:"right",autoHide:!1,delay:200,reposition:!0,selectableSubMenu:!1,classNames:{hover:"context-menu-hover",disabled:"context-menu-disabled",visible:"context-menu-visible",notSelectable:"context-menu-not-selectable",icon:"context-menu-icon",iconEdit:"context-menu-icon-edit",iconCut:"context-menu-icon-cut",iconCopy:"context-menu-icon-copy",iconPaste:"context-menu-icon-paste",iconDelete:"context-menu-icon-delete",iconAdd:"context-menu-icon-add",iconQuit:"context-menu-icon-quit",iconLoadingClass:"context-menu-icon-loading"},determinePosition:function(t){if(e.ui&&e.ui.position)t.css("display","block").position({my:"center top",at:"center bottom",of:this,offset:"0 5",collision:"fit"}).css("display","none");else{var n=this.offset();n.top+=this.outerHeight(),n.left+=this.outerWidth()/2-t.outerWidth()/2,t.css(n)}},position:function(e,t,n){var i;if(!t&&!n){e.determinePosition.call(this,e.$menu);return}t==="maintain"&&n==="maintain"?i=e.$menu.position():i={top:n,left:t};var s=r.scrollTop()+r.height(),o=r.scrollLeft()+r.width(),u=e.$menu.outerHeight(),a=e.$menu.outerWidth();i.top+u>s&&(i.top-=u),i.top<0&&(i.top=0),i.left+a>o&&(i.left-=a),i.left<0&&(i.left=0),e.$menu.css(i)},positionSubmenu:function(t){if(t===undefined)return;if(e.ui&&e.ui.position)t.css("display","block").position({my:"left top-5",at:"right top",of:this,collision:"flipfit fit"}).css("display","");else{var n={top:-9,left:this.outerWidth()-5};t.css(n)}},zIndex:1,animation:{duration:50,show:"slideDown",hide:"slideUp"},events:{show:e.noop,hide:e.noop},callback:null,items:{}},f={timer:null,pageX:null,pageY:null},l=function(e){var t=0,n=e;for(;;){t=Math.max(t,parseInt(n.css("z-index"),10)||0),n=n.parent();if(!n||!n.length||"html body".indexOf(n.prop("nodeName").toLowerCase())>-1)break}return t},c={abortevent:function(e){e.preventDefault(),e.stopImmediatePropagation()},contextmenu:function(n){var r=e(this);n.data.trigger==="right"&&(n.preventDefault(),n.stopImmediatePropagation());if(n.data.trigger!=="right"&&n.data.trigger!=="demand"&&n.originalEvent)return;if(!(n.mouseButton===undefined||!n.data||n.data.trigger==="left"&&n.mouseButton===0||n.data.trigger==="right"&&n.mouseButton===2))return;if(r.hasClass("context-menu-active"))return;if(!r.hasClass("context-menu-disabled")){t=r;if(n.data.build){var i=n.data.build(t,n);if(i===!1)return;n.data=e.extend(!0,{},a,n.data,i||{});if(!n.data.items||e.isEmptyObject(n.data.items))throw window.console&&(console.error||console.log).call(console,"No items specified to show in contextMenu"),new Error("No Items specified");n.data.$trigger=t,h.create(n.data)}var s=!1;for(var o in n.data.items)if(n.data.items.hasOwnProperty(o)){var u;e.isFunction(n.data.items[o].visible)?u=n.data.items[o].visible.call(e(n.currentTarget),o,n.data):typeof n.data.items[o]!="undefined"&&n.data.items[o].visible?u=n.data.items[o].visible===!0:u=!0,u&&(s=!0)}s&&h.show.call(r,n.data,n.pageX,n.pageY)}},click:function(t){t.preventDefault(),t.stopImmediatePropagation(),e(this).trigger(e.Event("contextmenu",{data:t.data,pageX:t.pageX,pageY:t.pageY}))},mousedown:function(n){var r=e(this);t&&t.length&&!t.is(r)&&t.data("contextMenu").$menu.trigger("contextmenu:hide"),n.button===2&&(t=r.data("contextMenuActive",!0))},mouseup:function(n){var r=e(this);r.data("contextMenuActive")&&t&&t.length&&t.is(r)&&!r.hasClass("context-menu-disabled")&&(n.preventDefault(),n.stopImmediatePropagation(),t=r,r.trigger(e.Event("contextmenu",{data:n.data,pageX:n.pageX,pageY:n.pageY}))),r.removeData("contextMenuActive")},mouseenter:function(n){var r=e(this),i=e(n.relatedTarget),s=e(document);if(i.is(".context-menu-list")||i.closest(".context-menu-list").length)return;if(t&&t.length)return;f.pageX=n.pageX,f.pageY=n.pageY,f.data=n.data,s.on("mousemove.contextMenuShow",c.mousemove),f.timer=setTimeout(function(){f.timer=null,s.off("mousemove.contextMenuShow"),t=r,r.trigger(e.Event("contextmenu",{data:f.data,pageX:f.pageX,pageY:f.pageY}))},n.data.delay)},mousemove:function(e){f.pageX=e.pageX,f.pageY=e.pageY},mouseleave:function(t){var n=e(t.relatedTarget);if(n.is(".context-menu-list")||n.closest(".context-menu-list").length)return;try{clearTimeout(f.timer)}catch(t){}f.timer=null},layerClick:function(t){var n=e(this),i=n.data("contextMenuRoot"),s=t.button,o=t.pageX,u=t.pageY,a,f;t.preventDefault(),t.stopImmediatePropagation(),setTimeout(function(){var n,l=i.trigger==="left"&&s===0||i.trigger==="right"&&s===2;if(document.elementFromPoint&&i.$layer){i.$layer.hide(),a=document.elementFromPoint(o-r.scrollLeft(),u-r.scrollTop());if(a.isContentEditable){var c=document.createRange(),h=window.getSelection();c.selectNode(a),c.collapse(!0),h.removeAllRanges(),h.addRange(c)}i.$layer.show()}if(i.reposition&&l)if(document.elementFromPoint){if(i.$trigger.is(a)||i.$trigger.has(a).length){i.position.call(i.$trigger,i,o,u);return}}else{f=i.$trigger.offset(),n=e(window),f.top+=n.scrollTop();if(f.top<=t.pageY){f.left+=n.scrollLeft();if(f.left<=t.pageX){f.bottom=f.top+i.$trigger.outerHeight();if(f.bottom>=t.pageY){f.right=f.left+i.$trigger.outerWidth();if(f.right>=t.pageX){i.position.call(i.$trigger,i,o,u);return}}}}}a&&l&&i.$trigger.one("contextmenu:hidden",function(){e(a).contextMenu({x:o,y:u,button:s})}),i!=null&&i.$menu!=null&&i.$menu.trigger("contextmenu:hide")},50)},keyStop:function(e,t){t.isInput||e.preventDefault(),e.stopPropagation()},key:function(e){var n={};t&&(n=t.data("contextMenu")||{}),n.zIndex===undefined&&(n.zIndex=0);var r=0,i=function(e){e.style.zIndex!==""?r=e.style.zIndex:e.offsetParent!==null&&e.offsetParent!==undefined?i(e.offsetParent):e.parentElement!==null&&e.parentElement!==undefined&&i(e.parentElement)};i(e.target);if(r>n.zIndex)return;switch(e.keyCode){case 9:case 38:c.keyStop(e,n);if(n.isInput){if(e.keyCode===9&&e.shiftKey){e.preventDefault(),n.$selected&&n.$selected.find("input, textarea, select").blur(),n.$menu!=null&&n.$menu.trigger("prevcommand");return}if(e.keyCode===38&&n.$selected.find("input, textarea, select").prop("type")==="checkbox"){e.preventDefault();return}}else if(e.keyCode!==9||e.shiftKey){n.$menu!=null&&n.$menu.trigger("prevcommand");return}break;case 40:c.keyStop(e,n);if(!n.isInput){n.$menu!=null&&n.$menu.trigger("nextcommand");return}if(e.keyCode===9){e.preventDefault(),n.$selected&&n.$selected.find("input, textarea, select").blur(),n.$menu!=null&&n.$menu.trigger("nextcommand");return}if(e.keyCode===40&&n.$selected.find("input, textarea, select").prop("type")==="checkbox"){e.preventDefault();return}break;case 37:c.keyStop(e,n);if(n.isInput||!n.$selected||!n.$selected.length)break;if(!n.$selected.parent().hasClass("context-menu-root")){var s=n.$selected.parent().parent();n.$selected.trigger("contextmenu:blur"),n.$selected=s;return}break;case 39:c.keyStop(e,n);if(n.isInput||!n.$selected||!n.$selected.length)break;var o=n.$selected.data("contextMenu")||{};if(o.$menu&&n.$selected.hasClass("context-menu-submenu")){n.$selected=null,o.$selected=null,o.$menu.trigger("nextcommand");return}break;case 35:case 36:if(n.$selected&&n.$selected.find("input, textarea, select").length)return;(n.$selected&&n.$selected.parent()||n.$menu).children(":not(."+n.classNames.disabled+", ."+n.classNames.notSelectable+")")[e.keyCode===36?"first":"last"]().trigger("contextmenu:focus"),e.preventDefault();return;case 13:c.keyStop(e,n);if(n.isInput){if(n.$selected&&!n.$selected.is("textarea, select")){e.preventDefault();return}break}typeof n.$selected!="undefined"&&n.$selected!==null&&n.$selected.trigger("mouseup");return;case 32:case 33:case 34:c.keyStop(e,n);return;case 27:c.keyStop(e,n),n.$menu!=null&&n.$menu.trigger("contextmenu:hide");return;default:var u=String.fromCharCode(e.keyCode).toUpperCase();if(n.accesskeys&&n.accesskeys[u]){n.accesskeys[u].$node.trigger(n.accesskeys[u].$menu?"contextmenu:focus":"mouseup");return}}e.stopPropagation(),typeof n.$selected!="undefined"&&n.$selected!==null&&n.$selected.trigger(e)},prevItem:function(t){t.stopPropagation();var n=e(this).data("contextMenu")||{},r=e(this).data("contextMenuRoot")||{};if(n.$selected){var i=n.$selected;n=n.$selected.parent().data("contextMenu")||{},n.$selected=i}var s=n.$menu.children(),o=!n.$selected||!n.$selected.prev().length?s.last():n.$selected.prev(),u=o;while(o.hasClass(r.classNames.disabled)||o.hasClass(r.classNames.notSelectable)||o.is(":hidden")){o.prev().length?o=o.prev():o=s.last();if(o.is(u))return}n.$selected&&c.itemMouseleave.call(n.$selected.get(0),t),c.itemMouseenter.call(o.get(0),t);var a=o.find("input, textarea, select");a.length&&a.focus()},nextItem:function(t){t.stopPropagation();var n=e(this).data("contextMenu")||{},r=e(this).data("contextMenuRoot")||{};if(n.$selected){var i=n.$selected;n=n.$selected.parent().data("contextMenu")||{},n.$selected=i}var s=n.$menu.children(),o=!n.$selected||!n.$selected.next().length?s.first():n.$selected.next(),u=o;while(o.hasClass(r.classNames.disabled)||o.hasClass(r.classNames.notSelectable)||o.is(":hidden")){o.next().length?o=o.next():o=s.first();if(o.is(u))return}n.$selected&&c.itemMouseleave.call(n.$selected.get(0),t),c.itemMouseenter.call(o.get(0),t);var a=o.find("input, textarea, select");a.length&&a.focus()},focusInput:function(){var t=e(this).closest(".context-menu-item"),n=t.data(),r=n.contextMenu,i=n.contextMenuRoot;i.$selected=r.$selected=t,i.isInput=r.isInput=!0},blurInput:function(){var t=e(this).closest(".context-menu-item"),n=t.data(),r=n.contextMenu,i=n.contextMenuRoot;i.isInput=r.isInput=!1},menuMouseenter:function(){var t=e(this).data().contextMenuRoot;t.hovering=!0},menuMouseleave:function(t){var n=e(this).data().contextMenuRoot;n.$layer&&n.$layer.is(t.relatedTarget)&&(n.hovering=!1)},itemMouseenter:function(t){var n=e(this),r=n.data(),i=r.contextMenu,s=r.contextMenuRoot;s.hovering=!0,t&&s.$layer&&s.$layer.is(t.relatedTarget)&&(t.preventDefault(),t.stopImmediatePropagation()),(i.$menu?i:s).$menu.children("."+s.classNames.hover).trigger("contextmenu:blur").children(".hover").trigger("contextmenu:blur");if(n.hasClass(s.classNames.disabled)||n.hasClass(s.classNames.notSelectable)){i.$selected=null;return}n.trigger("contextmenu:focus")},itemMouseleave:function(t){var n=e(this),r=n.data(),i=r.contextMenu,s=r.contextMenuRoot;if(s!==i&&s.$layer&&s.$layer.is(t.relatedTarget)){typeof s.$selected!="undefined"&&s.$selected!==null&&s.$selected.trigger("contextmenu:blur"),t.preventDefault(),t.stopImmediatePropagation(),s.$selected=i.$selected=i.$node;return}n.trigger("contextmenu:blur")},itemClick:function(t){var n=e(this),r=n.data(),i=r.contextMenu,s=r.contextMenuRoot,o=r.contextMenuKey,u;if(!i.items[o]||n.is("."+s.classNames.disabled+", .context-menu-separator, ."+s.classNames.notSelectable)||n.is(".context-menu-submenu")&&s.selectableSubMenu===!1)return;t.preventDefault(),t.stopImmediatePropagation();if(e.isFunction(i.callbacks[o])&&Object.prototype.hasOwnProperty.call(i.callbacks,o))u=i.callbacks[o];else{if(!e.isFunction(s.callback))return;u=s.callback}u.call(s.$trigger,o,s)!==!1?s.$menu.trigger("contextmenu:hide"):s.$menu.parent().length&&h.update.call(s.$trigger,s)},inputClick:function(e){e.stopImmediatePropagation()},hideMenu:function(t,n){var r=e(this).data("contextMenuRoot");h.hide.call(r.$trigger,r,n&&n.force)},focusItem:function(t){t.stopPropagation();var n=e(this),r=n.data(),i=r.contextMenu,s=r.contextMenuRoot;if(n.hasClass(s.classNames.disabled)||n.hasClass(s.classNames.notSelectable))return;n.addClass([s.classNames.hover,s.classNames.visible].join(" ")).parent().find(".context-menu-item").not(n).removeClass(s.classNames.visible).filter("."+s.classNames.hover).trigger("contextmenu:blur"),i.$selected=s.$selected=n,i.$node&&s.positionSubmenu.call(i.$node,i.$menu)},blurItem:function(t){t.stopPropagation();var n=e(this),r=n.data(),i=r.contextMenu,s=r.contextMenuRoot;i.autoHide&&n.removeClass(s.classNames.visible),n.removeClass(s.classNames.hover),i.$selected=null}},h={show:function(n,r,i){var s=e(this),o={};e("#context-menu-layer").trigger("mousedown"),n.$trigger=s;if(n.events.show.call(s,n)===!1){t=null;return}h.update.call(s,n),n.position.call(s,n,r,i);if(n.zIndex){var u=n.zIndex;typeof n.zIndex=="function"&&(u=n.zIndex.call(s,n)),o.zIndex=l(s)+u}h.layer.call(n.$menu,n,o.zIndex),n.$menu.find("ul").css("zIndex",o.zIndex+1),n.$menu.css(o)[n.animation.show](n.animation.duration,function(){s.trigger("contextmenu:visible")}),s.data("contextMenu",n).addClass("context-menu-active"),e(document).off("keydown.contextMenu").on("keydown.contextMenu",c.key),n.autoHide&&e(document).on("mousemove.contextMenuAutoHide",function(e){var t=s.offset();t.right=t.left+s.outerWidth(),t.bottom=t.top+s.outerHeight(),n.$layer&&!n.hovering&&(!(e.pageX>=t.left&&e.pageX<=t.right)||!(e.pageY>=t.top&&e.pageY<=t.bottom))&&setTimeout(function(){!n.hovering&&n.$menu!=null&&n.$menu.trigger("contextmenu:hide")},50)})},hide:function(n,r){var i=e(this);n||(n=i.data("contextMenu")||{});if(!r&&n.events&&n.events.hide.call(i,n)===!1)return;i.removeData("contextMenu").removeClass("context-menu-active");if(n.$layer){setTimeout(function(e){return function(){e.remove()}}(n.$layer),10);try{delete n.$layer}catch(s){n.$layer=null}}t=null,n.$menu.find("."+n.classNames.hover).trigger("contextmenu:blur"),n.$selected=null,n.$menu.find("."+n.classNames.visible).removeClass(n.classNames.visible),e(document).off(".contextMenuAutoHide").off("keydown.contextMenu"),n.$menu&&n.$menu[n.animation.hide](n.animation.duration,function(){n.build&&(n.$menu.remove(),e.each(n,function(e){switch(e){case"ns":case"selector":case"build":case"trigger":return!0;default:n[e]=undefined;try{delete n[e]}catch(t){}return!0}})),setTimeout(function(){i.trigger("contextmenu:hidden")},10)})},create:function(t,n){function r(t){var n=e("<span></span>");if(t._accesskey)t._beforeAccesskey&&n.append(document.createTextNode(t._beforeAccesskey)),e("<span></span>").addClass("context-menu-accesskey").text(t._accesskey).appendTo(n),t._afterAccesskey&&n.append(document.createTextNode(t._afterAccesskey));else if(t.isHtmlName){if(typeof t.accesskey!="undefined")throw new Error("accesskeys are not compatible with HTML names and cannot be used together in the same item");n.html(t.name)}else n.text(t.name);return n}n===undefined&&(n=t),t.$menu=e('<ul class="context-menu-list"></ul>').addClass(t.className||"").data({contextMenu:t,contextMenuRoot:n}),e.each(["callbacks","commands","inputs"],function(e,r){t[r]={},n[r]||(n[r]={})}),n.accesskeys||(n.accesskeys={}),e.each(t.items,function(i,s){var o=e('<li class="context-menu-item"></li>').addClass(s.className||""),a=null,f=null;o.on("click",e.noop);if(typeof s=="string"||s.type==="cm_separator")s={type:"cm_seperator"};s.$node=o.data({contextMenu:t,contextMenuRoot:n,contextMenuKey:i});if(typeof s.accesskey!="undefined"){var l=p(s.accesskey);for(var d=0,v;v=l[d];d++)if(!n.accesskeys[v]){n.accesskeys[v]=s;var m=s.name.match(new RegExp("^(.*?)("+v+")(.*)$","i"));m&&(s._beforeAccesskey=m[1],s._accesskey=m[2],s._afterAccesskey=m[3]);break}}if(s.type&&u[s.type])u[s.type].call(o,s,t,n),e.each([t,n],function(n,r){r.commands[i]=s,e.isFunction(s.callback)&&(r.callbacks[i]===undefined||t.type===undefined)&&(r.callbacks[i]=s.callback)});else{s.type==="cm_seperator"?o.addClass("context-menu-separator "+n.classNames.notSelectable):s.type==="html"?o.addClass("context-menu-html "+n.classNames.notSelectable):s.type!=="sub"&&(s.type?(a=e("<label></label>").appendTo(o),r(s).appendTo(a),o.addClass("context-menu-input"),t.hasTypes=!0,e.each([t,n],function(e,t){t.commands[i]=s,t.inputs[i]=s})):s.items&&(s.type="sub"));switch(s.type){case"cm_seperator":break;case"text":f=e('<input type="text" value="1" name="" />').attr("name","context-menu-input-"+i).val(s.value||"").appendTo(a);break;case"textarea":f=e('<textarea name=""></textarea>').attr("name","context-menu-input-"+i).val(s.value||"").appendTo(a),s.height&&f.height(s.height);break;case"checkbox":f=e('<input type="checkbox" value="1" name="" />').attr("name","context-menu-input-"+i).val(s.value||"").prop("checked",!!s.selected).prependTo(a);break;case"radio":f=e('<input type="radio" value="1" name="" />').attr("name","context-menu-input-"+s.radio).val(s.value||"").prop("checked",!!s.selected).prependTo(a);break;case"select":f=e('<select name=""></select>').attr("name","context-menu-input-"+i).appendTo(a),s.options&&(e.each(s.options,function(t,n){e("<option></option>").val(t).text(n).appendTo(f)}),f.val(s.selected));break;case"sub":r(s).appendTo(o),s.appendTo=s.$node,o.data("contextMenu",s).addClass("context-menu-submenu"),s.callback=null,"function"==typeof s.items.then?h.processPromises(s,n,s.items):h.create(s,n);break;case"html":e(s.html).appendTo(o);break;default:e.each([t,n],function(n,r){r.commands[i]=s,e.isFunction(s.callback)&&(r.callbacks[i]===undefined||t.type===undefined)&&(r.callbacks[i]=s.callback)}),r(s).appendTo(o)}s.type&&s.type!=="sub"&&s.type!=="html"&&s.type!=="cm_seperator"&&(f.on("focus",c.focusInput).on("blur",c.blurInput),s.events&&f.on(s.events,t)),s.icon&&(e.isFunction(s.icon)?s._icon=s.icon.call(this,this,o,i,s):typeof s.icon=="string"&&s.icon.substring(0,3)==="fa-"?s._icon=n.classNames.icon+" "+n.classNames.icon+"--fa fa "+s.icon:s._icon=n.classNames.icon+" "+n.classNames.icon+"-"+s.icon,o.addClass(s._icon))}s.$input=f,s.$label=a,o.appendTo(t.$menu),!t.hasTypes&&e.support.eventSelectstart&&o.on("selectstart.disableTextSelect",c.abortevent)}),t.$node||t.$menu.css("display","none").addClass("context-menu-root"),t.$menu.appendTo(t.appendTo||document.body)},resize:function(t,n){var r;t.css({position:"absolute",display:"block"}),t.data("width",(r=t.get(0)).getBoundingClientRect?Math.ceil(r.getBoundingClientRect().width):t.outerWidth()+1),t.css({position:"static",minWidth:"0px",maxWidth:"100000px"}),t.find("> li > ul").each(function(){h.resize(e(this),!0)}),n||t.find("ul").addBack().css({position:"",display:"",minWidth:"",maxWidth:""}).outerWidth(function(){return e(this).data("width")})},update:function(t,n){var r=this;n===undefined&&(n=t,h.resize(t.$menu)),t.$menu.children().each(function(){var i=e(this),s=i.data("contextMenuKey"),o=t.items[s],u=e.isFunction(o.disabled)&&o.disabled.call(r,s,n)||o.disabled===!0,a;e.isFunction(o.visible)?a=o.visible.call(r,s,n):typeof o.visible!="undefined"?a=o.visible===!0:a=!0,i[a?"show":"hide"](),i[u?"addClass":"removeClass"](n.classNames.disabled),e.isFunction(o.icon)&&(i.removeClass(o._icon),o._icon=o.icon.call(this,r,i,s,o),i.addClass(o._icon));if(o.type){i.find("input, select, textarea").prop("disabled",u);switch(o.type){case"text":case"textarea":o.$input.val(o.value||"");break;case"checkbox":case"radio":o.$input.val(o.value||"").prop("checked",!!o.selected);break;case"select":o.$input.val(o.selected||"")}}o.$menu&&h.update.call(r,o,n)})},layer:function(t,n){var i=t.$layer=e('<div id="context-menu-layer"></div>').css({height:r.height(),width:r.width(),display:"block",position:"fixed","z-index":n,top:0,left:0,opacity:0,filter:"alpha(opacity=0)","background-color":"#000"}).data("contextMenuRoot",t).insertBefore(this).on("contextmenu",c.abortevent).on("mousedown",c.layerClick);return document.body.style.maxWidth===undefined&&i.css({position:"absolute",height:e(document).height()}),i},processPromises:function(e,t,n){function r(e,t,n){n===undefined&&i(undefined),s(e,t,n)}function i(e,t,n){n===undefined?(n={error:{name:"No items and no error item",icon:"context-menu-icon context-menu-icon-quit"}},window.console&&(console.error||console.log).call(console,'When you reject a promise, provide an "items" object, equal to normal sub-menu items')):typeof n=="string"&&(n={error:{name:n}}),s(e,t,n)}function s(e,t,n){if(t.$menu===undefined||!t.$menu.is(":visible"))return;e.$node.removeClass(t.classNames.iconLoadingClass),e.items=n,h.create(e,t,!0),h.update(e,t),t.positionSubmenu.call(e.$node,e.$menu)}e.$node.addClass(t.classNames.iconLoadingClass),n.then(r.bind(this,e,t),i.bind(this,e,t))}};e.fn.contextMenu=function(t){var n=this,r=t;if(this.length>0)if(t===undefined)this.first().trigger("contextmenu");else if(t.x!==undefined&&t.y!==undefined)this.first().trigger(e.Event("contextmenu",{pageX:t.x,pageY:t.y,mouseButton:t.button}));else if(t==="hide"){var i=this.first().data("contextMenu")?this.first().data("contextMenu").$menu:null;i&&i.trigger("contextmenu:hide")}else t==="destroy"?e.contextMenu("destroy",{context:this}):e.isPlainObject(t)?(t.context=this,e.contextMenu("create",t)):t?this.removeClass("context-menu-disabled"):t||this.addClass("context-menu-disabled");else e.each(o,function(){this.selector===n.selector&&(r.data=this,e.extend(r.data,{trigger:"demand"}))}),c.contextmenu.call(r.target,r);return this},e.contextMenu=function(t,r){typeof t!="string"&&(r=t,t="create"),typeof r=="string"?r={selector:r}:r===undefined&&(r={});var u=e.extend(!0,{},a,r||{}),f=e(document),l=f,p=!1;!u.context||!u.context.length?u.context=document:(l=e(u.context).first(),u.context=l.get(0),p=!e(u.context).is(document));switch(t){case"create":if(!u.selector)throw new Error("No selector specified");if(u.selector.match(/.context-menu-(list|item|input)($|\s)/))throw new Error('Cannot bind to selector "'+u.selector+'" as it contains a reserved className');if(!u.build&&(!u.items||e.isEmptyObject(u.items)))throw new Error("No Items specified");i++,u.ns=".contextMenu"+i,p||(s[u.selector]=u.ns),o[u.ns]=u,u.trigger||(u.trigger="right");if(!n){var d=u.itemClickEvent==="click"?"click.contextMenu":"mouseup.contextMenu",v={"contextmenu:focus.contextMenu":c.focusItem,"contextmenu:blur.contextMenu":c.blurItem,"contextmenu.contextMenu":c.abortevent,"mouseenter.contextMenu":c.itemMouseenter,"mouseleave.contextMenu":c.itemMouseleave};v[d]=c.itemClick,f.on({"contextmenu:hide.contextMenu":c.hideMenu,"prevcommand.contextMenu":c.prevItem,"nextcommand.contextMenu":c.nextItem,"contextmenu.contextMenu":c.abortevent,"mouseenter.contextMenu":c.menuMouseenter,"mouseleave.contextMenu":c.menuMouseleave},".context-menu-list").on("mouseup.contextMenu",".context-menu-input",c.inputClick).on(v,".context-menu-item"),n=!0}l.on("contextmenu"+u.ns,u.selector,u,c.contextmenu),p&&l.on("remove"+u.ns,function(){e(this).contextMenu("destroy")});switch(u.trigger){case"hover":l.on("mouseenter"+u.ns,u.selector,u,c.mouseenter).on("mouseleave"+u.ns,u.selector,u,c.mouseleave);break;case"left":l.on("click"+u.ns,u.selector,u,c.click)}u.build||h.create(u);break;case"destroy":var m;if(p){var g=u.context;e.each(o,function(t,n){if(!n)return!0;if(!e(g).is(n.selector))return!0;m=e(".context-menu-list").filter(":visible"),m.length&&m.data().contextMenuRoot.$trigger.is(e(n.context).find(n.selector))&&m.trigger("contextmenu:hide",{force:!0});try{o[n.ns].$menu&&o[n.ns].$menu.remove(),delete o[n.ns]}catch(r){o[n.ns]=null}return e(n.context).off(n.ns),!0})}else if(!u.selector)f.off(".contextMenu .contextMenuAutoHide"),e.each(o,function(t,n){e(n.context).off(n.ns)}),s={},o={},i=0,n=!1,e("#context-menu-layer, .context-menu-list").remove();else if(s[u.selector]){m=e(".context-menu-list").filter(":visible"),m.length&&m.data().contextMenuRoot.$trigger.is(u.selector)&&m.trigger("contextmenu:hide",{force:!0});try{o[s[u.selector]].$menu&&o[s[u.selector]].$menu.remove(),delete o[s[u.selector]]}catch(y){o[s[u.selector]]=null}f.off(s[u.selector])}break;case"html5":(!e.support.htmlCommand&&!e.support.htmlMenuitem||typeof r=="boolean"&&r)&&e('menu[type="context"]').each(function(){this.id&&e.contextMenu({selector:"[contextmenu="+this.id+"]",items:e.contextMenu.fromMenu(this)})}).css("display","none");break;default:throw new Error('Unknown operation "'+t+'"')}return this},e.contextMenu.setInputValues=function(t,n){n===undefined&&(n={}),e.each(t.inputs,function(e,t){switch(t.type){case"text":case"textarea":t.value=n[e]||"";break;case"checkbox":t.selected=n[e]?!0:!1;break;case"radio":t.selected=(n[t.radio]||"")===t.value;break;case"select":t.selected=n[e]||""}})},e.contextMenu.getInputValues=function(t,n){return n===undefined&&(n={}),e.each(t.inputs,function(e,t){switch(t.type){case"text":case"textarea":case"select":n[e]=t.$input.val();break;case"checkbox":n[e]=t.$input.prop("checked");break;case"radio":t.$input.prop("checked")&&(n[t.radio]=t.value)}}),n},e.contextMenu.fromMenu=function(t){var n=e(t),r={};return v(r,n.children()),r},e.contextMenu.defaults=a,e.contextMenu.types=u,e.contextMenu.handle=c,e.contextMenu.op=h,e.contextMenu.menus=o});
+// jscs:disable
+/* jshint ignore:start */
+(function (factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as anonymous module.
+        define(['jquery'], factory);
+    } else if (typeof exports === 'object') {
+        // Node / CommonJS
+        factory(require('jquery'));
+    } else {
+        // Browser globals.
+        factory(jQuery);
+    }
+})(function ($) {
+
+    'use strict';
+
+    // TODO: -
+    // ARIA stuff: menuitem, menuitemcheckbox und menuitemradio
+    // create <menu> structure if $.support[htmlCommand || htmlMenuitem] and !opt.disableNative
+
+    // determine html5 compatibility
+    $.support.htmlMenuitem = ('HTMLMenuItemElement' in window);
+    $.support.htmlCommand = ('HTMLCommandElement' in window);
+    $.support.eventSelectstart = ('onselectstart' in document.documentElement);
+    /* // should the need arise, test for css user-select
+     $.support.cssUserSelect = (function(){
+     var t = false,
+     e = document.createElement('div');
+
+     $.each('Moz|Webkit|Khtml|O|ms|Icab|'.split('|'), function(i, prefix) {
+     var propCC = prefix + (prefix ? 'U' : 'u') + 'serSelect',
+     prop = (prefix ? ('-' + prefix.toLowerCase() + '-') : '') + 'user-select';
+
+     e.style.cssText = prop + ': text;';
+     if (e.style[propCC] == 'text') {
+     t = true;
+     return false;
+     }
+
+     return true;
+     });
+
+     return t;
+     })();
+     */
+
+
+    if (!$.ui || !$.widget) {
+        // duck punch $.cleanData like jQueryUI does to get that remove event
+        $.cleanData = (function (orig) {
+            return function (elems) {
+                var events, elem, i;
+                for (i = 0; elems[i] != null; i++) {
+                    elem = elems[i];
+                    try {
+                        // Only trigger remove when necessary to save time
+                        events = $._data(elem, 'events');
+                        if (events && events.remove) {
+                            $(elem).triggerHandler('remove');
+                        }
+
+                        // Http://bugs.jquery.com/ticket/8235
+                    } catch (e) {}
+                }
+                orig(elems);
+            };
+        })($.cleanData);
+    }
+    /* jshint ignore:end */
+    // jscs:enable
+
+    var // currently active contextMenu trigger
+        $currentTrigger = null,
+    // is contextMenu initialized with at least one menu?
+        initialized = false,
+    // window handle
+        $win = $(window),
+    // number of registered menus
+        counter = 0,
+    // mapping selector to namespace
+        namespaces = {},
+    // mapping namespace to options
+        menus = {},
+    // custom command type handlers
+        types = {},
+    // default values
+        defaults = {
+            // selector of contextMenu trigger
+            selector: null,
+            // where to append the menu to
+            appendTo: null,
+            // method to trigger context menu ["right", "left", "hover"]
+            trigger: 'right',
+            // hide menu when mouse leaves trigger / menu elements
+            autoHide: false,
+            // ms to wait before showing a hover-triggered context menu
+            delay: 200,
+            // flag denoting if a second trigger should simply move (true) or rebuild (false) an open menu
+            // as long as the trigger happened on one of the trigger-element's child nodes
+            reposition: true,
+
+	          //ability to select submenu
+	          selectableSubMenu: false,
+            
+            // Default classname configuration to be able avoid conflicts in frameworks
+            classNames : {
+                hover: 'context-menu-hover', // Item hover
+                disabled: 'context-menu-disabled', // Item disabled
+                visible: 'context-menu-visible', // Item visible
+                notSelectable: 'context-menu-not-selectable', // Item not selectable
+
+                icon: 'context-menu-icon',
+                iconEdit: 'context-menu-icon-edit',
+                iconCut: 'context-menu-icon-cut',
+                iconCopy: 'context-menu-icon-copy',
+                iconPaste: 'context-menu-icon-paste',
+                iconDelete: 'context-menu-icon-delete',
+                iconAdd: 'context-menu-icon-add',
+                iconQuit: 'context-menu-icon-quit',
+                iconLoadingClass: 'context-menu-icon-loading'
+            },
+
+            // determine position to show menu at
+            determinePosition: function ($menu) {
+                // position to the lower middle of the trigger element
+                if ($.ui && $.ui.position) {
+                    // .position() is provided as a jQuery UI utility
+                    // (...and it won't work on hidden elements)
+                    $menu.css('display', 'block').position({
+                        my: 'center top',
+                        at: 'center bottom',
+                        of: this,
+                        offset: '0 5',
+                        collision: 'fit'
+                    }).css('display', 'none');
+                } else {
+                    // determine contextMenu position
+                    var offset = this.offset();
+                    offset.top += this.outerHeight();
+                    offset.left += this.outerWidth() / 2 - $menu.outerWidth() / 2;
+                    $menu.css(offset);
+                }
+            },
+            // position menu
+            position: function (opt, x, y) {
+                var offset;
+                // determine contextMenu position
+                if (!x && !y) {
+                    opt.determinePosition.call(this, opt.$menu);
+                    return;
+                } else if (x === 'maintain' && y === 'maintain') {
+                    // x and y must not be changed (after re-show on command click)
+                    offset = opt.$menu.position();
+                } else {
+                    // x and y are given (by mouse event)
+                    offset = {top: y, left: x};
+                }
+
+                // correct offset if viewport demands it
+                var bottom = $win.scrollTop() + $win.height(),
+                    right = $win.scrollLeft() + $win.width(),
+                    height = opt.$menu.outerHeight(),
+                    width = opt.$menu.outerWidth();
+
+                if (offset.top + height > bottom) {
+                    offset.top -= height;
+                }
+
+                if (offset.top < 0) {
+                    offset.top = 0;
+                }
+
+                if (offset.left + width > right) {
+                    offset.left -= width;
+                }
+
+                if (offset.left < 0) {
+                    offset.left = 0;
+                }
+
+                opt.$menu.css(offset);
+            },
+            // position the sub-menu
+            positionSubmenu: function ($menu) {
+                if ($menu === undefined) {
+                    // When user hovers over item (which has sub items) handle.focusItem will call this.
+                    // but the submenu does not exist yet if opt.items is a promise. just return, will
+                    // call positionSubmenu after promise is completed.
+                    return;
+                }
+                if ($.ui && $.ui.position) {
+                    // .position() is provided as a jQuery UI utility
+                    // (...and it won't work on hidden elements)
+                    $menu.css('display', 'block').position({
+                        my: 'left top-5',
+                        at: 'right top',
+                        of: this,
+                        collision: 'flipfit fit'
+                    }).css('display', '');
+                } else {
+                    // determine contextMenu position
+                    var offset = {
+                        top: -9,
+                        left: this.outerWidth() - 5
+                    };
+                    $menu.css(offset);
+                }
+            },
+            // offset to add to zIndex
+            zIndex: 1,
+            // show hide animation settings
+            animation: {
+                duration: 50,
+                show: 'slideDown',
+                hide: 'slideUp'
+            },
+            // events
+            events: {
+                show: $.noop,
+                hide: $.noop
+            },
+            // default callback
+            callback: null,
+            // list of contextMenu items
+            items: {}
+        },
+    // mouse position for hover activation
+        hoveract = {
+            timer: null,
+            pageX: null,
+            pageY: null
+        },
+    // determine zIndex
+        zindex = function ($t) {
+            var zin = 0,
+                $tt = $t;
+
+            while (true) {
+                zin = Math.max(zin, parseInt($tt.css('z-index'), 10) || 0);
+                $tt = $tt.parent();
+                if (!$tt || !$tt.length || 'html body'.indexOf($tt.prop('nodeName').toLowerCase()) > -1) {
+                    break;
+                }
+            }
+            return zin;
+        },
+    // event handlers
+        handle = {
+            // abort anything
+            abortevent: function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            },
+            // contextmenu show dispatcher
+            contextmenu: function (e) {
+                var $this = $(this);
+
+                // disable actual context-menu if we are using the right mouse button as the trigger
+                if (e.data.trigger === 'right') {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                }
+
+                // abort native-triggered events unless we're triggering on right click
+                if ((e.data.trigger !== 'right' && e.data.trigger !== 'demand') && e.originalEvent) {
+                    return;
+                }
+
+                // Let the current contextmenu decide if it should show or not based on its own trigger settings
+                if (e.mouseButton !== undefined && e.data) {
+                    if (!(e.data.trigger === 'left' && e.mouseButton === 0) && !(e.data.trigger === 'right' && e.mouseButton === 2)) {
+                        // Mouse click is not valid.
+                        return;
+                    }
+                }
+
+                // abort event if menu is visible for this trigger
+                if ($this.hasClass('context-menu-active')) {
+                    return;
+                }
+
+                if (!$this.hasClass('context-menu-disabled')) {
+                    // theoretically need to fire a show event at <menu>
+                    // http://www.whatwg.org/specs/web-apps/current-work/multipage/interactive-elements.html#context-menus
+                    // var evt = jQuery.Event("show", { data: data, pageX: e.pageX, pageY: e.pageY, relatedTarget: this });
+                    // e.data.$menu.trigger(evt);
+
+                    $currentTrigger = $this;
+                    if (e.data.build) {
+                        var built = e.data.build($currentTrigger, e);
+                        // abort if build() returned false
+                        if (built === false) {
+                            return;
+                        }
+
+                        // dynamically build menu on invocation
+                        e.data = $.extend(true, {}, defaults, e.data, built || {});
+
+                        // abort if there are no items to display
+                        if (!e.data.items || $.isEmptyObject(e.data.items)) {
+                            // Note: jQuery captures and ignores errors from event handlers
+                            if (window.console) {
+                                (console.error || console.log).call(console, 'No items specified to show in contextMenu');
+                            }
+
+                            throw new Error('No Items specified');
+                        }
+
+                        // backreference for custom command type creation
+                        e.data.$trigger = $currentTrigger;
+
+                        op.create(e.data);
+                    }
+                    var showMenu = false;
+                    for (var item in e.data.items) {
+                        if (e.data.items.hasOwnProperty(item)) {
+                            var visible;
+                            if ($.isFunction(e.data.items[item].visible)) {
+                                visible = e.data.items[item].visible.call($(e.currentTarget), item, e.data);
+                            } else if (typeof e.data.items[item] !== 'undefined' && e.data.items[item].visible) {
+                                visible = e.data.items[item].visible === true;
+                            } else {
+                                visible = true;
+                            }
+                            if (visible) {
+                                showMenu = true;
+                            }
+                        }
+                    }
+                    if (showMenu) {
+                        // show menu
+                        op.show.call($this, e.data, e.pageX, e.pageY);
+                    }
+                }
+            },
+            // contextMenu left-click trigger
+            click: function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                $(this).trigger($.Event('contextmenu', {data: e.data, pageX: e.pageX, pageY: e.pageY}));
+            },
+            // contextMenu right-click trigger
+            mousedown: function (e) {
+                // register mouse down
+                var $this = $(this);
+
+                // hide any previous menus
+                if ($currentTrigger && $currentTrigger.length && !$currentTrigger.is($this)) {
+                    $currentTrigger.data('contextMenu').$menu.trigger('contextmenu:hide');
+                }
+
+                // activate on right click
+                if (e.button === 2) {
+                    $currentTrigger = $this.data('contextMenuActive', true);
+                }
+            },
+            // contextMenu right-click trigger
+            mouseup: function (e) {
+                // show menu
+                var $this = $(this);
+                if ($this.data('contextMenuActive') && $currentTrigger && $currentTrigger.length && $currentTrigger.is($this) && !$this.hasClass('context-menu-disabled')) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    $currentTrigger = $this;
+                    $this.trigger($.Event('contextmenu', {data: e.data, pageX: e.pageX, pageY: e.pageY}));
+                }
+
+                $this.removeData('contextMenuActive');
+            },
+            // contextMenu hover trigger
+            mouseenter: function (e) {
+                var $this = $(this),
+                    $related = $(e.relatedTarget),
+                    $document = $(document);
+
+                // abort if we're coming from a menu
+                if ($related.is('.context-menu-list') || $related.closest('.context-menu-list').length) {
+                    return;
+                }
+
+                // abort if a menu is shown
+                if ($currentTrigger && $currentTrigger.length) {
+                    return;
+                }
+
+                hoveract.pageX = e.pageX;
+                hoveract.pageY = e.pageY;
+                hoveract.data = e.data;
+                $document.on('mousemove.contextMenuShow', handle.mousemove);
+                hoveract.timer = setTimeout(function () {
+                    hoveract.timer = null;
+                    $document.off('mousemove.contextMenuShow');
+                    $currentTrigger = $this;
+                    $this.trigger($.Event('contextmenu', {
+                        data: hoveract.data,
+                        pageX: hoveract.pageX,
+                        pageY: hoveract.pageY
+                    }));
+                }, e.data.delay);
+            },
+            // contextMenu hover trigger
+            mousemove: function (e) {
+                hoveract.pageX = e.pageX;
+                hoveract.pageY = e.pageY;
+            },
+            // contextMenu hover trigger
+            mouseleave: function (e) {
+                // abort if we're leaving for a menu
+                var $related = $(e.relatedTarget);
+                if ($related.is('.context-menu-list') || $related.closest('.context-menu-list').length) {
+                    return;
+                }
+
+                try {
+                    clearTimeout(hoveract.timer);
+                } catch (e) {
+                }
+
+                hoveract.timer = null;
+            },
+            // click on layer to hide contextMenu
+            layerClick: function (e) {
+                var $this = $(this),
+                    root = $this.data('contextMenuRoot'),
+                    button = e.button,
+                    x = e.pageX,
+                    y = e.pageY,
+                    target,
+                    offset;
+
+                e.preventDefault();
+                e.stopImmediatePropagation();
+
+                setTimeout(function () {
+                    var $window;
+                    var triggerAction = ((root.trigger === 'left' && button === 0) || (root.trigger === 'right' && button === 2));
+
+                    // find the element that would've been clicked, wasn't the layer in the way
+                    if (document.elementFromPoint && root.$layer) {
+                        root.$layer.hide();
+                        target = document.elementFromPoint(x - $win.scrollLeft(), y - $win.scrollTop());
+                        
+                        // also need to try and focus this element if we're in a contenteditable area,
+                        // as the layer will prevent the browser mouse action we want
+                        if (target.isContentEditable) {
+                           var range = document.createRange(),
+                              sel = window.getSelection();
+                           range.selectNode(target);
+                           range.collapse(true);
+                           sel.removeAllRanges();
+                           sel.addRange(range);
+                        }
+                        
+                        root.$layer.show();
+                    }
+
+                    if (root.reposition && triggerAction) {
+                        if (document.elementFromPoint) {
+                            if (root.$trigger.is(target) || root.$trigger.has(target).length) {
+                                root.position.call(root.$trigger, root, x, y);
+                                return;
+                            }
+                        } else {
+                            offset = root.$trigger.offset();
+                            $window = $(window);
+                            // while this looks kinda awful, it's the best way to avoid
+                            // unnecessarily calculating any positions
+                            offset.top += $window.scrollTop();
+                            if (offset.top <= e.pageY) {
+                                offset.left += $window.scrollLeft();
+                                if (offset.left <= e.pageX) {
+                                    offset.bottom = offset.top + root.$trigger.outerHeight();
+                                    if (offset.bottom >= e.pageY) {
+                                        offset.right = offset.left + root.$trigger.outerWidth();
+                                        if (offset.right >= e.pageX) {
+                                            // reposition
+                                            root.position.call(root.$trigger, root, x, y);
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (target && triggerAction) {
+                        root.$trigger.one('contextmenu:hidden', function () {
+                            $(target).contextMenu({ x: x, y: y, button: button });
+                        });
+                    }
+
+                    if (root != null && root.$menu != null) {
+                        root.$menu.trigger('contextmenu:hide');
+                    }
+                }, 50);
+            },
+            // key handled :hover
+            keyStop: function (e, opt) {
+                if (!opt.isInput) {
+                    e.preventDefault();
+                }
+
+                e.stopPropagation();
+            },
+            key: function (e) {
+
+                var opt = {};
+
+                // Only get the data from $currentTrigger if it exists
+                if ($currentTrigger) {
+                    opt = $currentTrigger.data('contextMenu') || {};
+                }
+                // If the trigger happen on a element that are above the contextmenu do this
+                if (opt.zIndex === undefined) {
+                    opt.zIndex = 0;
+				}
+                var targetZIndex = 0;
+                var getZIndexOfTriggerTarget = function (target) {
+					if (target.style.zIndex !== '') {
+						targetZIndex = target.style.zIndex;
+					} else {
+						if (target.offsetParent !== null && target.offsetParent !== undefined) {
+							getZIndexOfTriggerTarget(target.offsetParent);
+						}
+						else if (target.parentElement !== null && target.parentElement !== undefined) {
+							getZIndexOfTriggerTarget(target.parentElement);
+						}
+					}
+                };
+                getZIndexOfTriggerTarget(e.target);
+                // If targetZIndex is heigher then opt.zIndex dont progress any futher.
+                // This is used to make sure that if you are using a dialog with a input / textarea / contenteditable div
+                // and its above the contextmenu it wont steal keys events
+                if (targetZIndex > opt.zIndex) {
+                    return;
+				}
+                switch (e.keyCode) {
+                    case 9:
+                    case 38: // up
+                        handle.keyStop(e, opt);
+                        // if keyCode is [38 (up)] or [9 (tab) with shift]
+                        if (opt.isInput) {
+                            if (e.keyCode === 9 && e.shiftKey) {
+                                e.preventDefault();
+                                if(opt.$selected) {
+                                    opt.$selected.find('input, textarea, select').blur();
+                                }
+                                if (opt.$menu != null) opt.$menu.trigger('prevcommand');
+                                return;
+                            } else if (e.keyCode === 38 && opt.$selected.find('input, textarea, select').prop('type') === 'checkbox') {
+                                // checkboxes don't capture this key
+                                e.preventDefault();
+                                return;
+                            }
+                        } else if (e.keyCode !== 9 || e.shiftKey) {
+                            if (opt.$menu != null) opt.$menu.trigger('prevcommand');
+                            return;
+                        }
+                        break;
+                    // omitting break;
+                    // case 9: // tab - reached through omitted break;
+                    case 40: // down
+                        handle.keyStop(e, opt);
+                        if (opt.isInput) {
+                            if (e.keyCode === 9) {
+                                e.preventDefault();
+                                if(opt.$selected) {
+                                    opt.$selected.find('input, textarea, select').blur();
+                                }
+                                if (opt.$menu != null) opt.$menu.trigger('nextcommand');
+                                return;
+                            } else if (e.keyCode === 40 && opt.$selected.find('input, textarea, select').prop('type') === 'checkbox') {
+                                // checkboxes don't capture this key
+                                e.preventDefault();
+                                return;
+                            }
+                        } else {
+                            if (opt.$menu != null) opt.$menu.trigger('nextcommand');
+                            return;
+                        }
+                        break;
+
+                    case 37: // left
+                        handle.keyStop(e, opt);
+                        if (opt.isInput || !opt.$selected || !opt.$selected.length) {
+                            break;
+                        }
+
+                        if (!opt.$selected.parent().hasClass('context-menu-root')) {
+                            var $parent = opt.$selected.parent().parent();
+                            opt.$selected.trigger('contextmenu:blur');
+                            opt.$selected = $parent;
+                            return;
+                        }
+                        break;
+
+                    case 39: // right
+                        handle.keyStop(e, opt);
+                        if (opt.isInput || !opt.$selected || !opt.$selected.length) {
+                            break;
+                        }
+
+                        var itemdata = opt.$selected.data('contextMenu') || {};
+                        if (itemdata.$menu && opt.$selected.hasClass('context-menu-submenu')) {
+                            opt.$selected = null;
+                            itemdata.$selected = null;
+                            itemdata.$menu.trigger('nextcommand');
+                            return;
+                        }
+                        break;
+
+                    case 35: // end
+                    case 36: // home
+                        if (opt.$selected && opt.$selected.find('input, textarea, select').length) {
+                            return;
+                        } else {
+                            (opt.$selected && opt.$selected.parent() || opt.$menu)
+                                .children(':not(.' + opt.classNames.disabled + ', .' + opt.classNames.notSelectable + ')')[e.keyCode === 36 ? 'first' : 'last']()
+                                .trigger('contextmenu:focus');
+                            e.preventDefault();
+                            return;
+                        }
+                        break;
+
+                    case 13: // enter
+                        handle.keyStop(e, opt);
+                        if (opt.isInput) {
+                            if (opt.$selected && !opt.$selected.is('textarea, select')) {
+                                e.preventDefault();
+                                return;
+                            }
+                            break;
+                        }
+                        if (typeof opt.$selected !== 'undefined' && opt.$selected !== null) {
+                            opt.$selected.trigger('mouseup');
+                        }
+                        return;
+
+                    case 32: // space
+                    case 33: // page up
+                    case 34: // page down
+                        // prevent browser from scrolling down while menu is visible
+                        handle.keyStop(e, opt);
+                        return;
+
+                    case 27: // esc
+                        handle.keyStop(e, opt);
+                        if (opt.$menu != null) opt.$menu.trigger('contextmenu:hide');
+                        return;
+
+                    default: // 0-9, a-z
+                        var k = (String.fromCharCode(e.keyCode)).toUpperCase();
+                        if (opt.accesskeys && opt.accesskeys[k]) {
+                            // according to the specs accesskeys must be invoked immediately
+                            opt.accesskeys[k].$node.trigger(opt.accesskeys[k].$menu ? 'contextmenu:focus' : 'mouseup');
+                            return;
+                        }
+                        break;
+                }
+                // pass event to selected item,
+                // stop propagation to avoid endless recursion
+                e.stopPropagation();
+                if (typeof opt.$selected !== 'undefined' && opt.$selected !== null) {
+                    opt.$selected.trigger(e);
+                }
+            },
+            // select previous possible command in menu
+            prevItem: function (e) {
+                e.stopPropagation();
+                var opt = $(this).data('contextMenu') || {};
+                var root = $(this).data('contextMenuRoot') || {};
+
+                // obtain currently selected menu
+                if (opt.$selected) {
+                    var $s = opt.$selected;
+                    opt = opt.$selected.parent().data('contextMenu') || {};
+                    opt.$selected = $s;
+                }
+
+                var $children = opt.$menu.children(),
+                    $prev = !opt.$selected || !opt.$selected.prev().length ? $children.last() : opt.$selected.prev(),
+                    $round = $prev;
+
+                // skip disabled or hidden elements
+                while ($prev.hasClass(root.classNames.disabled) || $prev.hasClass(root.classNames.notSelectable) || $prev.is(':hidden')) {
+                    if ($prev.prev().length) {
+                        $prev = $prev.prev();
+                    } else {
+                        $prev = $children.last();
+                    }
+                    if ($prev.is($round)) {
+                        // break endless loop
+                        return;
+                    }
+                }
+
+                // leave current
+                if (opt.$selected) {
+                    handle.itemMouseleave.call(opt.$selected.get(0), e);
+                }
+
+                // activate next
+                handle.itemMouseenter.call($prev.get(0), e);
+
+                // focus input
+                var $input = $prev.find('input, textarea, select');
+                if ($input.length) {
+                    $input.focus();
+                }
+            },
+            // select next possible command in menu
+            nextItem: function (e) {
+                e.stopPropagation();
+                var opt = $(this).data('contextMenu') || {};
+                var root = $(this).data('contextMenuRoot') || {};
+
+                // obtain currently selected menu
+                if (opt.$selected) {
+                    var $s = opt.$selected;
+                    opt = opt.$selected.parent().data('contextMenu') || {};
+                    opt.$selected = $s;
+                }
+
+                var $children = opt.$menu.children(),
+                    $next = !opt.$selected || !opt.$selected.next().length ? $children.first() : opt.$selected.next(),
+                    $round = $next;
+
+                // skip disabled
+                while ($next.hasClass(root.classNames.disabled) || $next.hasClass(root.classNames.notSelectable) || $next.is(':hidden')) {
+                    if ($next.next().length) {
+                        $next = $next.next();
+                    } else {
+                        $next = $children.first();
+                    }
+                    if ($next.is($round)) {
+                        // break endless loop
+                        return;
+                    }
+                }
+
+                // leave current
+                if (opt.$selected) {
+                    handle.itemMouseleave.call(opt.$selected.get(0), e);
+                }
+
+                // activate next
+                handle.itemMouseenter.call($next.get(0), e);
+
+                // focus input
+                var $input = $next.find('input, textarea, select');
+                if ($input.length) {
+                    $input.focus();
+                }
+            },
+            // flag that we're inside an input so the key handler can act accordingly
+            focusInput: function () {
+                var $this = $(this).closest('.context-menu-item'),
+                    data = $this.data(),
+                    opt = data.contextMenu,
+                    root = data.contextMenuRoot;
+
+                root.$selected = opt.$selected = $this;
+                root.isInput = opt.isInput = true;
+            },
+            // flag that we're inside an input so the key handler can act accordingly
+            blurInput: function () {
+                var $this = $(this).closest('.context-menu-item'),
+                    data = $this.data(),
+                    opt = data.contextMenu,
+                    root = data.contextMenuRoot;
+
+                root.isInput = opt.isInput = false;
+            },
+            // :hover on menu
+            menuMouseenter: function () {
+                var root = $(this).data().contextMenuRoot;
+                root.hovering = true;
+            },
+            // :hover on menu
+            menuMouseleave: function (e) {
+                var root = $(this).data().contextMenuRoot;
+                if (root.$layer && root.$layer.is(e.relatedTarget)) {
+                    root.hovering = false;
+                }
+            },
+            // :hover done manually so key handling is possible
+            itemMouseenter: function (e) {
+                var $this = $(this),
+                    data = $this.data(),
+                    opt = data.contextMenu,
+                    root = data.contextMenuRoot;
+
+                root.hovering = true;
+
+                // abort if we're re-entering
+                if (e && root.$layer && root.$layer.is(e.relatedTarget)) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                }
+
+                // make sure only one item is selected
+                (opt.$menu ? opt : root).$menu
+                    .children('.' + root.classNames.hover).trigger('contextmenu:blur')
+                    .children('.hover').trigger('contextmenu:blur');
+
+                if ($this.hasClass(root.classNames.disabled) || $this.hasClass(root.classNames.notSelectable)) {
+                    opt.$selected = null;
+                    return;
+                }
+
+                $this.trigger('contextmenu:focus');
+            },
+            // :hover done manually so key handling is possible
+            itemMouseleave: function (e) {
+                var $this = $(this),
+                    data = $this.data(),
+                    opt = data.contextMenu,
+                    root = data.contextMenuRoot;
+
+                if (root !== opt && root.$layer && root.$layer.is(e.relatedTarget)) {
+                    if (typeof root.$selected !== 'undefined' && root.$selected !== null) {
+                        root.$selected.trigger('contextmenu:blur');
+                    }
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    root.$selected = opt.$selected = opt.$node;
+                    return;
+                }
+
+                $this.trigger('contextmenu:blur');
+            },
+            // contextMenu item click
+            itemClick: function (e) {
+                var $this = $(this),
+                    data = $this.data(),
+                    opt = data.contextMenu,
+                    root = data.contextMenuRoot,
+                    key = data.contextMenuKey,
+                    callback;
+
+                // abort if the key is unknown or disabled or is a menu
+                if (!opt.items[key] || $this.is('.' + root.classNames.disabled + ', .context-menu-separator, .' + root.classNames.notSelectable) || ($this.is('.context-menu-submenu') && root.selectableSubMenu === false )) {
+                    return;
+                }
+
+                e.preventDefault();
+                e.stopImmediatePropagation();
+
+                if ($.isFunction(opt.callbacks[key]) && Object.prototype.hasOwnProperty.call(opt.callbacks, key)) {
+                    // item-specific callback
+                    callback = opt.callbacks[key];
+                } else if ($.isFunction(root.callback)) {
+                    // default callback
+                    callback = root.callback;
+                } else {
+                    // no callback, no action
+                    return;
+                }
+
+                // hide menu if callback doesn't stop that
+                if (callback.call(root.$trigger, key, root) !== false) {
+                    root.$menu.trigger('contextmenu:hide');
+                } else if (root.$menu.parent().length) {
+                    op.update.call(root.$trigger, root);
+                }
+            },
+            // ignore click events on input elements
+            inputClick: function (e) {
+                e.stopImmediatePropagation();
+            },
+            // hide <menu>
+            hideMenu: function (e, data) {
+                var root = $(this).data('contextMenuRoot');
+                op.hide.call(root.$trigger, root, data && data.force);
+            },
+            // focus <command>
+            focusItem: function (e) {
+                e.stopPropagation();
+                var $this = $(this),
+                    data = $this.data(),
+                    opt = data.contextMenu,
+                    root = data.contextMenuRoot;
+
+                if ($this.hasClass(root.classNames.disabled) || $this.hasClass(root.classNames.notSelectable)) {
+                    return;
+                }
+
+                $this
+                    .addClass([root.classNames.hover, root.classNames.visible].join(' '))
+                    // select other items and included items
+                    .parent().find('.context-menu-item').not($this)
+                    .removeClass(root.classNames.visible)
+                    .filter('.' + root.classNames.hover)
+                    .trigger('contextmenu:blur');
+
+                // remember selected
+                opt.$selected = root.$selected = $this;
+
+                // position sub-menu - do after show so dumb $.ui.position can keep up
+                if (opt.$node) {
+                    root.positionSubmenu.call(opt.$node, opt.$menu);
+                }
+            },
+            // blur <command>
+            blurItem: function (e) {
+                e.stopPropagation();
+                var $this = $(this),
+                    data = $this.data(),
+                    opt = data.contextMenu,
+                    root = data.contextMenuRoot;
+
+                if (opt.autoHide) { // for tablets and touch screens this needs to remain
+                    $this.removeClass(root.classNames.visible);
+                }
+                $this.removeClass(root.classNames.hover);
+                opt.$selected = null;
+            }
+        },
+    // operations
+        op = {
+            show: function (opt, x, y) {
+                var $trigger = $(this),
+                    css = {};
+
+                // hide any open menus
+                $('#context-menu-layer').trigger('mousedown');
+
+                // backreference for callbacks
+                opt.$trigger = $trigger;
+
+                // show event
+                if (opt.events.show.call($trigger, opt) === false) {
+                    $currentTrigger = null;
+                    return;
+                }
+
+                // create or update context menu
+                op.update.call($trigger, opt);
+
+                // position menu
+                opt.position.call($trigger, opt, x, y);
+
+                // make sure we're in front
+                if (opt.zIndex) {
+                  var additionalZValue = opt.zIndex;
+                  // If opt.zIndex is a function, call the function to get the right zIndex.
+                  if (typeof opt.zIndex === 'function') {
+                      additionalZValue = opt.zIndex.call($trigger, opt);
+                  }
+                  css.zIndex = zindex($trigger) + additionalZValue;
+                }
+
+                // add layer
+                op.layer.call(opt.$menu, opt, css.zIndex);
+
+                // adjust sub-menu zIndexes
+                opt.$menu.find('ul').css('zIndex', css.zIndex + 1);
+
+                // position and show context menu
+                opt.$menu.css(css)[opt.animation.show](opt.animation.duration, function () {
+                    $trigger.trigger('contextmenu:visible');
+                });
+                // make options available and set state
+                $trigger
+                    .data('contextMenu', opt)
+                    .addClass('context-menu-active');
+
+                // register key handler
+                $(document).off('keydown.contextMenu').on('keydown.contextMenu', handle.key);
+                // register autoHide handler
+                if (opt.autoHide) {
+                    // mouse position handler
+                    $(document).on('mousemove.contextMenuAutoHide', function (e) {
+                        // need to capture the offset on mousemove,
+                        // since the page might've been scrolled since activation
+                        var pos = $trigger.offset();
+                        pos.right = pos.left + $trigger.outerWidth();
+                        pos.bottom = pos.top + $trigger.outerHeight();
+
+                        if (opt.$layer && !opt.hovering && (!(e.pageX >= pos.left && e.pageX <= pos.right) || !(e.pageY >= pos.top && e.pageY <= pos.bottom))) {
+                            /* Additional hover check after short time, you might just miss the edge of the menu */
+                            setTimeout(function () {
+                                if (!opt.hovering && opt.$menu != null) { opt.$menu.trigger('contextmenu:hide'); }
+                            }, 50);
+                        }
+                    });
+                }
+            },
+            hide: function (opt, force) {
+                var $trigger = $(this);
+                if (!opt) {
+                    opt = $trigger.data('contextMenu') || {};
+                }
+
+                // hide event
+                if (!force && opt.events && opt.events.hide.call($trigger, opt) === false) {
+                    return;
+                }
+
+                // remove options and revert state
+                $trigger
+                    .removeData('contextMenu')
+                    .removeClass('context-menu-active');
+
+                if (opt.$layer) {
+                    // keep layer for a bit so the contextmenu event can be aborted properly by opera
+                    setTimeout((function ($layer) {
+                        return function () {
+                            $layer.remove();
+                        };
+                    })(opt.$layer), 10);
+
+                    try {
+                        delete opt.$layer;
+                    } catch (e) {
+                        opt.$layer = null;
+                    }
+                }
+
+                // remove handle
+                $currentTrigger = null;
+                // remove selected
+                opt.$menu.find('.' + opt.classNames.hover).trigger('contextmenu:blur');
+                opt.$selected = null;
+                // collapse all submenus
+                opt.$menu.find('.' + opt.classNames.visible).removeClass(opt.classNames.visible);
+                // unregister key and mouse handlers
+                // $(document).off('.contextMenuAutoHide keydown.contextMenu'); // http://bugs.jquery.com/ticket/10705
+                $(document).off('.contextMenuAutoHide').off('keydown.contextMenu');
+                // hide menu
+                if(opt.$menu){
+                    opt.$menu[opt.animation.hide](opt.animation.duration, function () {
+                        // tear down dynamically built menu after animation is completed.
+                        if (opt.build) {
+                            opt.$menu.remove();
+                            $.each(opt, function (key) {
+                                switch (key) {
+                                    case 'ns':
+                                    case 'selector':
+                                    case 'build':
+                                    case 'trigger':
+                                        return true;
+
+                                    default:
+                                        opt[key] = undefined;
+                                        try {
+                                            delete opt[key];
+                                        } catch (e) {
+                                        }
+                                        return true;
+                                }
+                            });
+                        }
+
+                        setTimeout(function () {
+                            $trigger.trigger('contextmenu:hidden');
+                        }, 10);
+                    });
+                }
+            },
+            create: function (opt, root) {
+                if (root === undefined) {
+                    root = opt;
+                }
+                // create contextMenu
+                opt.$menu = $('<ul class="context-menu-list"></ul>').addClass(opt.className || '').data({
+                    'contextMenu': opt,
+                    'contextMenuRoot': root
+                });
+
+                $.each(['callbacks', 'commands', 'inputs'], function (i, k) {
+                    opt[k] = {};
+                    if (!root[k]) {
+                        root[k] = {};
+                    }
+                });
+
+                if(!root.accesskeys){
+                    root.accesskeys = {};
+                }
+
+                function createNameNode(item) {
+                    var $name = $('<span></span>');
+                    if (item._accesskey) {
+                        if (item._beforeAccesskey) {
+                            $name.append(document.createTextNode(item._beforeAccesskey));
+                        }
+                        $('<span></span>')
+                            .addClass('context-menu-accesskey')
+                            .text(item._accesskey)
+                            .appendTo($name);
+                        if (item._afterAccesskey) {
+                            $name.append(document.createTextNode(item._afterAccesskey));
+                        }
+                    } else {
+                        if (item.isHtmlName) {
+                            // restrict use with access keys
+                            if (typeof item.accesskey !== 'undefined') {
+                                throw new Error('accesskeys are not compatible with HTML names and cannot be used together in the same item');
+                            }
+                            $name.html(item.name);
+                        } else {
+                            $name.text(item.name);
+                        }
+                    }
+                    return $name;
+                }
+
+                // create contextMenu items
+                $.each(opt.items, function (key, item) {
+                    var $t = $('<li class="context-menu-item"></li>').addClass(item.className || ''),
+                        $label = null,
+                        $input = null;
+
+                    // iOS needs to see a click-event bound to an element to actually
+                    // have the TouchEvents infrastructure trigger the click event
+                    $t.on('click', $.noop);
+
+                    // Make old school string seperator a real item so checks wont be
+                    // akward later.
+                    // And normalize 'cm_separator' into 'cm_seperator'.
+                    if (typeof item === 'string' || item.type === 'cm_separator') {
+                        item = { type : 'cm_seperator' };
+                    }
+
+                    item.$node = $t.data({
+                        'contextMenu': opt,
+                        'contextMenuRoot': root,
+                        'contextMenuKey': key
+                    });
+
+                    // register accesskey
+                    // NOTE: the accesskey attribute should be applicable to any element, but Safari5 and Chrome13 still can't do that
+                    if (typeof item.accesskey !== 'undefined') {
+                        var aks = splitAccesskey(item.accesskey);
+                        for (var i = 0, ak; ak = aks[i]; i++) {
+                            if (!root.accesskeys[ak]) {
+                                root.accesskeys[ak] = item;
+                                var matched = item.name.match(new RegExp('^(.*?)(' + ak + ')(.*)$', 'i'));
+                                if (matched) {
+                                    item._beforeAccesskey = matched[1];
+                                    item._accesskey = matched[2];
+                                    item._afterAccesskey = matched[3];
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    if (item.type && types[item.type]) {
+                        // run custom type handler
+                        types[item.type].call($t, item, opt, root);
+                        // register commands
+                        $.each([opt, root], function (i, k) {
+                            k.commands[key] = item;
+                            // Overwrite only if undefined or the item is appended to the root. This so it
+                            // doesn't overwrite callbacks of root elements if the name is the same.
+                            if ($.isFunction(item.callback) && (k.callbacks[key] === undefined || opt.type === undefined)) {
+                                k.callbacks[key] = item.callback;
+                            }
+                        });
+                    } else {
+                        // add label for input
+                        if (item.type === 'cm_seperator') {
+                            $t.addClass('context-menu-separator ' + root.classNames.notSelectable);
+                        } else if (item.type === 'html') {
+                            $t.addClass('context-menu-html ' + root.classNames.notSelectable);
+                        } else if (item.type === 'sub') {
+                           // We don't want to execute the next else-if if it is a sub.
+                        } else if (item.type) {
+                            $label = $('<label></label>').appendTo($t);
+                            createNameNode(item).appendTo($label);
+
+                            $t.addClass('context-menu-input');
+                            opt.hasTypes = true;
+                            $.each([opt, root], function (i, k) {
+                                k.commands[key] = item;
+                                k.inputs[key] = item;
+                            });
+                        } else if (item.items) {
+                            item.type = 'sub';
+                        }
+
+                        switch (item.type) {
+                            case 'cm_seperator':
+                                break;
+
+                            case 'text':
+                                $input = $('<input type="text" value="1" name="" />')
+                                    .attr('name', 'context-menu-input-' + key)
+                                    .val(item.value || '')
+                                    .appendTo($label);
+                                break;
+
+                            case 'textarea':
+                                $input = $('<textarea name=""></textarea>')
+                                    .attr('name', 'context-menu-input-' + key)
+                                    .val(item.value || '')
+                                    .appendTo($label);
+
+                                if (item.height) {
+                                    $input.height(item.height);
+                                }
+                                break;
+
+                            case 'checkbox':
+                                $input = $('<input type="checkbox" value="1" name="" />')
+                                    .attr('name', 'context-menu-input-' + key)
+                                    .val(item.value || '')
+                                    .prop('checked', !!item.selected)
+                                    .prependTo($label);
+                                break;
+
+                            case 'radio':
+                                $input = $('<input type="radio" value="1" name="" />')
+                                    .attr('name', 'context-menu-input-' + item.radio)
+                                    .val(item.value || '')
+                                    .prop('checked', !!item.selected)
+                                    .prependTo($label);
+                                break;
+
+                            case 'select':
+                                $input = $('<select name=""></select>')
+                                    .attr('name', 'context-menu-input-' + key)
+                                    .appendTo($label);
+                                if (item.options) {
+                                    $.each(item.options, function (value, text) {
+                                        $('<option></option>').val(value).text(text).appendTo($input);
+                                    });
+                                    $input.val(item.selected);
+                                }
+                                break;
+
+                            case 'sub':
+                                createNameNode(item).appendTo($t);
+                                item.appendTo = item.$node;
+                                $t.data('contextMenu', item).addClass('context-menu-submenu');
+                                item.callback = null;
+
+                                // If item contains items, and this is a promise, we should create it later
+                                // check if subitems is of type promise. If it is a promise we need to create
+                                // it later, after promise has been resolved.
+                                if ('function' === typeof item.items.then) {
+                                  // probably a promise, process it, when completed it will create the sub menu's.
+                                  op.processPromises(item, root, item.items);
+                                } else {
+                                  // normal submenu.
+                                  op.create(item, root);
+                                }
+                                break;
+
+                            case 'html':
+                                $(item.html).appendTo($t);
+                                break;
+
+                            default:
+                                $.each([opt, root], function (i, k) {
+                                    k.commands[key] = item;
+                                    // Overwrite only if undefined or the item is appended to the root. This so it
+                                    // doesn't overwrite callbacks of root elements if the name is the same.
+                                    if ($.isFunction(item.callback) && (k.callbacks[key] === undefined || opt.type === undefined)) {
+                                        k.callbacks[key] = item.callback;
+                                    }
+                                });
+                                createNameNode(item).appendTo($t);
+                                break;
+                        }
+
+                        // disable key listener in <input>
+                        if (item.type && item.type !== 'sub' && item.type !== 'html' && item.type !== 'cm_seperator') {
+                            $input
+                                .on('focus', handle.focusInput)
+                                .on('blur', handle.blurInput);
+
+                            if (item.events) {
+                                $input.on(item.events, opt);
+                            }
+                        }
+
+                        // add icons
+                        if (item.icon) {
+                            if ($.isFunction(item.icon)) {
+                                item._icon = item.icon.call(this, this, $t, key, item);
+                            } else {
+                                if ( typeof(item.icon) === 'string' && item.icon.substring(0,3) === 'fa-' ) {
+                                    // to enable font awesome
+                                    item._icon = root.classNames.icon + ' ' + root.classNames.icon + '--fa fa ' + item.icon;
+                                } else {
+                                    item._icon = root.classNames.icon + ' ' + root.classNames.icon + '-' + item.icon;
+                                }
+                            }
+                            $t.addClass(item._icon);
+                        }
+                    }
+
+                    // cache contained elements
+                    item.$input = $input;
+                    item.$label = $label;
+
+                    // attach item to menu
+                    $t.appendTo(opt.$menu);
+
+                    // Disable text selection
+                    if (!opt.hasTypes && $.support.eventSelectstart) {
+                        // browsers support user-select: none,
+                        // IE has a special event for text-selection
+                        // browsers supporting neither will not be preventing text-selection
+                        $t.on('selectstart.disableTextSelect', handle.abortevent);
+                    }
+                });
+                // attach contextMenu to <body> (to bypass any possible overflow:hidden issues on parents of the trigger element)
+                if (!opt.$node) {
+                    opt.$menu.css('display', 'none').addClass('context-menu-root');
+                }
+                opt.$menu.appendTo(opt.appendTo || document.body);
+            },
+            resize: function ($menu, nested) {
+                var domMenu;
+                // determine widths of submenus, as CSS won't grow them automatically
+                // position:absolute within position:absolute; min-width:100; max-width:200; results in width: 100;
+                // kinda sucks hard...
+
+                // determine width of absolutely positioned element
+                $menu.css({position: 'absolute', display: 'block'});
+                // don't apply yet, because that would break nested elements' widths
+                $menu.data('width',
+                    (domMenu = $menu.get(0)).getBoundingClientRect ?
+                        Math.ceil(domMenu.getBoundingClientRect().width) :
+                        $menu.outerWidth() + 1); // outerWidth() returns rounded pixels
+                // reset styles so they allow nested elements to grow/shrink naturally
+                $menu.css({
+                    position: 'static',
+                    minWidth: '0px',
+                    maxWidth: '100000px'
+                });
+                // identify width of nested menus
+                $menu.find('> li > ul').each(function () {
+                    op.resize($(this), true);
+                });
+                // reset and apply changes in the end because nested
+                // elements' widths wouldn't be calculatable otherwise
+                if (!nested) {
+                    $menu.find('ul').addBack().css({
+                        position: '',
+                        display: '',
+                        minWidth: '',
+                        maxWidth: ''
+                    }).outerWidth(function () {
+                        return $(this).data('width');
+                    });
+                }
+            },
+            update: function (opt, root) {
+                var $trigger = this;
+                if (root === undefined) {
+                    root = opt;
+                    op.resize(opt.$menu);
+                }
+                // re-check disabled for each item
+                opt.$menu.children().each(function () {
+                    var $item = $(this),
+                        key = $item.data('contextMenuKey'),
+                        item = opt.items[key],
+                        disabled = ($.isFunction(item.disabled) && item.disabled.call($trigger, key, root)) || item.disabled === true,
+                        visible;
+                    if ($.isFunction(item.visible)) {
+                        visible = item.visible.call($trigger, key, root);
+                    } else if (typeof item.visible !== 'undefined') {
+                        visible = item.visible === true;
+                    } else {
+                        visible = true;
+                    }
+                    $item[visible ? 'show' : 'hide']();
+
+                    // dis- / enable item
+                    $item[disabled ? 'addClass' : 'removeClass'](root.classNames.disabled);
+
+                    if ($.isFunction(item.icon)) {
+                        $item.removeClass(item._icon);
+                        item._icon = item.icon.call(this, $trigger, $item, key, item);
+                        $item.addClass(item._icon);
+                    }
+
+                    if (item.type) {
+                        // dis- / enable input elements
+                        $item.find('input, select, textarea').prop('disabled', disabled);
+
+                        // update input states
+                        switch (item.type) {
+                            case 'text':
+                            case 'textarea':
+                                item.$input.val(item.value || '');
+                                break;
+
+                            case 'checkbox':
+                            case 'radio':
+                                item.$input.val(item.value || '').prop('checked', !!item.selected);
+                                break;
+
+                            case 'select':
+                                item.$input.val(item.selected || '');
+                                break;
+                        }
+                    }
+
+                    if (item.$menu) {
+                        // update sub-menu
+                        op.update.call($trigger, item, root);
+                    }
+                });
+            },
+            layer: function (opt, zIndex) {
+                // add transparent layer for click area
+                // filter and background for Internet Explorer, Issue #23
+                var $layer = opt.$layer = $('<div id="context-menu-layer"></div>')
+                    .css({height: $win.height(), width: $win.width(), display: 'block', position: 'fixed', 'z-index': zIndex, top:0, left:0, opacity: 0, filter: 'alpha(opacity=0)', 'background-color': '#000'})
+                    .data('contextMenuRoot', opt)
+                    .insertBefore(this)
+                    .on('contextmenu', handle.abortevent)
+                    .on('mousedown', handle.layerClick);
+
+                // IE6 doesn't know position:fixed;
+                if (document.body.style.maxWidth === undefined) { // IE6 doesn't support maxWidth
+                    $layer.css({
+                        'position': 'absolute',
+                        'height': $(document).height()
+                    });
+                }
+
+                return $layer;
+            },
+            processPromises: function (opt, root, promise) {
+                // Start
+                opt.$node.addClass(root.classNames.iconLoadingClass);
+
+                function completedPromise(opt,root,items) {
+                    // Completed promise (dev called promise.resolve). We now have a list of items which can
+                    // be used to create the rest of the context menu.
+                    if (items === undefined) {
+                        // Null result, dev should have checked
+                        errorPromise(undefined);//own error object
+                    }
+                    finishPromiseProcess(opt,root, items);
+                }
+                function errorPromise(opt,root,errorItem) {
+                    // User called promise.reject() with an error item, if not, provide own error item.
+                    if (errorItem === undefined) {
+                        errorItem = { "error": { name: "No items and no error item", icon: "context-menu-icon context-menu-icon-quit" } };
+                        if (window.console) {
+                            (console.error || console.log).call(console, 'When you reject a promise, provide an "items" object, equal to normal sub-menu items');
+                        }
+                    } else if(typeof errorItem === 'string'){
+						            errorItem = { "error": { name: errorItem } };
+					          }
+                    finishPromiseProcess(opt,root,errorItem);
+                }
+                function finishPromiseProcess(opt,root,items) {
+                    if(root.$menu === undefined || !root.$menu.is(':visible')){
+                        return;
+                    }
+                    opt.$node.removeClass(root.classNames.iconLoadingClass);
+                    opt.items = items;
+                    op.create(opt, root, true); // Create submenu
+                    op.update(opt, root); // Correctly update position if user is already hovered over menu item
+                    root.positionSubmenu.call(opt.$node, opt.$menu); // positionSubmenu, will only do anything if user already hovered over menu item that just got new subitems.
+                }
+
+                // Wait for promise completion. .then(success, error, notify) (we don't track notify). Bind the opt
+                // and root to avoid scope problems
+                promise.then(completedPromise.bind(this, opt, root), errorPromise.bind(this, opt, root));
+            }
+        };
+
+    // split accesskey according to http://www.whatwg.org/specs/web-apps/current-work/multipage/editing.html#assigned-access-key
+    function splitAccesskey(val) {
+        var t = val.split(/\s+/),
+            keys = [];
+
+        for (var i = 0, k; k = t[i]; i++) {
+            k = k.charAt(0).toUpperCase(); // first character only
+            // theoretically non-accessible characters should be ignored, but different systems, different keyboard layouts, ... screw it.
+            // a map to look up already used access keys would be nice
+            keys.push(k);
+        }
+
+        return keys;
+    }
+
+// handle contextMenu triggers
+    $.fn.contextMenu = function (operation) {
+        var $t = this, $o = operation;
+        if (this.length > 0) {  // this is not a build on demand menu
+            if (operation === undefined) {
+                this.first().trigger('contextmenu');
+            } else if (operation.x !== undefined && operation.y !== undefined) {
+                this.first().trigger($.Event('contextmenu', { pageX: operation.x, pageY: operation.y, mouseButton: operation.button }));
+            } else if (operation === 'hide') {
+                var $menu = this.first().data('contextMenu') ? this.first().data('contextMenu').$menu : null;
+                if($menu){
+                    $menu.trigger('contextmenu:hide');
+                }
+            } else if (operation === 'destroy') {
+                $.contextMenu('destroy', {context: this});
+            } else if ($.isPlainObject(operation)) {
+                operation.context = this;
+                $.contextMenu('create', operation);
+            } else if (operation) {
+                this.removeClass('context-menu-disabled');
+            } else if (!operation) {
+                this.addClass('context-menu-disabled');
+            }
+        } else {
+            $.each(menus, function () {
+                if (this.selector === $t.selector) {
+                    $o.data = this;
+
+                    $.extend($o.data, {trigger: 'demand'});
+                }
+            });
+
+            handle.contextmenu.call($o.target, $o);
+        }
+
+        return this;
+    };
+
+    // manage contextMenu instances
+    $.contextMenu = function (operation, options) {
+        if (typeof operation !== 'string') {
+            options = operation;
+            operation = 'create';
+        }
+
+        if (typeof options === 'string') {
+            options = {selector: options};
+        } else if (options === undefined) {
+            options = {};
+        }
+
+        // merge with default options
+        var o = $.extend(true, {}, defaults, options || {});
+        var $document = $(document);
+        var $context = $document;
+        var _hasContext = false;
+
+        if (!o.context || !o.context.length) {
+            o.context = document;
+        } else {
+            // you never know what they throw at you...
+            $context = $(o.context).first();
+            o.context = $context.get(0);
+            _hasContext = !$(o.context).is(document);
+        }
+
+        switch (operation) {
+            case 'create':
+                // no selector no joy
+                if (!o.selector) {
+                    throw new Error('No selector specified');
+                }
+                // make sure internal classes are not bound to
+                if (o.selector.match(/.context-menu-(list|item|input)($|\s)/)) {
+                    throw new Error('Cannot bind to selector "' + o.selector + '" as it contains a reserved className');
+                }
+                if (!o.build && (!o.items || $.isEmptyObject(o.items))) {
+                    throw new Error('No Items specified');
+                }
+                counter++;
+                o.ns = '.contextMenu' + counter;
+                if (!_hasContext) {
+                    namespaces[o.selector] = o.ns;
+                }
+                menus[o.ns] = o;
+
+                // default to right click
+                if (!o.trigger) {
+                    o.trigger = 'right';
+                }
+
+                if (!initialized) {
+                    var itemClick = o.itemClickEvent === 'click' ? 'click.contextMenu' : 'mouseup.contextMenu';
+                    var contextMenuItemObj = {
+                            // 'mouseup.contextMenu': handle.itemClick,
+                            // 'click.contextMenu': handle.itemClick,
+                            'contextmenu:focus.contextMenu': handle.focusItem,
+                            'contextmenu:blur.contextMenu': handle.blurItem,
+                            'contextmenu.contextMenu': handle.abortevent,
+                            'mouseenter.contextMenu': handle.itemMouseenter,
+                            'mouseleave.contextMenu': handle.itemMouseleave
+                        };
+                    contextMenuItemObj[itemClick] = handle.itemClick;
+                    // make sure item click is registered first
+                    $document
+                        .on({
+                            'contextmenu:hide.contextMenu': handle.hideMenu,
+                            'prevcommand.contextMenu': handle.prevItem,
+                            'nextcommand.contextMenu': handle.nextItem,
+                            'contextmenu.contextMenu': handle.abortevent,
+                            'mouseenter.contextMenu': handle.menuMouseenter,
+                            'mouseleave.contextMenu': handle.menuMouseleave
+                        }, '.context-menu-list')
+                        .on('mouseup.contextMenu', '.context-menu-input', handle.inputClick)
+                        .on(contextMenuItemObj, '.context-menu-item');
+
+                    initialized = true;
+                }
+
+                // engage native contextmenu event
+                $context
+                    .on('contextmenu' + o.ns, o.selector, o, handle.contextmenu);
+
+                if (_hasContext) {
+                    // add remove hook, just in case
+                    $context.on('remove' + o.ns, function () {
+                        $(this).contextMenu('destroy');
+                    });
+                }
+
+                switch (o.trigger) {
+                    case 'hover':
+                        $context
+                            .on('mouseenter' + o.ns, o.selector, o, handle.mouseenter)
+                            .on('mouseleave' + o.ns, o.selector, o, handle.mouseleave);
+                        break;
+
+                    case 'left':
+                        $context.on('click' + o.ns, o.selector, o, handle.click);
+                        break;
+                    /*
+                     default:
+                     // http://www.quirksmode.org/dom/events/contextmenu.html
+                     $document
+                     .on('mousedown' + o.ns, o.selector, o, handle.mousedown)
+                     .on('mouseup' + o.ns, o.selector, o, handle.mouseup);
+                     break;
+                     */
+                }
+
+                // create menu
+                if (!o.build) {
+                    op.create(o);
+                }
+                break;
+
+            case 'destroy':
+                var $visibleMenu;
+                if (_hasContext) {
+                    // get proper options
+                    var context = o.context;
+                    $.each(menus, function (ns, o) {
+                        
+                        if (!o) {
+                            return true;
+                        }
+
+                        // Is this menu equest to the context called from
+                        if (!$(context).is(o.selector)) {
+                            return true;
+                        }
+
+                        $visibleMenu = $('.context-menu-list').filter(':visible');
+                        if ($visibleMenu.length && $visibleMenu.data().contextMenuRoot.$trigger.is($(o.context).find(o.selector))) {
+                            $visibleMenu.trigger('contextmenu:hide', {force: true});
+                        }
+
+                        try {
+                            if (menus[o.ns].$menu) {
+                                menus[o.ns].$menu.remove();
+                            }
+
+                            delete menus[o.ns];
+                        } catch (e) {
+                            menus[o.ns] = null;
+                        }
+
+                        $(o.context).off(o.ns);
+
+                        return true;
+                    });
+                } else if (!o.selector) {
+                    $document.off('.contextMenu .contextMenuAutoHide');
+                    $.each(menus, function (ns, o) {
+                        $(o.context).off(o.ns);
+                    });
+
+                    namespaces = {};
+                    menus = {};
+                    counter = 0;
+                    initialized = false;
+
+                    $('#context-menu-layer, .context-menu-list').remove();
+                } else if (namespaces[o.selector]) {
+                    $visibleMenu = $('.context-menu-list').filter(':visible');
+                    if ($visibleMenu.length && $visibleMenu.data().contextMenuRoot.$trigger.is(o.selector)) {
+                        $visibleMenu.trigger('contextmenu:hide', {force: true});
+                    }
+
+                    try {
+                        if (menus[namespaces[o.selector]].$menu) {
+                            menus[namespaces[o.selector]].$menu.remove();
+                        }
+
+                        delete menus[namespaces[o.selector]];
+                    } catch (e) {
+                        menus[namespaces[o.selector]] = null;
+                    }
+
+                    $document.off(namespaces[o.selector]);
+                }
+                break;
+
+            case 'html5':
+                // if <command> or <menuitem> are not handled by the browser,
+                // or options was a bool true,
+                // initialize $.contextMenu for them
+                if ((!$.support.htmlCommand && !$.support.htmlMenuitem) || (typeof options === 'boolean' && options)) {
+                    $('menu[type="context"]').each(function () {
+                        if (this.id) {
+                            $.contextMenu({
+                                selector: '[contextmenu=' + this.id + ']',
+                                items: $.contextMenu.fromMenu(this)
+                            });
+                        }
+                    }).css('display', 'none');
+                }
+                break;
+
+            default:
+                throw new Error('Unknown operation "' + operation + '"');
+        }
+
+        return this;
+    };
+
+// import values into <input> commands
+    $.contextMenu.setInputValues = function (opt, data) {
+        if (data === undefined) {
+            data = {};
+        }
+
+        $.each(opt.inputs, function (key, item) {
+            switch (item.type) {
+                case 'text':
+                case 'textarea':
+                    item.value = data[key] || '';
+                    break;
+
+                case 'checkbox':
+                    item.selected = data[key] ? true : false;
+                    break;
+
+                case 'radio':
+                    item.selected = (data[item.radio] || '') === item.value;
+                    break;
+
+                case 'select':
+                    item.selected = data[key] || '';
+                    break;
+            }
+        });
+    };
+
+// export values from <input> commands
+    $.contextMenu.getInputValues = function (opt, data) {
+        if (data === undefined) {
+            data = {};
+        }
+
+        $.each(opt.inputs, function (key, item) {
+            switch (item.type) {
+                case 'text':
+                case 'textarea':
+                case 'select':
+                    data[key] = item.$input.val();
+                    break;
+
+                case 'checkbox':
+                    data[key] = item.$input.prop('checked');
+                    break;
+
+                case 'radio':
+                    if (item.$input.prop('checked')) {
+                        data[item.radio] = item.value;
+                    }
+                    break;
+            }
+        });
+
+        return data;
+    };
+
+// find <label for="xyz">
+    function inputLabel(node) {
+        return (node.id && $('label[for="' + node.id + '"]').val()) || node.name;
+    }
+
+// convert <menu> to items object
+    function menuChildren(items, $children, counter) {
+        if (!counter) {
+            counter = 0;
+        }
+
+        $children.each(function () {
+            var $node = $(this),
+                node = this,
+                nodeName = this.nodeName.toLowerCase(),
+                label,
+                item;
+
+            // extract <label><input>
+            if (nodeName === 'label' && $node.find('input, textarea, select').length) {
+                label = $node.text();
+                $node = $node.children().first();
+                node = $node.get(0);
+                nodeName = node.nodeName.toLowerCase();
+            }
+
+            /*
+             * <menu> accepts flow-content as children. that means <embed>, <canvas> and such are valid menu items.
+             * Not being the sadistic kind, $.contextMenu only accepts:
+             * <command>, <menuitem>, <hr>, <span>, <p> <input [text, radio, checkbox]>, <textarea>, <select> and of course <menu>.
+             * Everything else will be imported as an html node, which is not interfaced with contextMenu.
+             */
+
+            // http://www.whatwg.org/specs/web-apps/current-work/multipage/commands.html#concept-command
+            switch (nodeName) {
+                // http://www.whatwg.org/specs/web-apps/current-work/multipage/interactive-elements.html#the-menu-element
+                case 'menu':
+                    item = {name: $node.attr('label'), items: {}};
+                    counter = menuChildren(item.items, $node.children(), counter);
+                    break;
+
+                // http://www.whatwg.org/specs/web-apps/current-work/multipage/commands.html#using-the-a-element-to-define-a-command
+                case 'a':
+                // http://www.whatwg.org/specs/web-apps/current-work/multipage/commands.html#using-the-button-element-to-define-a-command
+                case 'button':
+                    item = {
+                        name: $node.text(),
+                        disabled: !!$node.attr('disabled'),
+                        callback: (function () {
+                            return function () {
+                                $node.click();
+                            };
+                        })()
+                    };
+                    break;
+
+                // http://www.whatwg.org/specs/web-apps/current-work/multipage/commands.html#using-the-command-element-to-define-a-command
+
+                case 'menuitem':
+                case 'command':
+                    switch ($node.attr('type')) {
+                        case undefined:
+                        case 'command':
+                        case 'menuitem':
+                            item = {
+                                name: $node.attr('label'),
+                                disabled: !!$node.attr('disabled'),
+                                icon: $node.attr('icon'),
+                                callback: (function () {
+                                    return function () {
+                                        $node.click();
+                                    };
+                                })()
+                            };
+                            break;
+
+                        case 'checkbox':
+                            item = {
+                                type: 'checkbox',
+                                disabled: !!$node.attr('disabled'),
+                                name: $node.attr('label'),
+                                selected: !!$node.attr('checked')
+                            };
+                            break;
+                        case 'radio':
+                            item = {
+                                type: 'radio',
+                                disabled: !!$node.attr('disabled'),
+                                name: $node.attr('label'),
+                                radio: $node.attr('radiogroup'),
+                                value: $node.attr('id'),
+                                selected: !!$node.attr('checked')
+                            };
+                            break;
+
+                        default:
+                            item = undefined;
+                    }
+                    break;
+
+                case 'hr':
+                    item = '-------';
+                    break;
+
+                case 'input':
+                    switch ($node.attr('type')) {
+                        case 'text':
+                            item = {
+                                type: 'text',
+                                name: label || inputLabel(node),
+                                disabled: !!$node.attr('disabled'),
+                                value: $node.val()
+                            };
+                            break;
+
+                        case 'checkbox':
+                            item = {
+                                type: 'checkbox',
+                                name: label || inputLabel(node),
+                                disabled: !!$node.attr('disabled'),
+                                selected: !!$node.attr('checked')
+                            };
+                            break;
+
+                        case 'radio':
+                            item = {
+                                type: 'radio',
+                                name: label || inputLabel(node),
+                                disabled: !!$node.attr('disabled'),
+                                radio: !!$node.attr('name'),
+                                value: $node.val(),
+                                selected: !!$node.attr('checked')
+                            };
+                            break;
+
+                        default:
+                            item = undefined;
+                            break;
+                    }
+                    break;
+
+                case 'select':
+                    item = {
+                        type: 'select',
+                        name: label || inputLabel(node),
+                        disabled: !!$node.attr('disabled'),
+                        selected: $node.val(),
+                        options: {}
+                    };
+                    $node.children().each(function () {
+                        item.options[this.value] = $(this).text();
+                    });
+                    break;
+
+                case 'textarea':
+                    item = {
+                        type: 'textarea',
+                        name: label || inputLabel(node),
+                        disabled: !!$node.attr('disabled'),
+                        value: $node.val()
+                    };
+                    break;
+
+                case 'label':
+                    break;
+
+                default:
+                    item = {type: 'html', html: $node.clone(true)};
+                    break;
+            }
+
+            if (item) {
+                counter++;
+                items['key' + counter] = item;
+            }
+        });
+
+        return counter;
+    }
+
+// convert html5 menu
+    $.contextMenu.fromMenu = function (element) {
+        var $this = $(element),
+            items = {};
+
+        menuChildren(items, $this.children());
+
+        return items;
+    };
+
+// make defaults accessible
+    $.contextMenu.defaults = defaults;
+    $.contextMenu.types = types;
+// export internal functions - undocumented, for hacking only!
+    $.contextMenu.handle = handle;
+    $.contextMenu.op = op;
+    $.contextMenu.menus = menus;
+
+
+});

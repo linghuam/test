@@ -1,1 +1,602 @@
-define("func/portInfo",["leaflet","echarts","func/base","data/ajax","control/panel","plugins/mcscroll"],function(e,t){e.ICT.PortInfo=e.Class.extend({initialize:function(t){this.config=Project_ParamConfig.PortConfig,this.ajax=new e.ICT.Ajax,this.ictmap=t,this.portLayerGroup=e.featureGroup([]),this.ictmap.map.addLayer(this.portLayerGroup),this.getPortList()},chartToGoogle:function(){this.portLayerGroup.eachLayer(function(t){var n=t.getLatLng(),r=Project_ParamConfig.MapOptions.offset.offsetLat,i=Project_ParamConfig.MapOptions.offset.offsetLng,s=e.latLng(n.lat+r,n.lng+i);t.setLatLng(s)},this)},googleToChart:function(){this.portLayerGroup.eachLayer(function(t){var n=t.getLatLng(),r=Project_ParamConfig.MapOptions.offset.offsetLat,i=Project_ParamConfig.MapOptions.offset.offsetLng,s=e.latLng(n.lat-r,n.lng-i);t.setLatLng(s)},this)},getPortList:function(){var e=this.config.listUrl;this.ajax.get(e,null,!0,this,function(e){if(e.state!==1)console.error(e.msg.error);else{var t=e.msg.portsList;for(var n=0,r=t.length;n<r;n++){var i=this.convertPortObj(t[n]),s=this.createPortMarker(i,!0);this.ictmap.map.getZoom()<this.config.showLevel&&(s.setOpacity(0),s.off("click",this.portClickEvt,this)),this.portLayerGroup.addLayer(s)}}},function(e){console.error("获取港口信息列表出错！")})},convertPortObj:function(e){var t={};return t.id=e.id,t.cc=e.cc,t.lon=e.lo/6e5,t.lat=e.la/6e5,t.name=e.pn,t},createPortMarker:function(t,n){var n=n===undefined?!0:n,r=e.latLng(t.lat,t.lon),i=t.name,s=e.icon({iconUrl:"themes/images/shipIcons/port.png",iconSize:[20,20],iconAnchor:[10,10]}),o={icon:s,title:i,data:t},u=e.marker(r,o);return n&&u.on("click",this.portClickEvt,this),u},portClickEvt:function(e){var t=e.target,n={},r=this.config.infoUrl;n.id=t.options.data.id,this.ajax.post(r,n,!0,this,function(e){if(e.state!=1)console.error(e.msg.error);else{var n=this.convertPortInfoObj(e.msg.portObject),r={maxWidth:300,minWidth:300,className:"ict_portInfo_popupContainer"};t.on("popupopen",function(){this._initInfoPopEvts()},this),t.bindPopup(this.getPopupContent(n),r).openPopup()}},function(e){console.error("获取港口信息出错！")})},locateByPortId:function(e){var t=this.getPortById(e);t&&(t.options.opacity===0&&(t.setOpacity(1),t.on("click",this.portClickEvt,this)),t.fire("click"),this.ictmap.map.setView(t.getLatLng(),this.config.showLevel))},portStastic:function(t){var n=this.config.portStaticUrl;this.ajax.post(n,t,!0,this,function(t){t.state!==1?(console.error(t.msg.error),e.ict.app.util.dialog.error($.i18n.prop("dialog_alert_title"),$.i18n.prop("port_info_stastic_error"))):this.showStasticRes(t)},function(t){e.ict.app.util.dialog.error($.i18n.prop("dialog_alert_title"),$.i18n.prop("port_info_stastic_error"))})},showStasticRes:function(t){var n={title:$.i18n.prop("port_static_title"),width:800,height:600};n.contentHTML=this.getStasticHtml(t);var r=this._stasticPanel=new e.ICT.PopPanel(n);r.show(),this._initStasticEvts(),this.initecharts(t)},getStasticHtml:function(e){var t=$.i18n.prop("port_static_chart"),n=$.i18n.prop("port_static_table"),r=[];return r.push('<div class="port_stastic_container">'),r.push('<div class="titleDiv">'),r.push('<ul class="nav nav_titleNav">'),r.push('<li class="active" data-info="chart"><a href="#" >'+t+"</a></li>"),r.push('<li data-info="table"><a href="#">'+n+"</a></li>"),r.push("</ul>"),r.push("</div>"),r.push('<div class="contentDiv">'),r.push(this.getstasticChartHtml(e)),r.push(this.getstasticTableHtml(e)),r.push("</div>"),r.push("</div>"),r.join("")},getstasticChartHtml:function(e){var t=$.i18n.prop("port_static_qysr"),n=$.i18n.prop("port_static_qysl"),r=[];return r.push('<div class="stasticChartDiv" style="display:block;">'),r.push("<p>"+t+"</p>"),r.push('<div class="stastic_chart_enter"></div>'),r.push("<p>"+n+"</p>"),r.push('<div class="stastic_chart_out"></div>'),r.push("</div>"),r.join("")},getstasticTableHtml:function(e){var t=e.msg.shipDst,n=e.msg.shipSrc,r=e.msg.dstSum,i=e.msg.srcSum,s=$.i18n.prop("port_static_qysrcount",r),o=$.i18n.prop("port_static_qyslcount",i),u=$.i18n.prop("common_ship_country2"),a=$.i18n.prop("func_filter_shiptype_1"),f=$.i18n.prop("func_filter_shiptype_3"),l=$.i18n.prop("func_filter_shiptype_6"),c=$.i18n.prop("func_filter_shiptype_5"),h=$.i18n.prop("func_filter_shiptype_7"),p=$.i18n.prop("func_filter_shiptype_4"),d=$.i18n.prop("func_filter_shiptype_100"),v=[];v.push('<div class="stasticTableDiv" style="display:none;">'),v.push("<p>"+s+"</p>"),v.push('<div class="stastic_table_enter">'),v.push("<table>"),v.push("<thead><tr><th>"+u+"</th><th>"+a+"</th><th>"+f+"</th><th>"+l+"</th><th>"+c+"</th><th>"+h+"</th><th>"+p+"</th><th>"+d+"</th></tr></thead>"),v.push("<tbody>");for(var m=0,g=t.length;m<g;m++){var y=t[m],b=this.ictmap.realtarget.convertNameToKey(y.countryCn.trim(),"shipflag"),w=window.localStorage.getItem("language")==="en"?y.countryEn:y.countryCn;v.push("<tr>"),v.push('<td><img src="themes/images/filterdisplay/country_'+b+'.png">'+w+"</td>"),v.push("<td>"+y.shiphuo+"</td>"),v.push("<td>"+y.shipyou+"</td>"),v.push("<td>"+y.shiptuo+"</td>"),v.push("<td>"+y.shipyu+"</td>"),v.push("<td>"+y.shipke+"</td>"),v.push("<td>"+y.shiptl+"</td>"),v.push("<td>"+y.shipother+"</td>"),v.push("</tr>"),m<g-1&&v.push('<tr class="splitTr"><td colspan="8">&nbsp</td></tr>')}v.push("</tbody>"),v.push("</table>"),v.push("</div>"),v.push("<p>"+o+"</p>"),v.push('<div class="stastic_table_out">'),v.push("<table>"),v.push("<thead><tr><th>"+u+"</th><th>"+a+"</th><th>"+f+"</th><th>"+l+"</th><th>"+c+"</th><th>"+h+"</th><th>"+p+"</th><th>"+d+"</th></tr></thead>"),v.push("<tbody>");for(var m=0,g=n.length;m<g;m++){var E=n[m],b=this.ictmap.realtarget.convertNameToKey(E.countryCn.trim(),"shipflag"),w=window.localStorage.getItem("language")==="en"?E.countryEn:E.countryCn;v.push("<tr>"),v.push('<td><img src="themes/images/filterdisplay/country_'+b+'.png">'+w+"</td>"),v.push("<td>"+E.shiphuo+"</td>"),v.push("<td>"+E.shipyou+"</td>"),v.push("<td>"+E.shiptuo+"</td>"),v.push("<td>"+E.shipyu+"</td>"),v.push("<td>"+E.shipke+"</td>"),v.push("<td>"+E.shiptl+"</td>"),v.push("<td>"+E.shipother+"</td>"),v.push("</tr>"),m<g-1&&v.push('<tr class="splitTr"><td colspan="8">&nbsp</td></tr>')}return v.push("</tbody>"),v.push("</table>"),v.push("</div>"),v.push("</div>"),v.join("")},initecharts:function(e){var n=this._stasticPanel.getContainer(),r={},i={};for(var s=0,o=e.msg.shipDst.length;s<o;s++){var u=e.msg.shipDst[s];r[u.countryCn]=[],r[u.countryCn].push(u.shiphuo),r[u.countryCn].push(u.shipyou),r[u.countryCn].push(u.shiptuo),r[u.countryCn].push(u.shipyu),r[u.countryCn].push(u.shipke),r[u.countryCn].push(u.shiptl),r[u.countryCn].push(u.shipother)}for(var s=0,o=e.msg.shipSrc.length;s<o;s++){var a=e.msg.shipSrc[s];i[a.countryCn]=[],i[a.countryCn].push(a.shiphuo),i[a.countryCn].push(a.shipyou),i[a.countryCn].push(a.shiptuo),i[a.countryCn].push(a.shipyu),i[a.countryCn].push(a.shipke),i[a.countryCn].push(a.shiptl),i[a.countryCn].push(a.shipother)}this.echart_enter=t.init(n.find(".stastic_chart_enter").get(0)),this.echart_out=t.init(n.find(".stastic_chart_out").get(0));var f=this.getChartOption(r),l=this.getChartOption(i);this.echart_enter.setOption(f,!0),this.echart_out.setOption(l,!0)},_initStasticEvts:function(){var e=this,t=this._stasticPanel.getContainer();t.find(".nav_titleNav>li").on("click",function(){$(this).addClass("active").siblings().removeClass("active");var e=$(this).data("info");e==="chart"?(t.find(".stasticChartDiv").css("display","block"),t.find(".stasticTableDiv").css("display","none")):(t.find(".stasticChartDiv").css("display","none"),t.find(".stasticTableDiv").css("display","block"))}),t.find(".stastic_table_enter").mCustomScrollbar({theme:"minimal-dark"}),t.find(".stastic_table_out").mCustomScrollbar({theme:"minimal-dark"})},getChartOption:function(e){var t=$.i18n.prop("func_filter_shipflag_1"),n=$.i18n.prop("func_filter_shipflag_5"),r=$.i18n.prop("func_filter_shipflag_2"),i=$.i18n.prop("func_filter_shipflag_3"),s=$.i18n.prop("func_filter_shipflag_4"),o=$.i18n.prop("func_filter_shipflag_100"),u=$.i18n.prop("func_filter_shiptype_1"),a=$.i18n.prop("func_filter_shiptype_3"),f=$.i18n.prop("func_filter_shiptype_6"),l=$.i18n.prop("func_filter_shiptype_5"),c=$.i18n.prop("func_filter_shiptype_7"),h=$.i18n.prop("func_filter_shiptype_4"),p=$.i18n.prop("func_filter_shiptype_100"),d={tooltip:{trigger:"axis",axisPointer:{type:"shadow"}},legend:{data:[t,n,r,i,s,o]},xAxis:[{type:"category",data:[u,a,f,l,c,h,p]}],yAxis:[{type:"value"}],color:["#065F89","#0A7CB0","#0FA0E3","#3AD3FF","#6DDEFE","#BDF1FF"],series:[{name:t,type:"bar",barWidth:10,stack:"stastic",data:e["中国"]},{name:n,type:"bar",stack:"stastic",data:e["俄罗斯"]},{name:r,type:"bar",stack:"stastic",data:e["英国"]},{name:i,type:"bar",stack:"stastic",data:e["法国"]},{name:s,type:"bar",stack:"stastic",data:e["美国"]},{name:o,type:"bar",stack:"stastic",data:e["其他"]}]};return d},_initInfoPopEvts:function(){var t=this,n=$(".ict_portInfo_popupContainer"),r=n.find(".msg"),i=e.ict.app.util.dateTime;n.find(".Wdate").on("focus",function(){var e={readOnly:!0,dateFmt:"yyyy-MM-dd HH",isShowClear:!1,minDate:"2013-01-10 0:0:0",maxDate:"2016-5-1 0:0:0",lang:window.localStorage.getItem("language")==="en"?"en":"zh-cn"};WdatePicker(e)}),n.find(".Wdate.startTime").val("2013-01-10 00"),n.find(".Wdate.endTime").val("2016-05-01 00"),$(".ict_portInfo_popupContainer .btnDiv button").on("click",function(){if(!e.ICT.Func.UserLogin.getInstance().isLogin()){e.ICT.Func.UserLogin.getInstance().alertLoginDialog();return}var s=$(this).data("id"),o=n.find(".startTime").val(),u=n.find(".endTime").val(),a=i.checkStrartEndTime(o+":00:00",u+":00:00");if(!a.result){r.text(a.msg);return}o=i.getCusUnixTime(o+":00:00"),u=i.getCusUnixTime(u+":00:00");var f={portid:s,startTime:o,endTime:u};t.portStastic(f)})},convertPortInfoObj:function(e){var t={};return t.id=e.id,t.areaname=e.area_Name,t.name=e.port_Name,t.countryen=e.country,t.countryzh=e.country_Chinese,t.countrycode=e.country_Code,t.portsize=e.harbor_Size,t.porttype=e.harbor_Type,t.lat=e.latitude/6e5,t.lon=e.longitude/6e5,t},getPopupContent:function(t){var n=e.ict.app.util.tool.latlngTodfmStr(t.lat,"lat"),r=e.ict.app.util.tool.latlngTodfmStr(t.lon,"lng"),i=$.i18n.prop("port_info_title"),s=$.i18n.prop("port_info_id"),o=$.i18n.prop("port_info_areaenname"),u=$.i18n.prop("port_info_enname"),a=$.i18n.prop("port_info_coenname"),f=$.i18n.prop("port_info_cozhname"),l=$.i18n.prop("port_info_size"),c=$.i18n.prop("port_info_type"),h=$.i18n.prop("common_ship_lng"),p=$.i18n.prop("common_ship_lat"),d=$.i18n.prop("port_info_conum"),v=$.i18n.prop("port_static_jltj"),m=$.i18n.prop("common_time_info2"),g=$.i18n.prop("common_btn_ok"),y=[];return y.push('<div class="portInfo_Div">'),y.push('<div class="portInfo_title">'+i+"</div>"),y.push('<div class="portInfo_table_div">'),y.push("<table>"),y.push("<tr><td>"+s+"</td><td>"+t.id+"</td></tr>"),y.push("<tr><td>"+o+"</td><td>"+t.areaname+"</td></tr>"),y.push("<tr><td>"+u+"</td><td>"+t.name+"</td></tr>"),y.push("<tr><td>"+a+"</td><td>"+t.countryen+"</td></tr>"),y.push("<tr><td>"+f+"</td><td>"+t.countryzh+"</td></tr>"),y.push("<tr><td>"+l+"</td><td>"+t.portsize+"</td></tr>"),y.push("<tr><td>"+c+"</td><td>"+t.porttype+"</td></tr>"),y.push("<tr><td>"+h+"</td><td>"+r+"</td></tr>"),y.push("<tr><td>"+p+"</td><td>"+n+"</td></tr>"),y.push("<tr><td>"+d+"</td><td>"+t.countrycode+"</td></tr>"),y.push("</table>"),y.push("</div>"),y.push('<div class="port_stastic">'),y.push("<p>"+v+"</p>"),y.push('<input type="text" class="Wdate startTime">&nbsp<label>'+m+'</label>&nbsp<input type="text" readonly  class="Wdate endTime">'),y.push("</div>"),y.push('<p class="msg"></p>'),y.push('<div class="btnDiv">'),y.push('<button type="button" data-id="'+t.id+'">'+g+"</button>"),y.push("</div>"),y.push("</div>"),y.join("")},showOrHidePortLayer:function(){this.ictmap.getCurZoom()<this.config.showLevel?this.hidePortLayer():this.showPortLayer()},showPortLayer:function(){this.portLayerGroup?this.portLayerGroup.eachLayer(function(e){e.setOpacity(1),e.on("click",this.portClickEvt,this)},this):this.getPortList()},hidePortLayer:function(){if(!this.portLayerGroup)return;this.portLayerGroup.eachLayer(function(e){e.setOpacity(0),e.off("click",this.portClickEvt,this)},this)},removePortLayer:function(){this.ictmap.map.hasLayer(this.portLayerGroup)&&this.portLayerGroup.clearLayers()},reloadPortLayer:function(){this.removePortLayer(),this.getPortList()},getPortById:function(e){var t=null;return this.portLayerGroup&&this.portLayerGroup.eachLayer(function(n){var r=n.options.data;r.id===e&&(t=n)},this),t}})});
+/**
+*港口信息
+*/
+define("func/portInfo",[
+	"leaflet",
+  "echarts",
+	"func/base",
+  "data/ajax",
+  "control/panel",
+  "plugins/mcscroll"
+
+],function(L,echarts){
+
+      L.ICT.PortInfo =  L.Class.extend({
+
+        initialize:function(ictmap){
+            this.config = Project_ParamConfig.PortConfig;
+            this.ajax = new L.ICT.Ajax();
+            this.ictmap = ictmap;
+            this.portLayerGroup = L.featureGroup([]);
+            this.ictmap.map.addLayer(this.portLayerGroup);
+            //获取港口列表
+            this.getPortList();
+        },
+
+        //地图切换，设置坐标偏移
+        chartToGoogle:function(){
+            this.portLayerGroup.eachLayer(function(layer){
+                var latlng = layer.getLatLng();
+                var offsetLat = Project_ParamConfig.MapOptions.offset.offsetLat;
+                var offsetLng = Project_ParamConfig.MapOptions.offset.offsetLng;
+                var newlatlng = L.latLng(latlng.lat+offsetLat,latlng.lng+offsetLng);
+                layer.setLatLng(newlatlng);
+            },this);
+        },
+
+        googleToChart:function(){
+            this.portLayerGroup.eachLayer(function(layer){
+                var latlng = layer.getLatLng();
+                var offsetLat = Project_ParamConfig.MapOptions.offset.offsetLat;
+                var offsetLng = Project_ParamConfig.MapOptions.offset.offsetLng;
+                var newlatlng = L.latLng(latlng.lat-offsetLat,latlng.lng-offsetLng);
+                layer.setLatLng(newlatlng);
+            },this);            
+        },
+
+        getPortList:function(){
+            var url = this.config.listUrl;
+            this.ajax.get(url,null,true,this,function(res){
+                if(res.state !== 1){
+                   console.error(res.msg.error);
+                }else{
+                   var listinfo = res.msg.portsList;
+                   for(var i=0,len=listinfo.length;i<len;i++){
+                       var port = this.convertPortObj(listinfo[i]); 
+                       var marker = this.createPortMarker(port,true);
+                       if(this.ictmap.map.getZoom() < this.config.showLevel){
+                          marker.setOpacity(0);
+                          marker.off("click",this.portClickEvt,this);
+                       }
+                       this.portLayerGroup.addLayer(marker);
+                   }
+                }
+            },function(error){
+               console.error("获取港口信息列表出错！");
+            });
+        },
+
+        convertPortObj:function(obj){
+            var oneobj = {};
+            oneobj.id = obj.id;
+            oneobj.cc = obj.cc;
+            oneobj.lon = obj.lo/600000;     
+            oneobj.lat = obj.la/600000;
+            oneobj.name = obj.pn;
+            return oneobj;
+        },
+
+        createPortMarker:function(portobj,isAddEvent){
+           var isAddEvent = (isAddEvent === undefined ? true : isAddEvent );
+           var latlng = L.latLng(portobj.lat,portobj.lon),
+               tipText = portobj.name,
+               portIcon = L.icon({
+                    iconUrl: 'themes/images/shipIcons/port.png',
+                    iconSize: [20, 20],  //图标的大小，格式，第一个参数是宽度，第二个参数是高度
+                    iconAnchor: [10, 10] //图标显示位置，例如宽度和高度是图标大小的一半，则经纬度的点正好在图标的中心点
+                });
+           var markOptions = {
+              icon:portIcon,                  
+              title:tipText, //添加鼠标移上后的提示信息
+              data:portobj
+           };
+           var Lmarker = L.marker(latlng,markOptions);
+           if(isAddEvent){
+             Lmarker.on("click",this.portClickEvt,this);
+           }           
+           return Lmarker;
+        },
+
+        portClickEvt:function(event){
+            var curPort = event.target,
+                data = {},
+                url = this.config.infoUrl;
+            data.id = curPort.options.data.id;
+            this.ajax.post(url,data,true,this,function(res){
+               if(res.state != 1){
+                 console.error(res.msg.error);
+               }else{
+                  var portobj = this.convertPortInfoObj(res.msg.portObject);
+                  // portobj = L.extend(portobj,curPort.options.data);
+                  var popupOptions = {
+                      maxWidth:300,
+                      minWidth:300,
+                      className:'ict_portInfo_popupContainer'
+                   };
+                  curPort.on("popupopen",function(){
+                    this._initInfoPopEvts();
+                  },this);
+                  curPort.bindPopup(this.getPopupContent(portobj),popupOptions).openPopup();                    
+               }       
+            },function(error){
+              console.error("获取港口信息出错！");
+            });
+        },
+
+        //搜索定位
+        locateByPortId:function(id){
+              var port = this.getPortById(id);
+              if(port){
+                  if(port.options.opacity === 0){
+                      port.setOpacity(1);
+                      port.on("click",this.portClickEvt,this);
+                  }
+                  port.fire("click");
+                  this.ictmap.map.setView(port.getLatLng(),this.config.showLevel);  
+                  // var data = {id:id};
+                  // var url = this.config.infoUrl;
+                  // this.ajax.post(url,data,true,this,function(res){
+                  //    if(res.state !== 1){
+                  //      console.error(res.msg.error);
+                  //    }else{
+                  //       var portobj = this.convertPortInfoObj(res.msg.portObject);
+                  //       // portobj = L.extend(portobj,curPort.options.data);
+                  //       var popupOptions = {
+                  //           maxWidth:300,
+                  //           minWidth:300,
+                  //           className:'ict_portInfo_popupContainer'
+                  //        };
+                  //       port.on("popupopen",function(){
+                  //         this._initInfoPopEvts();
+                  //       },this);
+                  //       port.bindPopup(this.getPopupContent(portobj),popupOptions).openPopup();      
+                  //       this.ictmap.map.setView(port.getLatLng(),this.config.showLevel);                                    
+                  //    }       
+                  // },function(error){
+                  //     console.error("获取港口信息出错！");
+                  // });
+              }        
+        },
+
+        //进离港统计
+        portStastic:function(data){
+           var url = this.config.portStaticUrl;
+           this.ajax.post(url,data,true,this,function(res){
+               if(res.state !== 1){
+                  console.error(res.msg.error);
+                  L.ict.app.util.dialog.error($.i18n.prop('dialog_alert_title'),$.i18n.prop('port_info_stastic_error'));
+               } else {                               
+                  this.showStasticRes(res);
+               }
+           },function(error){
+               L.ict.app.util.dialog.error($.i18n.prop('dialog_alert_title'),$.i18n.prop('port_info_stastic_error'));  
+               // $(".ict_portInfo_popupContainer").find(".msg").text("统计出错！");
+           });
+        },
+
+        showStasticRes:function(data){
+            var options = {
+               title:$.i18n.prop('port_static_title'),
+               width:800,
+               height:600
+            };
+            options.contentHTML = this.getStasticHtml(data);
+            var pop = this._stasticPanel = new L.ICT.PopPanel(options);
+            pop.show();
+            this._initStasticEvts();   
+            this.initecharts(data);         
+        },
+
+        getStasticHtml:function(data){
+           var t1 = $.i18n.prop('port_static_chart');
+           var t2 = $.i18n.prop('port_static_table');
+           var html = [];
+           html.push('<div class="port_stastic_container">');
+           html.push('<div class="titleDiv">');
+           html.push('<ul class="nav nav_titleNav">');
+           html.push('<li class="active" data-info="chart"><a href="#" >'+ t1 +'</a></li>');
+           html.push('<li data-info="table"><a href="#">'+ t2 +'</a></li>');
+           html.push('</ul>');
+           html.push('</div>');
+           html.push('<div class="contentDiv">');
+           html.push(this.getstasticChartHtml(data));
+           html.push(this.getstasticTableHtml(data));
+           html.push('</div>');
+           html.push('</div>');
+           return html.join("");
+        },
+
+        getstasticChartHtml:function(data){
+           var sr = $.i18n.prop('port_static_qysr');
+           var sl = $.i18n.prop('port_static_qysl');
+           var html = [];
+           html.push('<div class="stasticChartDiv" style="display:block;">');
+           html.push('<p>'+ sr +'</p>');
+           html.push('<div class="stastic_chart_enter"></div>');
+           html.push('<p>'+ sl +'</p>');
+           html.push('<div class="stastic_chart_out"></div>');           
+           html.push('</div>');
+           return html.join("");
+        },
+
+        getstasticTableHtml:function(data){
+           var enterList = data.msg.shipDst;
+           var outList = data.msg.shipSrc;
+           var enterCount = data.msg.dstSum;
+           var outCount = data.msg.srcSum;      
+           var qc = $.i18n.prop('port_static_qysrcount',enterCount);
+           var ql = $.i18n.prop('port_static_qyslcount',outCount);
+           var co = $.i18n.prop('common_ship_country2');
+           var t1 = $.i18n.prop('func_filter_shiptype_1');
+           var t2 = $.i18n.prop('func_filter_shiptype_3');
+           var t3 = $.i18n.prop('func_filter_shiptype_6');
+           var t4 = $.i18n.prop('func_filter_shiptype_5');
+           var t5 = $.i18n.prop('func_filter_shiptype_7');
+           var t6 = $.i18n.prop('func_filter_shiptype_4');
+           var t7 = $.i18n.prop('func_filter_shiptype_100');
+           var html = [];
+           html.push('<div class="stasticTableDiv" style="display:none;">');
+           html.push('<p>'+ qc +'</p>');
+           html.push('<div class="stastic_table_enter">');
+           html.push('<table>');
+           html.push('<thead><tr><th>'+ co +'</th><th>'+ t1 +'</th><th>'+ t2 +'</th><th>'+ t3 +'</th><th>'+ t4 +'</th><th>'+ t5 +'</th><th>'+ t6 +'</th><th>'+ t7 +'</th></tr></thead>');
+           html.push('<tbody>');
+           for(var i=0,len=enterList.length;i<len;i++){
+              var eobj = enterList[i];
+              var countryimg = this.ictmap.realtarget.convertNameToKey(eobj.countryCn.trim(),'shipflag');
+              var coname = window.localStorage.getItem("language") === 'en' ? eobj.countryEn : eobj.countryCn;
+              html.push('<tr>');
+              html.push('<td>'+'<img src="themes/images/filterdisplay/country_'+ countryimg +'.png">'+ coname +'</td>');
+              html.push('<td>'+ eobj.shiphuo +'</td>');
+              html.push('<td>'+ eobj.shipyou +'</td>');
+              html.push('<td>'+ eobj.shiptuo +'</td>');
+              html.push('<td>'+ eobj.shipyu +'</td>');
+              html.push('<td>'+ eobj.shipke +'</td>');
+              html.push('<td>'+ eobj.shiptl +'</td>');
+              html.push('<td>'+ eobj.shipother +'</td>');
+              html.push('</tr>');
+              if( i < len-1){
+                 html.push('<tr class="splitTr"><td colspan="8">&nbsp</td></tr>');
+              }
+           }
+           html.push('</tbody>');
+           html.push('</table>');
+           html.push('</div>');
+
+           html.push('<p>'+ ql +'</p>');
+           html.push('<div class="stastic_table_out">'); 
+           html.push('<table>');
+           html.push('<thead><tr><th>'+ co +'</th><th>'+ t1 +'</th><th>'+ t2 +'</th><th>'+ t3 +'</th><th>'+ t4 +'</th><th>'+ t5 +'</th><th>'+ t6 +'</th><th>'+ t7 +'</th></tr></thead>');
+           html.push('<tbody>');
+           for(var i=0,len=outList.length;i<len;i++){
+              var otbj = outList[i];
+              var countryimg = this.ictmap.realtarget.convertNameToKey(otbj.countryCn.trim(),'shipflag');
+              var coname = window.localStorage.getItem("language") === 'en' ? otbj.countryEn : otbj.countryCn;
+              html.push('<tr>');
+              html.push('<td>'+'<img src="themes/images/filterdisplay/country_'+ countryimg +'.png">'+ coname +'</td>');              
+              // html.push('<td>'+'<img src="themes/images/country/'+otbj.countryCn.trim()+'.png">'+otbj.countryCn+'</td>');
+              html.push('<td>'+ otbj.shiphuo +'</td>');
+              html.push('<td>'+ otbj.shipyou +'</td>');
+              html.push('<td>'+ otbj.shiptuo +'</td>');
+              html.push('<td>'+ otbj.shipyu +'</td>');
+              html.push('<td>'+ otbj.shipke +'</td>');
+              html.push('<td>'+ otbj.shiptl +'</td>');
+              html.push('<td>'+ otbj.shipother +'</td>');
+              html.push('</tr>');
+              if( i < len-1){
+                 html.push('<tr class="splitTr"><td colspan="8">&nbsp</td></tr>');
+              }            
+           }   
+           html.push('</tbody>');        
+           html.push('</table>');
+           html.push('</div>');      
+           html.push('</div>');
+           return html.join("");
+        },
+
+        initecharts:function(data){
+            var $container = this._stasticPanel.getContainer();
+            var ydata_enter ={};
+            var ydata_out = {};
+            for(var i=0,len=data.msg.shipDst.length;i<len;i++){
+              var eobj = data.msg.shipDst[i];
+              ydata_enter[eobj.countryCn] = [];
+              ydata_enter[eobj.countryCn].push(eobj.shiphuo);
+              ydata_enter[eobj.countryCn].push(eobj.shipyou);
+              ydata_enter[eobj.countryCn].push(eobj.shiptuo);
+              ydata_enter[eobj.countryCn].push(eobj.shipyu);
+              ydata_enter[eobj.countryCn].push(eobj.shipke);
+              ydata_enter[eobj.countryCn].push(eobj.shiptl);
+              ydata_enter[eobj.countryCn].push(eobj.shipother);
+
+            }
+            for(var i=0,len=data.msg.shipSrc.length;i<len;i++){
+              var otobj = data.msg.shipSrc[i];
+              ydata_out[otobj.countryCn] = [];
+              ydata_out[otobj.countryCn].push(otobj.shiphuo);
+              ydata_out[otobj.countryCn].push(otobj.shipyou);
+              ydata_out[otobj.countryCn].push(otobj.shiptuo);
+              ydata_out[otobj.countryCn].push(otobj.shipyu);
+              ydata_out[otobj.countryCn].push(otobj.shipke);
+              ydata_out[otobj.countryCn].push(otobj.shiptl);
+              ydata_out[otobj.countryCn].push(otobj.shipother);
+
+            }            
+            //echarts 
+            this.echart_enter = echarts.init($container.find(".stastic_chart_enter").get(0));
+            this.echart_out = echarts.init($container.find(".stastic_chart_out").get(0));
+            var option_enter = this.getChartOption(ydata_enter);
+            var option_out = this.getChartOption(ydata_out);
+            this.echart_enter.setOption(option_enter, true);
+            this.echart_out.setOption(option_out,true);
+        },
+
+        _initStasticEvts:function(){
+            var self = this;
+            var $container = this._stasticPanel.getContainer();
+            //图表切换
+            $container.find(".nav_titleNav>li").on("click",function(){
+                $(this).addClass("active").siblings().removeClass("active");
+                var type = $(this).data("info");
+                if(type === "chart"){
+                   $container.find(".stasticChartDiv").css("display","block");
+                   $container.find(".stasticTableDiv").css("display","none");
+                } else{
+                   $container.find(".stasticChartDiv").css("display","none");
+                   $container.find(".stasticTableDiv").css("display","block");
+                }
+
+            });
+            //滚动
+            $container.find(".stastic_table_enter").mCustomScrollbar({ theme: "minimal-dark" });  
+            $container.find(".stastic_table_out").mCustomScrollbar({ theme: "minimal-dark" });              
+        },
+
+        getChartOption:function(ydata){
+           var c1 = $.i18n.prop('func_filter_shipflag_1');
+           var c2 = $.i18n.prop('func_filter_shipflag_5');
+           var c3 = $.i18n.prop('func_filter_shipflag_2');
+           var c4 = $.i18n.prop('func_filter_shipflag_3');
+           var c5 = $.i18n.prop('func_filter_shipflag_4');
+           var c6 = $.i18n.prop('func_filter_shipflag_100');
+
+           var t1 = $.i18n.prop('func_filter_shiptype_1');
+           var t2 = $.i18n.prop('func_filter_shiptype_3');
+           var t3 = $.i18n.prop('func_filter_shiptype_6');
+           var t4 = $.i18n.prop('func_filter_shiptype_5');
+           var t5 = $.i18n.prop('func_filter_shiptype_7');
+           var t6 = $.i18n.prop('func_filter_shiptype_4');
+           var t7 = $.i18n.prop('func_filter_shiptype_100');
+
+           var  option = {
+                  tooltip : {
+                      trigger: 'axis',
+                      axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                          type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                      }
+                  },
+                  legend: {
+                      // orient:'top',
+                      data:[c1,c2,c3,c4,c5,c6]
+                  },
+                  xAxis : [
+                      {
+                          type : 'category',
+                          data : [t1,t2,t3,t4,t5,t6,t7]
+                      }
+                  ],
+                  yAxis : [
+                      {
+                          type : 'value'
+                      }
+                  ],
+                  color:["#065F89", "#0A7CB0", "#0FA0E3", "#3AD3FF", "#6DDEFE", "#BDF1FF"],
+                  series : [
+                      {
+                         
+                          name:c1,
+                          type:'bar',
+                          barWidth : 10,
+                          stack: 'stastic',
+                          data:ydata["中国"]
+                      },
+                      {
+                          name:c2,
+                          type:'bar',
+                          stack: 'stastic',
+                          data:ydata["俄罗斯"]
+                      },
+                      {
+                          name:c3,
+                          type:'bar',
+                          stack: 'stastic',
+                          data:ydata["英国"]
+                      },
+                      {
+                          name:c4,
+                          type:'bar',
+                          stack: 'stastic',
+                          data:ydata["法国"]
+                      },
+                      {
+                          name:c5,
+                          type:'bar',
+                          stack: 'stastic',
+                          data:ydata["美国"]
+                      },
+                      {
+                          name:c6,
+                          type:'bar',
+                          stack: 'stastic',
+                          data:ydata["其他"]
+                      }                                            
+                  ]
+              };
+              return option;            
+        },
+
+        _initInfoPopEvts:function(){
+           var self = this,
+               $container =  $(".ict_portInfo_popupContainer"),
+               $msg = $container.find(".msg"),
+               dateUtil = L.ict.app.util.dateTime;
+            //日期控件
+           $container.find(".Wdate").on("focus",function(){
+                var config = {
+                   readOnly:true,
+                   dateFmt:'yyyy-MM-dd HH',
+                   isShowClear:false,
+                   minDate:'2013-01-10 0:0:0',
+                   maxDate:'2016-5-1 0:0:0',
+                   lang: window.localStorage.getItem("language") === 'en' ? 'en' : 'zh-cn'
+                };
+                WdatePicker(config);
+            });
+           // var startTime = dateUtil.getNewDateTimeBeforHour(24);
+           //     startTime = dateUtil.formatDateH(startTime);
+           // var endTime = dateUtil.formatDateH(new Date());
+           $container.find(".Wdate.startTime").val('2013-01-10 00');
+           $container.find(".Wdate.endTime").val('2016-05-01 00');  
+           //确定点击事件
+           $(".ict_portInfo_popupContainer .btnDiv button").on("click",function(){
+                //登录提示
+                if(!L.ICT.Func["UserLogin"].getInstance().isLogin()){
+                    L.ICT.Func["UserLogin"].getInstance().alertLoginDialog();                    
+                    return;
+                 }  
+               //id
+               var portid = $(this).data("id");
+               //判断时间
+               var startTime = $container.find(".startTime").val();
+               var endTime = $container.find(".endTime").val();    
+               var chkt = dateUtil.checkStrartEndTime(startTime+":00:00",endTime+":00:00");
+               if(!chkt.result){ $msg.text(chkt.msg); return;}
+               startTime = dateUtil.getCusUnixTime(startTime+":00:00");
+               endTime = dateUtil.getCusUnixTime(endTime+":00:00"); 
+               //data 
+               var data = {
+                  portid:portid,
+                  startTime:startTime,
+                  endTime:endTime
+               };               
+               //统计
+               self.portStastic(data);
+                
+           });
+        },     
+        
+        convertPortInfoObj:function(portobj){
+            var obj = {};
+            obj.id = portobj.id;
+            obj.areaname = portobj.area_Name;
+            obj.name = portobj.port_Name;
+            obj.countryen = portobj.country;
+            obj.countryzh = portobj.country_Chinese;
+            obj.countrycode = portobj.country_Code;
+            obj.portsize = portobj.harbor_Size;
+            obj.porttype = portobj.harbor_Type;
+            obj.lat =  portobj.latitude/600000;
+            obj.lon = portobj.longitude/600000;
+            return obj;
+        },
+        
+        getPopupContent:function(portobj){
+            var lat = L.ict.app.util.tool.latlngTodfmStr(portobj.lat,'lat'); 
+            var lng = L.ict.app.util.tool.latlngTodfmStr(portobj.lon,'lng');
+            var p = $.i18n.prop('port_info_title');
+            var p1 = $.i18n.prop('port_info_id');
+            var p2 = $.i18n.prop('port_info_areaenname');
+            var p3 = $.i18n.prop('port_info_enname');
+            var p4 = $.i18n.prop('port_info_coenname');
+            var p5 = $.i18n.prop('port_info_cozhname');
+            var p6 = $.i18n.prop('port_info_size');
+            var p7 = $.i18n.prop('port_info_type');
+            var p8 = $.i18n.prop('common_ship_lng');
+            var p9 = $.i18n.prop('common_ship_lat');
+            var p10 = $.i18n.prop('port_info_conum');
+            var p11 = $.i18n.prop('port_static_jltj');
+            var p12 = $.i18n.prop('common_time_info2');
+            var p13 = $.i18n.prop('common_btn_ok');
+
+            var html = [];
+            html.push('<div class="portInfo_Div">');
+            html.push('<div class="portInfo_title">'+ p +'</div>');
+            html.push('<div class="portInfo_table_div">');
+            html.push('<table>');
+            html.push('<tr><td>'+ p1 +'</td><td>'+ portobj.id +'</td></tr>');
+            html.push('<tr><td>'+ p2 +'</td><td>'+ portobj.areaname +'</td></tr>');
+            html.push('<tr><td>'+ p3 +'</td><td>'+ portobj.name +'</td></tr>');
+            html.push('<tr><td>'+ p4 +'</td><td>'+ portobj.countryen +'</td></tr>');
+            html.push('<tr><td>'+ p5 +'</td><td>'+ portobj.countryzh +'</td></tr>');
+            html.push('<tr><td>'+ p6 +'</td><td>'+ portobj.portsize +'</td></tr>');
+            html.push('<tr><td>'+ p7 +'</td><td>'+ portobj.porttype +'</td></tr>');
+            html.push('<tr><td>'+ p8 +'</td><td>'+ lng +'</td></tr>');
+            html.push('<tr><td>'+ p9 +'</td><td>'+ lat +'</td></tr>');   
+            html.push('<tr><td>'+ p10 +'</td><td>'+ portobj.countrycode +'</td></tr>');                                            
+            html.push('</table>');
+            html.push('</div>');
+            html.push('<div class="port_stastic">');
+            html.push('<p>'+ p11 +'</p>');
+            html.push('<input type="text" class="Wdate startTime">&nbsp<label>'+ p12 +'</label>&nbsp<input type="text" readonly  class="Wdate endTime">');
+            html.push('</div>');
+            html.push('<p class="msg"></p>');
+            html.push('<div class="btnDiv">');
+            html.push('<button type="button" data-id="'+ portobj.id +'">'+ p13 +'</button>');
+            html.push('</div>');
+            html.push('</div>');
+            return html.join("");
+        },   
+
+        showOrHidePortLayer:function(){
+           if(this.ictmap.getCurZoom() < this.config.showLevel){
+              this.hidePortLayer();
+           }else{
+              this.showPortLayer();
+           }
+        },
+
+        showPortLayer:function(){
+            if(!this.portLayerGroup){
+                this.getPortList();
+            } else{
+              this.portLayerGroup.eachLayer(function(layer){
+                 layer.setOpacity(1);
+                 layer.on("click",this.portClickEvt,this);
+              },this);
+            }
+        },
+
+        hidePortLayer:function(){
+            if(!this.portLayerGroup) return;
+            this.portLayerGroup.eachLayer(function(layer){
+               layer.setOpacity(0);
+               layer.off("click",this.portClickEvt,this);
+            },this);
+        },
+
+        removePortLayer:function(){
+            if(this.ictmap.map.hasLayer(this.portLayerGroup)){
+                this.portLayerGroup.clearLayers();
+            }
+        },
+
+        reloadPortLayer:function(){
+            this.removePortLayer();
+            this.getPortList();
+        },
+        
+        getPortById:function(id){
+           var port = null;
+           if(this.portLayerGroup){
+              this.portLayerGroup.eachLayer(function(layer){
+                 var data = layer.options.data;
+                 if(data.id === id){
+                    port = layer;
+                 }
+              },this);
+           }
+           return port;           
+        }
+
+      });
+});

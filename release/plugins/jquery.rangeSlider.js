@@ -1,1 +1,36 @@
-define("plugins/rangeSlider",["jquery"],function(e){e.fn.extend({rangeSlider:function(t){this.sliderCfg={min:t&&!isNaN(parseFloat(t.min))?Number(t.min):null,max:t&&!isNaN(parseFloat(t.max))?Number(t.max):null,step:t&&Number(t.step)?t.step:1,callback:t&&t.callback?t.callback:null};var n=e(this),r=this.sliderCfg.min,i=this.sliderCfg.max,s=this.sliderCfg.step,o=this.sliderCfg.callback;return n.attr("min",r).attr("max",i).attr("step",s),n.bind("input",function(t){n.attr("value",this.value),n.css("background-size",this.value+"% 100%"),e.isFunction(o)&&o(this)}),n}})});
+//jquery插件，用于range滑块填充颜色
+define("plugins/rangeSlider",["jquery"],function($){
+
+$.fn.extend({
+
+		"rangeSlider":function(cfg){
+            this.sliderCfg = {
+		        min: cfg && !isNaN(parseFloat(cfg.min)) ? Number(cfg.min) : null, 
+		        max: cfg && !isNaN(parseFloat(cfg.max)) ? Number(cfg.max) : null,
+		        step: cfg && Number(cfg.step) ? cfg.step : 1,
+		        callback: cfg && cfg.callback ? cfg.callback : null
+		    };
+
+		    var $input = $(this);
+		    var min = this.sliderCfg.min;
+		    var max = this.sliderCfg.max;
+		    var step = this.sliderCfg.step;
+		    var callback = this.sliderCfg.callback;
+
+		    $input.attr('min', min)
+		        .attr('max', max)
+		        .attr('step', step);
+
+		    $input.bind("input", function(e){
+		        $input.attr('value', this.value);
+		        $input.css( 'background-size', this.value + '% 100%' ); 
+
+		        if ($.isFunction(callback)) {
+		            callback(this);
+		        }
+		    });
+            return $input;
+		}
+	});
+
+});

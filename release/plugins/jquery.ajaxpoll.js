@@ -1,1 +1,315 @@
-define("plugins/ajaxpoll",["jquery"],function(){(function(e){var t,n,r,i,s=function(o){function a(){return document.hidden||document.mozHidden||document.msHidden||document.webkitHidden||!1}function f(e){var t=a()?f:s;n&&clearTimeout(n),n=setTimeout(function(){t(e)},1e3)}function l(e){return Math.round(Math.random()*500*Math.pow(2,e))}function c(e,t){var o=a()?f:s;n&&clearTimeout(n);if(i>e.pollMaxFailedAttempts){console.error("Polling terminated due to exceeding max failed attempts...");return}if(e.pollLoops!==-1){r+=1;if(r>=e.pollLoops)return}t&&(n=setTimeout(function(){o(e)},t))}var u=e.ajax;o.pollDelay=o.pollDelay||6e4,o.pollLoops=o.pollLoops||-1,o.pollMaxFailedAttempts=o.pollMaxFailedAttempts||10,r=r||0,i=i||0,t=u(o),typeof o.pollDone=="function"&&t.done(o.pollDone),typeof o.pollFail=="function"&&t.fail(o.pollFail),t.done(function(){i=0,c(o,o.pollDelay)}),t.fail(function(){i++,c(o,l(i))})};e.extend({poll:s})})(jQuery)});
+/*
+* jquery ajax 轮询插件
+*/
+define("plugins/ajaxpoll",[
+   "jquery"
+
+],function(){
+
+		/**
+		 * @fileOverview A module to extend regular ajax call with POLLING.
+		 * You can use it with jQuery $.ajax or add your own transport. While
+		 * applying jQuery.poll you can use standard $.ajax options, or/and jQuery.poll specific ones:
+		 * - 'pollLoops': haw many loops you want (not defining or -1 will initiate infinite polling),
+		 * - 'pollDelay': delay between requests (in milliseconds),
+		 * - 'pollDone': callback for all 'done' promises,
+		 * - 'pollFail': callback for all 'fail' promises,
+		 * - 'pollMaxFailedAttempts': limits of sequent fails (default: 10 times)
+		 *
+		 * @author Vitalii Omelkin
+		 *
+		 * Polling usage:
+		 * --------------
+		 *
+		 * (1) Simple: will initiate infinite looping with default options
+		 *
+		 *      $.poll({
+		 *          url: "https://www.example.com/api/request.json"
+		 *      });
+		 *
+		 * (2) Advanced: init polling options:
+		 *
+		 *      $.poll({
+		 *          url: "https://www.example.com/api/request.json",
+		 *          pollDelay: 5000,
+		 *          pollLoops: 15
+		 *      });
+		 *
+		 * The above example will invoke polling ajax request with polling period of 5 sec.
+		 * with 15 polls.
+		 *
+		 *
+		 */
+		(function($) {
+
+		'use strict';
+		var jqXHR, _pollTimer, _currentPollLoop, _fails;
+		// var jqXHRArr = [];
+
+		/**
+		 *  @param {Object} o Standard jQuery.ajax settings
+		 */
+		var poll = function(o) {
+
+		    // we can use here 'classical' $.ajax or or any other transport you want
+		    var invoker = $.ajax;
+
+		    // @private
+		    function isPageHidden(){
+		        return document.hidden || document.mozHidden || document.msHidden || document.webkitHidden || false;
+
+		        //linghuam 
+		        // var res = false;
+		        // if(o.currentFunc === 'MonitorStatisc' && Project_ParamConfig.monitorStatiscConfig.isClose){
+		        // 	res = true;
+		        // }
+		        // if(o.currentFunc === 'AbnormalAlarm' && Project_ParamConfig.abnormalAlarmConfig.isClose){
+		        // 	res = true;
+		        // }
+		        return res;
+		    }
+
+		    // @private
+		    function emptyRequest(o) {
+		        // polling stops while browser tab is hidden (saves resources)
+		        var invokeFunc = isPageHidden() ? emptyRequest : poll;
+		        if (_pollTimer) clearTimeout(_pollTimer);
+		        _pollTimer = setTimeout(function() {
+		            invokeFunc(o);
+		        }, 1000);
+		    }
+
+		    // @private
+		    function expBackoffDelay(currTry) {
+		        return Math.round(Math.random() * (500 * Math.pow(2, currTry)));
+		    }
+
+		    // @private
+		    function pollAjax(o, delay) {
+		        // polling stops while browser tab is hidden (saves resources)
+		        var invokeFunc = isPageHidden() ? emptyRequest : poll;
+		        if (_pollTimer) clearTimeout(_pollTimer);
+
+		        // stop if 'fails' count is more then max value
+		        if (_fails > o.pollMaxFailedAttempts) {
+		            console.error('Polling terminated due to exceeding max failed attempts...');
+		            return;
+		        }
+
+		        // check loops limit
+		        if (o.pollLoops !== -1) {
+		            _currentPollLoop += 1;
+		            if (_currentPollLoop >= o.pollLoops) return;
+		        }
+
+		        if (delay) {
+		            _pollTimer = setTimeout(function() {
+		                invokeFunc(o);
+		            }, delay);
+		        }
+		    }
+
+		    // Add/update polling options
+		    o.pollDelay = o.pollDelay || 60000; // Polling period: 60 sec
+		    o.pollLoops = o.pollLoops || -1; // max poll loops (-1: infinite loop)
+		    o.pollMaxFailedAttempts = o.pollMaxFailedAttempts || 10; // max fails (default: 10 times)
+
+		    // Internal params
+		    _currentPollLoop = _currentPollLoop || 0;
+		    _fails = _fails || 0;
+
+		    jqXHR = invoker(o); // Invoke AJAX request
+
+		    // add callback for 'done' (success) promise
+		    if (typeof o.pollDone === 'function') {
+		        jqXHR.done(o.pollDone);
+		    }
+
+		    // add callback for 'fail' (error) promise
+		    if (typeof o.pollFail === 'function') {
+		        jqXHR.fail(o.pollFail);
+		    }
+
+		    jqXHR.done(function() {
+		        _fails = 0; // init 'fails' sequence on success
+		        pollAjax(o, o.pollDelay); // re-launch ajax call
+		    });
+
+		    jqXHR.fail(function() {
+		        _fails++;
+		        pollAjax(o, expBackoffDelay(_fails)); // re-launch ajax call
+		    });
+
+		};
+
+		$.extend({ poll: poll });
+
+		}(jQuery));
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// define("plugins/ajaxpoll",[
+//    "jquery"
+
+// ],function(){
+
+// 		/**
+// 		 * @fileOverview A module to extend regular ajax call with POLLING.
+// 		 * You can use it with jQuery $.ajax or add your own transport. While
+// 		 * applying jQuery.poll you can use standard $.ajax options, or/and jQuery.poll specific ones:
+// 		 * - 'pollLoops': haw many loops you want (not defining or -1 will initiate infinite polling),
+// 		 * - 'pollDelay': delay between requests (in milliseconds),
+// 		 * - 'pollDone': callback for all 'done' promises,
+// 		 * - 'pollFail': callback for all 'fail' promises,
+// 		 * - 'pollMaxFailedAttempts': limits of sequent fails (default: 10 times)
+// 		 *
+// 		 * @author Vitalii Omelkin
+// 		 *
+// 		 * Polling usage:
+// 		 * --------------
+// 		 *
+// 		 * (1) Simple: will initiate infinite looping with default options
+// 		 *
+// 		 *      $.poll({
+// 		 *          url: "https://www.example.com/api/request.json"
+// 		 *      });
+// 		 *
+// 		 * (2) Advanced: init polling options:
+// 		 *
+// 		 *      $.poll({
+// 		 *          url: "https://www.example.com/api/request.json",
+// 		 *          pollDelay: 5000,
+// 		 *          pollLoops: 15
+// 		 *      });
+// 		 *
+// 		 * The above example will invoke polling ajax request with polling period of 5 sec.
+// 		 * with 15 polls.
+// 		 *
+// 		 *
+// 		 */
+// 		(function($) {
+
+// 		'use strict';
+// 		var jqXHR, _pollTimer, _currentPollLoop, _fails;
+
+// 		/**
+// 		 *  @param {Object} o Standard jQuery.ajax settings
+// 		 */
+// 		var poll = function(o) {
+
+// 		    // we can use here 'classical' $.ajax or or any other transport you want
+// 		    var invoker = $.ajax;
+
+// 		    // @private
+// 		    function isPageHidden(){
+// 		        return document.hidden || document.mozHidden || document.msHidden || document.webkitHidden || false;
+// 		    }
+
+// 		    // @private
+// 		    function emptyRequest(o) {
+// 		        // polling stops while browser tab is hidden (saves resources)
+// 		        var invokeFunc = isPageHidden() ? emptyRequest : poll;
+// 		        if (_pollTimer) clearTimeout(_pollTimer);
+// 		        _pollTimer = setTimeout(function() {
+// 		            invokeFunc(o);
+// 		        }, 1000);
+// 		    }
+
+// 		    // @private
+// 		    function expBackoffDelay(currTry) {
+// 		        return Math.round(Math.random() * (500 * Math.pow(2, currTry)));
+// 		    }
+
+// 		    // @private
+// 		    function pollAjax(o, delay) {
+// 		        // polling stops while browser tab is hidden (saves resources)
+// 		        var invokeFunc = isPageHidden() ? emptyRequest : poll;
+// 		        if (_pollTimer) clearTimeout(_pollTimer);
+
+// 		        // stop if 'fails' count is more then max value
+// 		        if (_fails > o.pollMaxFailedAttempts) {
+// 		            console.error('Polling terminated due to exceeding max failed attempts...');
+// 		            return;
+// 		        }
+
+// 		        // check loops limit
+// 		        if (o.pollLoops !== -1) {
+// 		            _currentPollLoop += 1;
+// 		            if (_currentPollLoop >= o.pollLoops) return;
+// 		        }
+
+// 		        if (delay) {
+// 		            _pollTimer = setTimeout(function() {
+// 		                invokeFunc(o);
+// 		            }, delay);
+// 		        }
+// 		    }
+
+// 		    // Add/update polling options
+// 		    o.pollDelay = o.pollDelay || 60000; // Polling period: 60 sec
+// 		    o.pollLoops = o.pollLoops || -1; // max poll loops (-1: infinite loop)
+// 		    o.pollMaxFailedAttempts = o.pollMaxFailedAttempts || 10; // max fails (default: 10 times)
+
+// 		    // Internal params
+// 		    _currentPollLoop = _currentPollLoop || 0;
+// 		    _fails = _fails || 0;
+
+// 		    jqXHR = invoker(o); // Invoke AJAX request
+
+// 		    // add callback for 'done' (success) promise
+// 		    if (typeof o.pollDone === 'function') {
+// 		        jqXHR.done(o.pollDone);
+// 		    }
+
+// 		    // add callback for 'fail' (error) promise
+// 		    if (typeof o.pollFail === 'function') {
+// 		        jqXHR.fail(o.pollFail);
+// 		    }
+
+// 		    jqXHR.done(function() {
+// 		        _fails = 0; // init 'fails' sequence on success
+// 		        pollAjax(o, o.pollDelay); // re-launch ajax call
+// 		    });
+
+// 		    jqXHR.fail(function() {
+// 		        _fails++;
+// 		        pollAjax(o, expBackoffDelay(_fails)); // re-launch ajax call
+// 		    });
+
+// 		};
+
+// 		$.extend({ poll: poll });
+
+// 		}(jQuery));
+
+
+// });

@@ -1,1 +1,18 @@
-.weather_nav_box_weather{right:5px;top:0px;width:95%;padding-bottom:5px;height:auto;}.weather_tyhoon{padding-left:5px;padding-top:0px;}.weather_radioclass{opacity:0.5;cursor:pointer;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";filter:alpha(opacity=0);vertical-align:middle;margin-top:0;}
+.weather_nav_box_weather{
+	right:5px; 
+	top:0px;
+	width:95%;
+	padding-bottom:5px;
+	height:auto;
+}
+.weather_tyhoon{
+	padding-left: 5px;
+	padding-top: 0px;
+}
+.weather_radioclass{
+	opacity: 0.5;
+	cursor: pointer;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	vertical-align:middle;margin-top:0;
+}

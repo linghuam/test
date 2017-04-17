@@ -1,1 +1,397 @@
-define("layout/menu",["leaflet","layout/base","core/namespace","func/tshf","func/oceanWeather","func/filterDisplay","func/portInfo","func/heatmap","func/areaflow","func/portquery","func/cdgl","func/weather"],function(e){e.ICT.Menu=e.Class.extend({mainmenu:null,submenu:null,initialize:function(){this._container=$("#menupanel"),this.mainmenu=new e.ICT.Layout.MainMenu,this.submenu=new e.ICT.Layout.SubMenu,this._container.addClass("disableSelect")},show:function(){this._container.css("display","block")},hide:function(){this._container.css("display","none")},refresh:function(){},clear:function(){},getContainer:function(){return this._container}}),e.ICT.Layout.MainMenu=e.ICT.Layout.extend({_data:[{id:"ict_menu_main_glxs","class":"menu_item",name:"过滤显示",name_en:"Filters",imgUrl:"themes/images/frame/menu_mbsx.png",Handler:"",hasSub:!0,available:!0},{id:"ict_menu_main_gkcx","class":"menu_item",name:"港口查询",name_en:"Ports",imgUrl:"themes/images/frame/menu_gkcx.png",Handler:"",hasSub:!0,available:!0},{id:"ict_menu_main_weather","class":"menu_item",name:"水文、气象信息",name_en:"Hydrological & meteorological information",imgUrl:"themes/images/frame/menu-swqxxx.png",Handler:"",hasSub:!1,available:!0},{id:"ict_menu_main_cdgl","class":"menu_item",name:"船队管理",name_en:"Fleets",imgUrl:"themes/images/frame/menu_cdgl.png",Handler:"",hasSub:!1,available:!0},{id:"ict_menu_main_qyll","class":"menu_item",name:"区域流量分析",name_en:"Arrivals & Departures of Area",imgUrl:"themes/images/frame/menu_xwfx.png",Handler:"",hasSub:!1,available:!0},{id:"ict_menu_main_tshf","class":"menu_item",name:"态势回放",name_en:"Track",imgUrl:"themes/images/frame/menu_tshf.png",Handler:"",hasSub:!0,available:!0},{id:"ict_menu_main_rlt","class":"menu_item",name:"热力图",name_en:"Density Maps",imgUrl:"themes/images/frame/menu_rlt.png",Handler:"",hasSub:!1,available:!0},{id:"ict_menu_main_hjcx","class":"menu_item",name:"历史轨迹查询",name_en:"History tracks",imgUrl:"themes/images/frame/menu_qyllfx.png",Handler:"",hasSub:!0,available:!0}],_menuSubs:[],initialize:function(){e.ICT.Layout.prototype.initialize.call(this),this._container=$(".menu_main_panel"),this._init()},_getMainMenuHTML:function(){var e=[],t=this._data;e.push('<ul class="menu_main">');for(i=0,len=t.length;i<len;i++){if(Project_ParamConfig.lang==="zh")var n=t[i].name;else var n=t[i].name_en;e.push('<li id="'+t[i].id+'" class="'+t[i].class+'" title="'+n+'" data-available="'+t[i].available+'" data-sub="'+t[i].hasSub+'">'),e.push('<img alt src="'+t[i].imgUrl+'">'),e.push("</li>")}return e.push("</ul>"),e.join("")},_init:function(){var e=this._getMainMenuHTML();this._container.html(e);var t=this._data;for(var n=0,r=t.length;n<r;n++)t[n].available?this.enableMenu(t[n].id):this.disableMenu(t[n].id)},_menuItemClickHandler:function(e){e.stopPropagation();var t=e.data.context;$this=$(e.currentTarget),menuid=$this.attr("id"),menuitem=t.getMenuItemById(menuid),isactive=$this.hasClass("active"),$this.toggleClass("active"),t.menuHandler(menuid,!isactive)},menuHandler:function(t,n){switch(t){case"ict_menu_main_glxs":n?e.ICT.Func.FilterDisplay.run():e.ICT.Func.FilterDisplay.close();break;case"ict_menu_main_gkcx":n?e.ICT.Func.PortQuery.run():e.ICT.Func.PortQuery.close();break;case"ict_menu_main_weather":n?e.ICT.Func.weather.run():e.ICT.Func.weather.close();break;case"ict_menu_main_cdgl":n?e.ICT.Func.cdgl.run():e.ICT.Func.cdgl.close();break;case"ict_menu_main_qyll":n?e.ICT.Func.AreaFlow.run():e.ICT.Func.AreaFlow.close();break;case"ict_menu_main_tshf":n?e.ICT.Func.TSHF.run():e.ICT.Func.TSHF.close();break;case"ict_menu_main_rlt":n?e.ICT.Func.HeatMap.run():e.ICT.Func.HeatMap.close();break;case"ict_menu_main_hjcx":n?e.ICT.Func.HJCXMoreShip.run():e.ICT.Func.HJCXMoreShip.close()}},activeMenu:function(e){this._container.find("#"+e).hasClass("active")||(this._container.find("#"+e).addClass("active"),this.menuHandler(e,!0))},deactiveMenu:function(e){this._container.find("#"+e).hasClass("active")&&(this._container.find("#"+e).removeClass("active"),this.menuHandler(e,!1))},deactiveMenuExceptOne:function(e){var t=this._data;for(var n=0,r=t.length;n<r;n++){var i=t[n].id;i!==e&&this._container.find("#"+i).hasClass("active")&&(this._container.find("#"+i).removeClass("active"),this.menuHandler(i,!1))}},disableMenu:function(e){$.type(e)==="undefined"?this._container.find(".menu_item").off("click"):this._container.find("#"+e).off("click")},disableMenuExceptOne:function(e){$.type(e)==="undefined"?this._container.find(".menu_item").off("click"):this._container.find(".menu_item:not(#"+e+")").off("click")},enableMenu:function(e){$.type(e)==="undefined"?(this._container.find(".menu_item").off("click"),this._container.find(".menu_item").on("click",{context:this},this._menuItemClickHandler)):(this._container.find("#"+e).off("click"),this._container.find("#"+e).on("click",{context:this},this._menuItemClickHandler))},getMenuItemById:function(e){var t=this._data;for(var n=0,r=t.length;n<r;n++)if(t[n].id===e)return t[n]},getMenuSub:function(t){var n=null;if(t==="ict_menu_main_tshf"){var r="";n=new e.ICT.Layout.SubMenu(r)}else t!=="ict_menu_main_xwwj"&&t!=="ict_menu_main_hyqx"&&t==="ict_menu_main_glxs";return n}}),e.ICT.Layout.SubMenu=e.ICT.Layout.extend({_data:{},initialize:function(t){e.ICT.Layout.prototype.initialize.call(this),this._container=$(".menu_sub_panel"),this._isShow=!1,this._data={}},_init:function(){this._container.html(this._html)},show:function(e){var t=this._data[e];this._container.html(t),this._container.css("display","block")},hide:function(){this._container.css("display","none")},add:function(e,t){var n=t;typeof t=="string"&&(n=$(t)),this._data[e]=n},has:function(e){return this._data.hasOwnProperty(e)?!0:!1},update:function(e,t){this._html=t,this._init(),this.show()},destory:function(e){this.hide(),delete this._data[e]}})});
+/*
+*功能菜单模块
+*/
+define("layout/menu",[
+	"leaflet",
+	"layout/base",
+	"core/namespace",
+  "func/tshf",
+  "func/oceanWeather",
+	"func/filterDisplay",
+  "func/portInfo",
+  "func/heatmap",
+  "func/areaflow",
+  "func/portquery",
+  "func/cdgl",
+  "func/weather"
+
+],function(L){
+
+
+/*
+*菜单类
+*/
+L.ICT.Menu = L.Class.extend({
+
+  	mainmenu:null,
+
+  	submenu:null,
+
+  	initialize:function(){
+  		this._container = $("#menupanel");
+  		this.mainmenu = new L.ICT.Layout.MainMenu();
+  		this.submenu = new L.ICT.Layout.SubMenu();
+      this._container.addClass("disableSelect");
+  	},
+
+    show:function(){
+       this._container.css("display","block");
+    },
+
+    hide:function(){
+      this._container.css("display","none");
+    },
+
+    refresh:function(){
+
+    },
+
+    clear:function(){
+
+    },
+
+    getContainer:function(){
+    	return this._container;
+    }
+
+});
+
+
+/*
+*主菜单类（一级菜单）
+*/
+L.ICT.Layout.MainMenu = L.ICT.Layout.extend({
+    
+  /*主菜单数据，用唯一id号来标识菜单项*/
+	_data:[
+
+   {
+      id:'ict_menu_main_glxs',
+      class:'menu_item',
+      name:'过滤显示',
+      name_en:'Filters',
+      imgUrl:'themes/images/frame/menu_mbsx.png',
+      Handler:'',
+      hasSub:true,
+      available:true
+   },
+   {
+      id:'ict_menu_main_gkcx',
+      class:'menu_item',
+      name:'港口查询',
+      name_en:'Ports',
+      imgUrl:'themes/images/frame/menu_gkcx.png',
+      Handler:'',
+      hasSub:true,
+      available:true
+   }, 
+   {
+      id:'ict_menu_main_weather',
+      class:'menu_item',
+      name:'水文、气象信息',
+      name_en:'Hydrological & meteorological information',
+      imgUrl:'themes/images/frame/menu-swqxxx.png',
+      Handler:'',
+      hasSub:false,
+      available:true
+   },  
+   {
+      id:'ict_menu_main_cdgl',
+      class:'menu_item',
+      name:'船队管理',
+      name_en:'Fleets',
+      imgUrl:'themes/images/frame/menu_cdgl.png',
+      Handler:'',
+      hasSub:false,
+      available:true
+   },        
+	 {
+	  	id:'ict_menu_main_qyll',
+	    class:'menu_item',
+	    name:'区域流量分析',
+      name_en:'Arrivals & Departures of Area',
+	    imgUrl:'themes/images/frame/menu_xwfx.png',
+	    Handler:'',
+	    hasSub:false,
+	    available:true
+	 },
+	 {
+		 id:'ict_menu_main_tshf',
+		 class:'menu_item',
+		 name:'态势回放',
+     name_en:'Track',
+		 imgUrl:'themes/images/frame/menu_tshf.png',
+		 Handler:'',
+		 hasSub:true,
+		 available:true
+	 },
+	 {
+	  	id:'ict_menu_main_rlt',
+	    class:'menu_item',
+	    name:'热力图',
+      name_en:'Density Maps',
+	    imgUrl:'themes/images/frame/menu_rlt.png',
+	    Handler:'',
+	    hasSub:false,
+	    available:true
+	 },
+	 {
+	  	id:'ict_menu_main_hjcx',
+	    class:'menu_item',
+	    name:'历史轨迹查询',
+      name_en:'History tracks',
+	    imgUrl:'themes/images/frame/menu_qyllfx.png',
+	    Handler:'',
+	    hasSub:true,
+	    available:true
+	 }
+
+	],
+    
+  _menuSubs:[],
+
+	initialize:function(){
+		L.ICT.Layout.prototype.initialize.call(this);
+		this._container = $(".menu_main_panel");
+		this._init();
+	},
+
+	_getMainMenuHTML:function(){
+         var html = [],
+             data = this._data;
+         html.push('<ul class="menu_main">');
+         for(i=0,len=data.length;i<len;i++){
+            if(Project_ParamConfig.lang === 'zh'){
+               var name = data[i].name;
+            } else{
+               var name = data[i].name_en;
+            }
+           	html.push('<li id="'+ data[i].id +'" class="'+ data[i].class +'" title="'+ name +'" data-available="' + data[i].available +'" data-sub="'+ data[i].hasSub +'">');
+           	html.push('<img alt src="'+ data[i].imgUrl +'">');
+           	html.push('</li>');
+         }
+         html.push('</ul>');
+         return html.join("");
+	},
+
+	_init:function(){
+		var html = this._getMainMenuHTML();
+		this._container.html(html);
+
+		// this._container.find(".menu_item").on("click",{context:this},this._menuItemClickHandler);
+        
+    var data = this._data;
+		for(var i=0,len=data.length;i<len;i++){			
+			if(data[i].available){
+				this.enableMenu(data[i].id);
+			}else{
+				this.disableMenu(data[i].id);
+			}
+		}
+	},
+    
+    //菜单点击事件
+	_menuItemClickHandler:function(event){
+        event.stopPropagation();
+        var _this = event.data.context;
+            $this = $(event.currentTarget),
+            menuid = $this.attr("id"),
+            menuitem = _this.getMenuItemById(menuid),
+            isactive = $this.hasClass("active");
+         
+        //样式
+        $this.toggleClass("active");
+        
+        // if(menuid == "ict_menu_main_glxs"){
+        //    _this.deactiveMenu("ict_menu_main_hyqx");
+        // }
+        // if(menuid == "ict_menu_main_hyqx"){
+        //    _this.deactiveMenu("ict_menu_main_glxs");
+        // }
+        //行为
+        _this.menuHandler(menuid,!isactive);
+	},
+    
+  //执行或关闭某个模块
+	menuHandler:function(menuid,isactive){
+
+    switch(menuid){
+
+      case "ict_menu_main_glxs":
+           isactive ? L.ICT.Func["FilterDisplay"].run() : L.ICT.Func["FilterDisplay"].close()
+           ;break;
+      case "ict_menu_main_gkcx": 
+           isactive ? L.ICT.Func["PortQuery"].run() : L.ICT.Func["PortQuery"].close()
+           ;break;
+      case "ict_menu_main_weather":
+           isactive ? L.ICT.Func["weather"].run() : L.ICT.Func["weather"].close()
+           ;break;
+      case "ict_menu_main_cdgl":
+           isactive ? L.ICT.Func["cdgl"].run() : L.ICT.Func["cdgl"].close()
+           ;break;
+      case "ict_menu_main_qyll":
+            isactive ? L.ICT.Func["AreaFlow"].run() : L.ICT.Func["AreaFlow"].close()
+           ;break;
+      case "ict_menu_main_tshf":
+           isactive ? L.ICT.Func["TSHF"].run() : L.ICT.Func["TSHF"].close()
+           ;break;
+      case "ict_menu_main_rlt":  
+           isactive ? L.ICT.Func["HeatMap"].run() : L.ICT.Func["HeatMap"].close()
+           ;break;
+      case "ict_menu_main_hjcx": 
+           isactive ? L.ICT.Func["HJCXMoreShip"].run() : L.ICT.Func["HJCXMoreShip"].close()
+           ;break;
+ 
+    }
+	},
+    
+  //激活并运行某个菜单项
+  activeMenu:function(menuid){ 
+       if(!this._container.find("#"+menuid).hasClass("active")){
+           this._container.find("#"+menuid).addClass("active");
+           this.menuHandler(menuid,true);          
+       }
+  },
+      
+  //关闭并退出某个菜单项
+  deactiveMenu:function(menuid){
+      if(this._container.find("#"+menuid).hasClass("active")){
+         this._container.find("#"+menuid).removeClass("active");
+         this.menuHandler(menuid,false);          
+      }
+  },
+
+  //关闭并退出除当前菜单项以外的菜单项
+  deactiveMenuExceptOne:function(menuid){
+      var data = this._data;
+      for(var i=0,len=data.length;i<len;i++){
+         var id = data[i].id;
+         if(id !== menuid){
+            if(this._container.find("#"+id).hasClass("active")){
+               this._container.find("#"+id).removeClass("active");
+               this.menuHandler(id,false);          
+            }             
+         }
+      }
+  },    
+    
+  //禁用菜单项 ；如果没传参数，禁用所有菜单项
+	disableMenu:function(menuid){
+       if($.type(menuid) === "undefined"){  
+       	  this._container.find(".menu_item").off("click");       	  
+       } else {
+          this._container.find('#'+menuid).off("click");
+       }
+	},
+    
+  //禁用菜单项 除某个菜单以外的菜单都禁用
+  disableMenuExceptOne:function(menuid){
+       if($.type(menuid) === "undefined"){  
+          this._container.find(".menu_item").off("click");          
+       } else {
+          this._container.find('.menu_item:not(#'+menuid+')').off("click");
+       }
+  }, 
+        
+  //启用菜单项；如果没传参数，启用所有菜单项
+	enableMenu:function(menuid){
+       if($.type(menuid) === "undefined"){  
+       	  this._container.find(".menu_item").off("click"); 
+       	  this._container.find(".menu_item").on("click",{context:this},this._menuItemClickHandler);       	  
+       } else {
+          this._container.find('#'+menuid).off("click");
+          this._container.find('#'+menuid).on("click",{context:this},this._menuItemClickHandler);
+       }
+	},
+
+	getMenuItemById:function(menuid){
+       var data = this._data;
+       for(var i=0,len=data.length; i<len; i++){
+       	   if(data[i].id === menuid){
+       	   	  return data[i];
+       	    }       	   	    
+       }
+	},
+
+	getMenuSub:function(menuid){
+	   var submenuObj = null;
+
+       if(menuid === 'ict_menu_main_tshf'){
+
+          var html = '';
+          submenuObj = new L.ICT.Layout.SubMenu(html);
+
+       } else if(menuid === 'ict_menu_main_xwwj'){
+
+       } else if(menuid === 'ict_menu_main_hyqx'){
+
+       } else if(menuid === 'ict_menu_main_glxs'){
+
+       }
+
+       return submenuObj;
+	}
+    
+});
+
+/*
+*子菜单类（二级菜单）
+*/
+L.ICT.Layout.SubMenu = L.ICT.Layout.extend({
+
+  _data:{}, //{id:$objhtml}
+
+  initialize:function(html){
+	   L.ICT.Layout.prototype.initialize.call(this);
+	   this._container = $(".menu_sub_panel");
+	   this._isShow = false;
+  	 this._data = {};
+  	 // this._html = html;
+	  // this._init();
+  },
+  
+  _init:function(){
+     this._container.html(this._html);
+  },
+
+  show:function(pmenuid){
+  	var $content = this._data[pmenuid];
+  	this._container.html($content);
+  	this._container.css("display","block");
+  },
+
+  hide:function(){    	
+  	this._container.css("display","none");
+  },
+
+  add:function(pmenuid,html){ //html string or jquery obj
+      var $html = html;
+      if(typeof html === "string"){
+      	$html = $(html);
+      }
+      this._data[pmenuid] = $html;    
+  },
+
+  has:function(pmenuid){
+  	if(this._data.hasOwnProperty(pmenuid)){
+  		return true;
+  	} else{
+  		return false;
+  	}
+  },
+
+  update:function(pmenuid,html){
+      this._html = html;
+      this._init();
+      this.show();
+  },
+
+  destory:function(pmenuid){
+     this.hide();
+     delete this._data[pmenuid];
+  }
+
+});
+
+});
+

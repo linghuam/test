@@ -4,10 +4,10 @@
 2、执行命令行 node r.js -o build.js
 */
 ({ 
-    appDir: './',   //项目根目录
-    dir: '../release',  //输出目录，全部文件打包后要放入的文件夹（如果没有会自动新建的）
+    appDir: '../',   //项目根目录
+    dir: '../../release',  //输出目录，全部文件打包后要放入的文件夹（如果没有会自动新建的）
     baseUrl: '.',   //相对于appDir，代表要查找js文件的起始文件夹，下文所有文件路径的定义都是基于这个baseUrl的  
-    map:{'*':{'css':'../hdwebapp0417/library/requirejs/css'}},
+    map:{'*':{'css':'./build/css'}},
     modules: [                      //要优化的模块
         {name:'project/main'}  //说白了就是各页面的入口文件，相对baseUrl的路径，也是省略后缀“.js”
         // {name:'userpages/login.main'},
@@ -22,14 +22,14 @@
     //   closure: 使用 Google's Closure Compiler 的简单优化模式
     //   closure.keepLines: 使用 closure，但保持换行
     //   none: 不压缩代码
-    optimize: "uglify",
+    optimize: "none",
     // CSS 优化方式，目前支持以下几种：
     // none: 不压缩，仅合并
     // standard: 标准压缩，移除注释、换行，以及可能导致 IE 解析出错的代码
     // standard.keepLines: 除标准压缩外，保留换行
     // standard.keepComments: 除标准压缩外，保留注释 (r.js 1.0.8+)
     // standard.keepComments.keepLines: 除标准压缩外，保留注释和换行 (r.js 1.0.8+)
-    optimizeCss: 'standard',
+    optimizeCss: 'none',
     removeCombined:false,   //如果为true，将从输出目录中删除已合并的文件
     paths:{
         // 核心lib

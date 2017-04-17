@@ -1,1 +1,5917 @@
-(function(e,t){typeof exports=="object"&&typeof module!="undefined"?module.exports=t():typeof define=="function"&&define.amd?define(t):e.proj4=t()})(this,function(){function b(e,t){if(e[t])return e[t];var n=Object.keys(e),r=t.toLowerCase().replace(y,""),i=-1,s,o;while(++i<n.length){s=n[i],o=s.toLowerCase().replace(y,"");if(o===r)return e[s]}}function _(e){if(typeof e!="string")throw new Error("not a string");this.text=e.trim(),this.level=0,this.place=0,this.root=null,this.stack=[],this.currentObject=null,this.state=E}function D(e){var t=new _(e);return t.output()}function P(e,t,n){Array.isArray(t)&&(n.unshift(t),t=null);var r=t?{}:e,i=n.reduce(function(e,t){return H(t,e),e},r);t&&(e[t]=i)}function H(e,t){if(!Array.isArray(e)){t[e]=!0;return}var n=e.shift();n==="PARAMETER"&&(n=e.shift());if(e.length===1){if(Array.isArray(e[0])){t[n]={},H(e[0],t[n]);return}t[n]=e[0];return}if(!e.length){t[n]=!0;return}if(n==="TOWGS84"){t[n]=e;return}Array.isArray(n)||(t[n]={});var r;switch(n){case"UNIT":case"PRIMEM":case"VERT_DATUM":t[n]={name:e[0].toLowerCase(),convert:e[1]},e.length===3&&H(e[2],t[n]);return;case"SPHEROID":case"ELLIPSOID":t[n]={name:e[0],a:e[1],rf:e[2]},e.length===4&&H(e[3],t[n]);return;case"PROJECTEDCRS":case"PROJCRS":case"GEOGCS":case"GEOCCS":case"PROJCS":case"LOCAL_CS":case"GEODCRS":case"GEODETICCRS":case"GEODETICDATUM":case"EDATUM":case"ENGINEERINGDATUM":case"VERT_CS":case"VERTCRS":case"VERTICALCRS":case"COMPD_CS":case"COMPOUNDCRS":case"ENGINEERINGCRS":case"ENGCRS":case"FITTED_CS":case"LOCAL_DATUM":case"DATUM":e[0]=["name",e[0]],P(t,n,e);return;default:r=-1;while(++r<e.length)if(!Array.isArray(e[r]))return H(e,t[n]);return P(t,n,e)}}function j(e,t){var n=t[0],r=t[1];!(n in e)&&r in e&&(e[n]=e[r],t.length===3&&(e[n]=t[2](e[n])))}function F(e){return e*B}function I(e){function n(t){var n=e.to_meter||1;return t*n}e.type==="GEOGCS"?e.projName="longlat":e.type==="LOCAL_CS"?(e.projName="identity",e.local=!0):typeof e.PROJECTION=="object"?e.projName=Object.keys(e.PROJECTION)[0]:e.projName=e.PROJECTION,e.UNIT&&(e.units=e.UNIT.name.toLowerCase(),e.units==="metre"&&(e.units="meter"),e.UNIT.convert&&(e.type==="GEOGCS"?e.DATUM&&e.DATUM.SPHEROID&&(e.to_meter=e.UNIT.convert*e.DATUM.SPHEROID.a):(e.to_meter=e.UNIT.convert,10)));var t=e.GEOGCS;e.type==="GEOGCS"&&(t=e);if(t){t.DATUM?e.datumCode=t.DATUM.name.toLowerCase():e.datumCode=t.name.toLowerCase(),e.datumCode.slice(0,2)==="d_"&&(e.datumCode=e.datumCode.slice(2));if(e.datumCode==="new_zealand_geodetic_datum_1949"||e.datumCode==="new_zealand_1949")e.datumCode="nzgd49";e.datumCode==="wgs_1984"&&(e.PROJECTION==="Mercator_Auxiliary_Sphere"&&(e.sphere=!0),e.datumCode="wgs84"),e.datumCode.slice(-6)==="_ferro"&&(e.datumCode=e.datumCode.slice(0,-6)),e.datumCode.slice(-8)==="_jakarta"&&(e.datumCode=e.datumCode.slice(0,-8)),~e.datumCode.indexOf("belge")&&(e.datumCode="rnb72"),t.DATUM&&t.DATUM.SPHEROID&&(e.ellps=t.DATUM.SPHEROID.name.replace("_19","").replace(/[Cc]larke\_18/,"clrk"),e.ellps.toLowerCase().slice(0,13)==="international"&&(e.ellps="intl"),e.a=t.DATUM.SPHEROID.a,e.rf=parseFloat(t.DATUM.SPHEROID.rf,10)),~e.datumCode.indexOf("osgb_1936")&&(e.datumCode="osgb36")}e.b&&!isFinite(e.b)&&(e.b=e.a);var r=function(t){return j(e,t)},i=[["standard_parallel_1","Standard_Parallel_1"],["standard_parallel_2","Standard_Parallel_2"],["false_easting","False_Easting"],["false_northing","False_Northing"],["central_meridian","Central_Meridian"],["latitude_of_origin","Latitude_Of_Origin"],["latitude_of_origin","Central_Parallel"],["scale_factor","Scale_Factor"],["k0","scale_factor"],["latitude_of_center","Latitude_of_center"],["lat0","latitude_of_center",F],["longitude_of_center","Longitude_Of_Center"],["longc","longitude_of_center",F],["x0","false_easting",n],["y0","false_northing",n],["long0","central_meridian",F],["lat0","latitude_of_origin",F],["lat0","standard_parallel_1",F],["lat1","standard_parallel_1",F],["lat2","standard_parallel_2",F],["alpha","azimuth",F],["srsCode","name"]];i.forEach(r),!e.long0&&e.longc&&(e.projName==="Albers_Conic_Equal_Area"||e.projName==="Lambert_Azimuthal_Equal_Area")&&(e.long0=e.longc),!e.lat_ts&&e.lat1&&(e.projName==="Stereographic_South_Pole"||e.projName==="Polar Stereographic (variant B)")&&(e.lat0=F(e.lat1>0?90:-90),e.lat_ts=e.lat1)}function R(e){var t=this;if(arguments.length===2){var n=arguments[1];typeof n=="string"?n.charAt(0)==="+"?R[e]=w(arguments[1]):R[e]=q(arguments[1]):R[e]=n}else if(arguments.length===1){if(Array.isArray(e))return e.map(function(e){Array.isArray(e)?R.apply(t,e):R(e)});if(typeof e=="string"){if(e in R)return R[e]}else"EPSG"in e?R["EPSG:"+e.EPSG]=e:"ESRI"in e?R["ESRI:"+e.ESRI]=e:"IAU2000"in e?R["IAU2000:"+e.IAU2000]=e:console.log(e);return}}function U(e){return typeof e=="string"}function z(e){return e in R}function X(e){return W.some(function(t){return e.indexOf(t)>-1})}function V(e){return e[0]==="+"}function $(e){if(!U(e))return e;if(z(e))return R[e];if(X(e))return q(e);if(V(e))return w(e)}function et(){var e=this.b/this.a;this.es=1-e*e,"x0"in this||(this.x0=0),"y0"in this||(this.y0=0),this.e=Math.sqrt(this.es),this.lat_ts?this.sphere?this.k0=Math.cos(this.lat_ts):this.k0=K(this.e,Math.sin(this.lat_ts),Math.cos(this.lat_ts)):this.k0||(this.k?this.k0=this.k:this.k0=1)}function tt(e){var t=e.x,n=e.y;if(n*h>90&&n*h<-90&&t*h>180&&t*h<-180)return null;var r,i;if(Math.abs(Math.abs(n)-o)<=l)return null;if(this.sphere)r=this.x0+this.a*this.k0*G(t-this.long0),i=this.y0+this.a*this.k0*Math.log(Math.tan(p+.5*n));else{var s=Math.sin(n),u=Y(this.e,n,s);r=this.x0+this.a*this.k0*G(t-this.long0),i=this.y0-this.a*this.k0*Math.log(u)}return e.x=r,e.y=i,e}function nt(e){var t=e.x-this.x0,n=e.y-this.y0,r,i;if(this.sphere)i=o-2*Math.atan(Math.exp(-n/(this.a*this.k0)));else{var s=Math.exp(-n/(this.a*this.k0));i=Z(this.e,s);if(i===-9999)return null}return r=G(this.long0+t/(this.a*this.k0)),e.x=r,e.y=i,e}function st(){}function ot(e){return e}function ht(e,t){var n=ct.length;return e.names?(ct[n]=e,e.names.forEach(function(e){lt[e.toLowerCase()]=n}),this):(console.log(t),!0)}function pt(e){if(!e)return!1;var t=e.toLowerCase();if(typeof lt[t]!="undefined"&&ct[lt[t]])return ct[lt[t]]}function dt(){ft.forEach(ht)}function yt(e,t,n,r){var i=e*e,s=t*t,o=(i-s)/i,l=0;r?(e*=1-o*(u+o*(a+o*f)),i=e*e,o=0):l=Math.sqrt(o);var c=(i-s)/s;return{es:o,e:l,ep2:c}}function bt(e,t,n,r,i){if(!e){var s=b(mt,r);s||(s=gt),e=s.a,t=s.b,n=s.rf}n&&!t&&(t=(1-1/n)*e);if(n===0||Math.abs(e-t)<l)i=!0,t=e;return{a:e,b:t,rf:n,sphere:i}}function Et(e,o,u,a,f,l){var c={};e===undefined||e==="none"?c.datum_type=i:c.datum_type=r;if(o){c.datum_params=o.map(parseFloat);if(c.datum_params[0]!==0||c.datum_params[1]!==0||c.datum_params[2]!==0)c.datum_type=t;c.datum_params.length>3&&(c.datum_params[3]!==0||c.datum_params[4]!==0||c.datum_params[5]!==0||c.datum_params[6]!==0)&&(c.datum_type=n,c.datum_params[3]*=s,c.datum_params[4]*=s,c.datum_params[5]*=s,c.datum_params[6]=c.datum_params[6]/1e6+1)}return c.a=u,c.b=a,c.es=f,c.ep2=l,c}function St(e,t){if(!(this instanceof St))return new St(e);t=t||function(e){if(e)throw e};var n=$(e);if(typeof n!="object"){t(e);return}var r=St.projections.get(n.projName);if(!r){t(e);return}if(n.datumCode&&n.datumCode!=="none"){var i=b(wt,n.datumCode);i&&(n.datum_params=i.towgs84?i.towgs84.split(","):null,n.ellps=i.ellipse,n.datumName=i.datumName?i.datumName:n.datumCode)}n.k0=n.k0||1,n.axis=n.axis||"enu",n.ellps=n.ellps||"wgs84";var s=bt(n.a,n.b,n.rf,n.ellps,n.sphere),o=yt(s.a,s.b,s.rf,n.R_A),u=n.datum||Et(n.datumCode,n.datum_params,s.a,s.b,o.es,o.ep2);J(this,n),J(this,r),this.a=s.a,this.b=s.b,this.rf=s.rf,this.sphere=s.sphere,this.es=o.es,this.e=o.e,this.ep2=o.ep2,this.datum=u,this.init(),t(null,this)}function xt(e,r){return e.datum_type!==r.datum_type?!1:e.a!==r.a||Math.abs(e.es-r.es)>5e-11?!1:e.datum_type===t?e.datum_params[0]===r.datum_params[0]&&e.datum_params[1]===r.datum_params[1]&&e.datum_params[2]===r.datum_params[2]:e.datum_type===n?e.datum_params[0]===r.datum_params[0]&&e.datum_params[1]===r.datum_params[1]&&e.datum_params[2]===r.datum_params[2]&&e.datum_params[3]===r.datum_params[3]&&e.datum_params[4]===r.datum_params[4]&&e.datum_params[5]===r.datum_params[5]&&e.datum_params[6]===r.datum_params[6]:!0}function Tt(e,t,n){var r=e.x,i=e.y,s=e.z?e.z:0,u,a,f,l;if(i<-o&&i>-1.001*o)i=-o;else if(i>o&&i<1.001*o)i=o;else if(i<-o||i>o)return null;return r>Math.PI&&(r-=2*Math.PI),a=Math.sin(i),l=Math.cos(i),f=a*a,u=n/Math.sqrt(1-t*f),{x:(u+s)*l*Math.cos(r),y:(u+s)*l*Math.sin(r),z:(u*(1-t)+s)*a}}function Nt(e,t,n,r){var i=1e-12,s=i*i,u=30,a,f,l,c,h,p,d,v,m,g,y,b,w,E=e.x,S=e.y,x=e.z?e.z:0,T,N,C;a=Math.sqrt(E*E+S*S),f=Math.sqrt(E*E+S*S+x*x);if(a/n<i){T=0;if(f/n<i)return N=o,C=-r,{x:e.x,y:e.y,z:e.z}}else T=Math.atan2(S,E);l=x/f,c=a/f,h=1/Math.sqrt(1-t*(2-t)*c*c),v=c*(1-t)*h,m=l*h,w=0;do w++,d=n/Math.sqrt(1-t*m*m),C=a*v+x*m-d*(1-t*m*m),p=t*d/(d+C),h=1/Math.sqrt(1-p*(2-p)*c*c),g=c*(1-p)*h,y=l*h,b=y*v-g*m,v=g,m=y;while(b*b>s&&w<u);return N=Math.atan(y/Math.abs(g)),{x:T,y:N,z:C}}function Ct(e,r,i){if(r===t)return{x:e.x+i[0],y:e.y+i[1],z:e.z+i[2]};if(r===n){var s=i[0],o=i[1],u=i[2],a=i[3],f=i[4],l=i[5],c=i[6];return{x:c*(e.x-l*e.y+f*e.z)+s,y:c*(l*e.x+e.y-a*e.z)+o,z:c*(-f*e.x+a*e.y+e.z)+u}}}function kt(e,r,i){if(r===t)return{x:e.x-i[0],y:e.y-i[1],z:e.z-i[2]};if(r===n){var s=i[0],o=i[1],u=i[2],a=i[3],f=i[4],l=i[5],c=i[6],h=(e.x-s)/c,p=(e.y-o)/c,d=(e.z-u)/c;return{x:h+l*p-f*d,y:-l*h+p+a*d,z:f*h-a*p+d}}}function Lt(e){return e===t||e===n}function _t(e,r){return(e.datum.datum_type===t||e.datum.datum_type===n)&&r.datumCode!=="WGS84"||(r.datum.datum_type===t||r.datum.datum_type===n)&&e.datumCode!=="WGS84"}function Dt(e,t,n){var r;return Array.isArray(n)&&(n=Mt(n)),e.datum&&t.datum&&_t(e,t)&&(r=new St("WGS84"),n=Dt(e,r,n),e=r),e.axis!=="enu"&&(n=Ot(e,!1,n)),e.projName==="longlat"?n={x:n.x*c,y:n.y*c}:(e.to_meter&&(n={x:n.x*e.to_meter,y:n.y*e.to_meter}),n=e.inverse(n)),e.from_greenwich&&(n.x+=e.from_greenwich),n=At(e.datum,t.datum,n),t.from_greenwich&&(n={x:n.x-t.from_greenwich,y:n.y}),t.projName==="longlat"?n={x:n.x*h,y:n.y*h}:(n=t.forward(n),t.to_meter&&(n={x:n.x/t.to_meter,y:n.y/t.to_meter})),t.axis!=="enu"?Ot(t,!0,n):n}function Ht(e,t,n){var r;return Array.isArray(n)?(r=Dt(e,t,n),n.length===3?[r.x,r.y,r.z]:[r.x,r.y]):Dt(e,t,n)}function Bt(e){return e instanceof St?e:e.oProj?e.oProj:St(e)}function jt(e,t,n){e=Bt(e);var r=!1,i;if(typeof t=="undefined")t=e,e=Pt,r=!0;else if(typeof t.x!="undefined"||Array.isArray(t))n=t,t=e,e=Pt,r=!0;return t=Bt(t),n?Ht(e,t,n):(i={forward:function(n){return Ht(e,t,n)},inverse:function(n){return Ht(t,e,n)}},r&&(i.oProj=t),i)}function $t(e,t){return t=t||5,tn(Yt({lat:e[1],lon:e[0]}),t)}function Jt(e){var t=Zt(on(e.toUpperCase()));return t.lat&&t.lon?[t.lon,t.lat,t.lon,t.lat]:[t.left,t.bottom,t.right,t.top]}function Kt(e){var t=Zt(on(e.toUpperCase()));return t.lat&&t.lon?[t.lon,t.lat]:[(t.left+t.right)/2,(t.top+t.bottom)/2]}function Qt(e){return e*(Math.PI/180)}function Gt(e){return 180*(e/Math.PI)}function Yt(e){var t=e.lat,n=e.lon,r=6378137,i=.00669438,s=.9996,o,u,a,f,l,c,h,p=Qt(t),d=Qt(n),v,m;m=Math.floor((n+180)/6)+1,n===180&&(m=60),t>=56&&t<64&&n>=3&&n<12&&(m=32),t>=72&&t<84&&(n>=0&&n<9?m=31:n>=9&&n<21?m=33:n>=21&&n<33?m=35:n>=33&&n<42&&(m=37)),o=(m-1)*6-180+3,v=Qt(o),u=i/(1-i),a=r/Math.sqrt(1-i*Math.sin(p)*Math.sin(p)),f=Math.tan(p)*Math.tan(p),l=u*Math.cos(p)*Math.cos(p),c=Math.cos(p)*(d-v),h=r*((1-i/4-3*i*i/64-5*i*i*i/256)*p-(3*i/8+3*i*i/32+45*i*i*i/1024)*Math.sin(2*p)+(15*i*i/256+45*i*i*i/1024)*Math.sin(4*p)-35*i*i*i/3072*Math.sin(6*p));var g=s*a*(c+(1-f+l)*c*c*c/6+(5-18*f+f*f+72*l-58*u)*c*c*c*c*c/120)+5e5,y=s*(h+a*Math.tan(p)*(c*c/2+(5-f+9*l+4*l*l)*c*c*c*c/24+(61-58*f+f*f+600*l-330*u)*c*c*c*c*c*c/720));return t<0&&(y+=1e7),{northing:Math.round(y),easting:Math.round(g),zoneNumber:m,zoneLetter:en(t)}}function Zt(e){var t=e.northing,n=e.easting,r=e.zoneLetter,i=e.zoneNumber;if(i<0||i>60)return null;var s=.9996,o=6378137,u=.00669438,a,f=(1-Math.sqrt(1-u))/(1+Math.sqrt(1-u)),l,c,h,p,d,v,m,g,y,b=n-5e5,w=t;r<"N"&&(w-=1e7),m=(i-1)*6-180+3,a=u/(1-u),v=w/s,g=v/(o*(1-u/4-3*u*u/64-5*u*u*u/256)),y=g+(3*f/2-27*f*f*f/32)*Math.sin(2*g)+(21*f*f/16-55*f*f*f*f/32)*Math.sin(4*g)+151*f*f*f/96*Math.sin(6*g),l=o/Math.sqrt(1-u*Math.sin(y)*Math.sin(y)),c=Math.tan(y)*Math.tan(y),h=a*Math.cos(y)*Math.cos(y),p=o*(1-u)/Math.pow(1-u*Math.sin(y)*Math.sin(y),1.5),d=b/(l*s);var E=y-l*Math.tan(y)/p*(d*d/2-(5+3*c+10*h-4*h*h-9*a)*d*d*d*d/24+(61+90*c+298*h+45*c*c-252*a-3*h*h)*d*d*d*d*d*d/720);E=Gt(E);var S=(d-(1+2*c+h)*d*d*d/6+(5-2*h+28*c-3*h*h+8*a+24*c*c)*d*d*d*d*d/120)/Math.cos(y);S=m+Gt(S);var x;if(e.accuracy){var T=Zt({northing:e.northing+e.accuracy,easting:e.easting+e.accuracy,zoneLetter:e.zoneLetter,zoneNumber:e.zoneNumber});x={top:T.lat,right:T.lon,bottom:E,left:S}}else x={lat:E,lon:S};return x}function en(e){var t="Z";return 84>=e&&e>=72?t="X":72>e&&e>=64?t="W":64>e&&e>=56?t="V":56>e&&e>=48?t="U":48>e&&e>=40?t="T":40>e&&e>=32?t="S":32>e&&e>=24?t="R":24>e&&e>=16?t="Q":16>e&&e>=8?t="P":8>e&&e>=0?t="N":0>e&&e>=-8?t="M":-8>e&&e>=-16?t="L":-16>e&&e>=-24?t="K":-24>e&&e>=-32?t="J":-32>e&&e>=-40?t="H":-40>e&&e>=-48?t="G":-48>e&&e>=-56?t="F":-56>e&&e>=-64?t="E":-64>e&&e>=-72?t="D":-72>e&&e>=-80&&(t="C"),t}function tn(e,t){var n="00000"+e.easting,r="00000"+e.northing;return e.zoneNumber+e.zoneLetter+nn(e.easting,e.northing,e.zoneNumber)+n.substr(n.length-5,t)+r.substr(r.length-5,t)}function nn(e,t,n){var r=rn(n),i=Math.floor(e/1e5),s=Math.floor(t/1e5)%20;return sn(i,s,r)}function rn(e){var t=e%Ft;return t===0&&(t=Ft),t}function sn(e,t,n){var r=n-1,i=It.charCodeAt(r),s=qt.charCodeAt(r),o=i+e-1,u=s+t,a=!1;o>Xt&&(o=o-Xt+Rt-1,a=!0),(o===Ut||i<Ut&&o>Ut||(o>Ut||i<Ut)&&a)&&o++;if(o===zt||i<zt&&o>zt||(o>zt||i<zt)&&a)o++,o===Ut&&o++;o>Xt&&(o=o-Xt+Rt-1),u>Wt?(u=u-Wt+Rt-1,a=!0):a=!1,(u===Ut||s<Ut&&u>Ut||(u>Ut||s<Ut)&&a)&&u++;if(u===zt||s<zt&&u>zt||(u>zt||s<zt)&&a)u++,u===Ut&&u++;u>Wt&&(u=u-Wt+Rt-1);var f=String.fromCharCode(o)+String.fromCharCode(u);return f}function on(e){if(e&&e.length===0)throw"MGRSPoint coverting from nothing";var t=e.length,n=null,r="",i,s=0;while(!/[A-Z]/.test(i=e.charAt(s))){if(s>=2)throw"MGRSPoint bad conversion from: "+e;r+=i,s++}var o=parseInt(r,10);if(s===0||s+3>t)throw"MGRSPoint bad conversion from: "+e;var u=e.charAt(s++);if(u<="A"||u==="B"||u==="Y"||u>="Z"||u==="I"||u==="O")throw"MGRSPoint zone letter "+u+" not handled: "+e;n=e.substring(s,s+=2);var a=rn(o),f=un(n.charAt(0),a),l=an(n.charAt(1),a);while(l<fn(u))l+=2e6;var c=t-s;if(c%2!==0)throw"MGRSPoint has to have an even number \nof digits after the zone letter and two 100km letters - front \nhalf for easting meters, second half for \nnorthing meters"+e;var h=c/2,p=0,d=0,v,m,g,y,b;return h>0&&(v=1e5/Math.pow(10,h),m=e.substring(s,s+h),p=parseFloat(m)*v,g=e.substring(s+h),d=parseFloat(g)*v),y=p+f,b=d+l,{easting:y,northing:b,zoneLetter:u,zoneNumber:o,accuracy:v}}function un(e,t){var n=It.charCodeAt(t-1),r=1e5,i=!1;while(n!==e.charCodeAt(0)){n++,n===Ut&&n++,n===zt&&n++;if(n>Xt){if(i)throw"Bad character: "+e;n=Rt,i=!0}r+=1e5}return r}function an(e,t){if(e>"V")throw"MGRSPoint given invalid Northing "+e;var n=qt.charCodeAt(t-1),r=0,i=!1;while(n!==e.charCodeAt(0)){n++,n===Ut&&n++,n===zt&&n++;if(n>Wt){if(i)throw"Bad character: "+e;n=Rt,i=!0}r+=1e5}return r}function fn(e){var t;switch(e){case"C":t=11e5;break;case"D":t=2e6;break;case"E":t=28e5;break;case"F":t=37e5;break;case"G":t=46e5;break;case"H":t=55e5;break;case"J":t=64e5;break;case"K":t=73e5;break;case"L":t=82e5;break;case"M":t=91e5;break;case"N":t=0;break;case"P":t=8e5;break;case"Q":t=17e5;break;case"R":t=26e5;break;case"S":t=35e5;break;case"T":t=44e5;break;case"U":t=53e5;break;case"V":t=62e5;break;case"W":t=7e6;break;case"X":t=79e5;break;default:t=-1}if(t>=0)return t;throw"Invalid zone letter: "+e}function ln(e,t,n){if(!(this instanceof ln))return new ln(e,t,n);if(Array.isArray(e))this.x=e[0],this.y=e[1],this.z=e[2]||0;else if(typeof e=="object")this.x=e.x,this.y=e.y,this.z=e.z||0;else if(typeof e=="string"&&typeof t=="undefined"){var r=e.split(",");this.x=parseFloat(r[0],10),this.y=parseFloat(r[1],10),this.z=parseFloat(r[2],10)||0}else this.x=e,this.y=t,this.z=n||0;console.warn("proj4.Point will be removed in version 3, use proj4.toPoint")}function Ln(){this.x0=this.x0!==undefined?this.x0:0,this.y0=this.y0!==undefined?this.y0:0,this.long0=this.long0!==undefined?this.long0:0,this.lat0=this.lat0!==undefined?this.lat0:0,this.es&&(this.en=Tn(this.es),this.ml0=Nn(this.lat0,Math.sin(this.lat0),Math.cos(this.lat0),this.en))}function An(e){var t=e.x,n=e.y,r=G(t-this.long0),i,s,o,u=Math.sin(n),a=Math.cos(n);if(!this.es){var f=a*Math.sin(r);if(Math.abs(Math.abs(f)-1)<l)return 93;s=.5*this.a*this.k0*Math.log((1+f)/(1-f))+this.x0,o=a*Math.cos(r)/Math.sqrt(1-Math.pow(f,2)),f=Math.abs(o);if(f>=1){if(f-1>l)return 93;o=0}else o=Math.acos(o);n<0&&(o=-o),o=this.a*this.k0*(o-this.lat0)+this.y0}else{var c=a*r,h=Math.pow(c,2),p=this.ep2*Math.pow(a,2),d=Math.pow(p,2),v=Math.abs(a)>l?Math.tan(n):0,m=Math.pow(v,2),g=Math.pow(m,2);i=1-this.es*Math.pow(u,2),c/=Math.sqrt(i);var y=Nn(n,u,a,this.en);s=this.a*this.k0*c*(1+h/6*(1-m+p+h/20*(5-18*m+g+14*p-58*m*p+h/42*(61+179*g-g*m-479*m))))+this.x0,o=this.a*this.k0*(y-this.ml0+u*r*c/2*(1+h/12*(5-m+9*p+4*d+h/30*(61+g-58*m+270*p-330*m*p+h/56*(1385+543*g-g*m-3111*m)))))+this.y0}return e.x=s,e.y=o,e}function On(e){var t,n,r,i,s=(e.x-this.x0)*(1/this.a),u=(e.y-this.y0)*(1/this.a);if(!this.es){var a=Math.exp(s/this.k0),f=.5*(a-1/a),c=this.lat0+u/this.k0,h=Math.cos(c);t=Math.sqrt((1-Math.pow(h,2))/(1+Math.pow(f,2))),r=Math.asin(t),u<0&&(r=-r),f===0&&h===0?i=0:i=G(Math.atan2(f,h)+this.long0)}else{t=this.ml0+u/this.k0,n=kn(t,this.es,this.en);if(Math.abs(n)<o){var p=Math.sin(n),d=Math.cos(n),v=Math.abs(d)>l?Math.tan(n):0,m=this.ep2*Math.pow(d,2),g=Math.pow(m,2),y=Math.pow(v,2),b=Math.pow(y,2);t=1-this.es*Math.pow(p,2);var w=s*Math.sqrt(t)/this.k0,E=Math.pow(w,2);t*=v,r=n-t*E/(1-this.es)*.5*(1-E/12*(5+3*y-9*m*y+m-4*g-E/30*(61+90*y-252*m*y+45*b+46*m-E/56*(1385+3633*y+4095*b+1574*b*y)))),i=G(this.long0+w*(1-E/6*(1+2*y+m-E/20*(5+28*y+24*b+8*m*y+6*m-E/42*(61+662*y+1320*b+720*b*y))))/d)}else r=o*Q(u),i=0}return e.x=i,e.y=r,e}function Rn(){if(this.es===undefined||this.es<=0)throw new Error("incorrect elliptical usage");this.x0=this.x0!==undefined?this.x0:0,this.y0=this.y0!==undefined?this.y0:0,this.long0=this.long0!==undefined?this.long0:0,this.lat0=this.lat0!==undefined?this.lat0:0,this.cgb=[],this.cbg=[],this.utg=[],this.gtu=[];var e=this.es/(1+Math.sqrt(1-this.es)),t=e/(2-e),n=t;this.cgb[0]=t*(2+t*(-2/3+t*(-2+t*(116/45+t*(26/45+t*(-2854/675)))))),this.cbg[0]=t*(-2+t*(2/3+t*(4/3+t*(-82/45+t*(32/45+t*(4642/4725)))))),n*=t,this.cgb[1]=n*(7/3+t*(-1.6+t*(-227/45+t*(2704/315+t*(2323/945))))),this.cbg[1]=n*(5/3+t*(-16/15+t*(-13/9+t*(904/315+t*(-1522/945))))),n*=t,this.cgb[2]=n*(56/15+t*(-136/35+t*(-1262/105+t*(73814/2835)))),this.cbg[2]=n*(-26/15+t*(34/21+t*(1.6+t*(-12686/2835)))),n*=t,this.cgb[3]=n*(4279/630+t*(-332/35+t*(-399572/14175))),this.cbg[3]=n*(1237/630+t*(-2.4+t*(-24832/14175))),n*=t,this.cgb[4]=n*(4174/315+t*(-144838/6237)),this.cbg[4]=n*(-734/315+t*(109598/31185)),n*=t,this.cgb[5]=n*(601676/22275),this.cbg[5]=n*(444337/155925),n=Math.pow(t,2),this.Qn=this.k0/(1+t)*(1+n*(.25+n*(1/64+n/256))),this.utg[0]=t*(-0.5+t*(2/3+t*(-37/96+t*(1/360+t*(81/512+t*(-96199/604800)))))),this.gtu[0]=t*(.5+t*(-2/3+t*(5/16+t*(41/180+t*(-127/288+t*(7891/37800)))))),this.utg[1]=n*(-1/48+t*(-1/15+t*(437/1440+t*(-46/105+t*(1118711/3870720))))),this.gtu[1]=n*(13/48+t*(-0.6+t*(557/1440+t*(281/630+t*(-1983433/1935360))))),n*=t,this.utg[2]=n*(-17/480+t*(37/840+t*(209/4480+t*(-5569/90720)))),this.gtu[2]=n*(61/240+t*(-103/140+t*(15061/26880+t*(167603/181440)))),n*=t,this.utg[3]=n*(-4397/161280+t*(11/504+t*(830251/7257600))),this.gtu[3]=n*(49561/161280+t*(-179/168+t*(6601661/7257600))),n*=t,this.utg[4]=n*(-4583/161280+t*(108847/3991680)),this.gtu[4]=n*(34729/80640+t*(-3418889/1995840)),n*=t,this.utg[5]=n*(-20648693/638668800),this.gtu[5]=n*.6650675310896665;var r=jn(this.cbg,this.lat0);this.Zb=-this.Qn*(r+Fn(this.gtu,2*r))}function Un(e){var t=G(e.x-this.long0),n=e.y;n=jn(this.cbg,n);var r=Math.sin(n),i=Math.cos(n),s=Math.sin(t),o=Math.cos(t);n=Math.atan2(r,o*i),t=Math.atan2(s*i,Pn(r,i*o)),t=Bn(Math.tan(t));var u=qn(this.gtu,2*n,2*t);n+=u[0],t+=u[1];var a,f;return Math.abs(t)<=2.623395162778?(a=this.a*this.Qn*t+this.x0,f=this.a*(this.Qn*n+this.Zb)+this.y0):(a=Infinity,f=Infinity),e.x=a,e.y=f,e}function zn(e){var t=(e.x-this.x0)*(1/this.a),n=(e.y-this.y0)*(1/this.a);n=(n-this.Zb)/this.Qn,t/=this.Qn;var r,i;if(Math.abs(t)<=2.623395162778){var s=qn(this.utg,2*n,2*t);n+=s[0],t+=s[1],t=Math.atan(Dn(t));var o=Math.sin(n),u=Math.cos(n),a=Math.sin(t),f=Math.cos(t);n=Math.atan2(o*f,Pn(a,f*u)),t=Math.atan2(a,f*u),r=G(t+this.long0),i=jn(this.cgb,n)}else r=Infinity,i=Infinity;return e.x=r,e.y=i,e}function Jn(){var e=Vn(this.zone,this.long0);if(e===undefined)throw new Error("unknown utm zone");this.lat0=0,this.long0=(6*Math.abs(e)-183)*c,this.x0=5e5,this.y0=this.utmSouth?1e7:0,this.k0=.9996,Xn.init.apply(this),this.forward=Xn.forward,this.inverse=Xn.inverse}function Zn(){var e=Math.sin(this.lat0),t=Math.cos(this.lat0);t*=t,this.rc=Math.sqrt(1-this.es)/(1-this.es*e*e),this.C=Math.sqrt(1+this.es*t*t/(1-this.es)),this.phic0=Math.asin(e/this.C),this.ratexp=.5*this.C*this.e,this.K=Math.tan(.5*this.phic0+p)/(Math.pow(Math.tan(.5*this.lat0+p),this.C)*Gn(this.e*e,this.ratexp))}function er(e){var t=e.x,n=e.y;return e.y=2*Math.atan(this.K*Math.pow(Math.tan(.5*n+p),this.C)*Gn(this.e*Math.sin(n),this.ratexp))-o,e.x=this.C*t,e}function tr(e){var t=1e-14,n=e.x/this.C,r=e.y,i=Math.pow(Math.tan(.5*r+p)/this.K,1/this.C);for(var s=Yn;s>0;--s){r=2*Math.atan(i*Gn(this.e*Math.sin(e.y),-0.5*this.e))-o;if(Math.abs(r-e.y)<t)break;e.y=r}return s?(e.x=n,e.y=r,e):null}function ir(){rr.init.apply(this);if(!this.rc)return;this.sinc0=Math.sin(this.phic0),this.cosc0=Math.cos(this.phic0),this.R2=2*this.rc,this.title||(this.title="Oblique Stereographic Alternative")}function sr(e){var t,n,r,i;return e.x=G(e.x-this.long0),rr.forward.apply(this,[e]),t=Math.sin(e.y),n=Math.cos(e.y),r=Math.cos(e.x),i=this.k0*this.R2/(1+this.sinc0*t+this.cosc0*n*r),e.x=i*n*Math.sin(e.x),e.y=i*(this.cosc0*t-this.sinc0*n*r),e.x=this.a*e.x+this.x0,e.y=this.a*e.y+this.y0,e}function or(e){var t,n,r,i,s;e.x=(e.x-this.x0)/this.a,e.y=(e.y-this.y0)/this.a,e.x/=this.k0,e.y/=this.k0;if(s=Math.sqrt(e.x*e.x+e.y*e.y)){var o=2*Math.atan2(s,this.R2);t=Math.sin(o),n=Math.cos(o),i=Math.asin(n*this.sinc0+e.y*t*this.cosc0/s),r=Math.atan2(e.x*t,s*this.cosc0*n-e.y*this.sinc0*t)}else i=this.phic0,r=0;return e.x=r,e.y=i,rr.inverse.apply(this,[e]),e.x=G(e.x+this.long0),e}function fr(e,t,n){return t*=n,Math.tan(.5*(o+e))*Math.pow((1-t)/(1+t),.5*n)}function lr(){this.coslat0=Math.cos(this.lat0),this.sinlat0=Math.sin(this.lat0),this.sphere?this.k0===1&&!isNaN(this.lat_ts)&&Math.abs(this.coslat0)<=l&&(this.k0=.5*(1+Q(this.lat0)*Math.sin(this.lat_ts))):(Math.abs(this.coslat0)<=l&&(this.lat0>0?this.con=1:this.con=-1),this.cons=Math.sqrt(Math.pow(1+this.e,1+this.e)*Math.pow(1-this.e,1-this.e)),this.k0===1&&!isNaN(this.lat_ts)&&Math.abs(this.coslat0)<=l&&(this.k0=.5*this.cons*K(this.e,Math.sin(this.lat_ts),Math.cos(this.lat_ts))/Y(this.e,this.con*this.lat_ts,this.con*Math.sin(this.lat_ts))),this.ms1=K(this.e,this.sinlat0,this.coslat0),this.X0=2*Math.atan(this.ssfn_(this.lat0,this.sinlat0,this.e))-o,this.cosX0=Math.cos(this.X0),this.sinX0=Math.sin(this.X0))}function cr(e){var t=e.x,n=e.y,r=Math.sin(n),i=Math.cos(n),s,u,a,f,c,h,p=G(t-this.long0);return Math.abs(Math.abs(t-this.long0)-Math.PI)<=l&&Math.abs(n+this.lat0)<=l?(e.x=NaN,e.y=NaN,e):this.sphere?(s=2*this.k0/(1+this.sinlat0*r+this.coslat0*i*Math.cos(p)),e.x=this.a*s*i*Math.sin(p)+this.x0,e.y=this.a*s*(this.coslat0*r-this.sinlat0*i*Math.cos(p))+this.y0,e):(u=2*Math.atan(this.ssfn_(n,r,this.e))-o,f=Math.cos(u),a=Math.sin(u),Math.abs(this.coslat0)<=l?(c=Y(this.e,n*this.con,this.con*r),h=2*this.a*this.k0*c/this.cons,e.x=this.x0+h*Math.sin(t-this.long0),e.y=this.y0-this.con*h*Math.cos(t-this.long0),e):(Math.abs(this.sinlat0)<l?(s=2*this.a*this.k0/(1+f*Math.cos(p)),e.y=s*a):(s=2*this.a*this.k0*this.ms1/(this.cosX0*(1+this.sinX0*a+this.cosX0*f*Math.cos(p))),e.y=s*(this.cosX0*a-this.sinX0*f*Math.cos(p))+this.y0),e.x=s*f*Math.sin(p)+this.x0,e))}function hr(e){e.x-=this.x0,e.y-=this.y0;var t,n,r,i,s,u=Math.sqrt(e.x*e.x+e.y*e.y);if(this.sphere){var a=2*Math.atan(u/(.5*this.a*this.k0));return t=this.long0,n=this.lat0,u<=l?(e.x=t,e.y=n,e):(n=Math.asin(Math.cos(a)*this.sinlat0+e.y*Math.sin(a)*this.coslat0/u),Math.abs(this.coslat0)<l?this.lat0>0?t=G(this.long0+Math.atan2(e.x,-1*e.y)):t=G(this.long0+Math.atan2(e.x,e.y)):t=G(this.long0+Math.atan2(e.x*Math.sin(a),u*this.coslat0*Math.cos(a)-e.y*this.sinlat0*Math.sin(a))),e.x=t,e.y=n,e)}if(Math.abs(this.coslat0)<=l){if(u<=l)return n=this.lat0,t=this.long0,e.x=t,e.y=n,e;e.x*=this.con,e.y*=this.con,r=u*this.cons/(2*this.a*this.k0),n=this.con*Z(this.e,r),t=this.con*G(this.con*this.long0+Math.atan2(e.x,-1*e.y))}else i=2*Math.atan(u*this.cosX0/(2*this.a*this.k0*this.ms1)),t=this.long0,u<=l?s=this.X0:(s=Math.asin(Math.cos(i)*this.sinX0+e.y*Math.sin(i)*this.cosX0/u),t=G(this.long0+Math.atan2(e.x*Math.sin(i),u*this.cosX0*Math.cos(i)-e.y*this.sinX0*Math.sin(i)))),n=-1*Z(this.e,Math.tan(.5*(o+s)));return e.x=t,e.y=n,e}function vr(){var e=this.lat0;this.lambda0=this.long0;var t=Math.sin(e),n=this.a,r=this.rf,i=1/r,s=2*i-Math.pow(i,2),o=this.e=Math.sqrt(s);this.R=this.k0*n*Math.sqrt(1-s)/(1-s*Math.pow(t,2)),this.alpha=Math.sqrt(1+s/(1-s)*Math.pow(Math.cos(e),4)),this.b0=Math.asin(t/this.alpha);var u=Math.log(Math.tan(Math.PI/4+this.b0/2)),a=Math.log(Math.tan(Math.PI/4+e/2)),f=Math.log((1+o*t)/(1-o*t));this.K=u-this.alpha*a+this.alpha*o/2*f}function mr(e){var t=Math.log(Math.tan(Math.PI/4-e.y/2)),n=this.e/2*Math.log((1+this.e*Math.sin(e.y))/(1-this.e*Math.sin(e.y))),r=-this.alpha*(t+n)+this.K,i=2*(Math.atan(Math.exp(r))-Math.PI/4),s=this.alpha*(e.x-this.lambda0),o=Math.atan(Math.sin(s)/(Math.sin(this.b0)*Math.tan(i)+Math.cos(this.b0)*Math.cos(s))),u=Math.asin(Math.cos(this.b0)*Math.sin(i)-Math.sin(this.b0)*Math.cos(i)*Math.cos(s));return e.y=this.R/2*Math.log((1+Math.sin(u))/(1-Math.sin(u)))+this.y0,e.x=this.R*o+this.x0,e}function gr(e){var t=e.x-this.x0,n=e.y-this.y0,r=t/this.R,i=2*(Math.atan(Math.exp(n/this.R))-Math.PI/4),s=Math.asin(Math.cos(this.b0)*Math.sin(i)+Math.sin(this.b0)*Math.cos(i)*Math.cos(r)),o=Math.atan(Math.sin(r)/(Math.cos(this.b0)*Math.cos(r)-Math.sin(this.b0)*Math.tan(i))),u=this.lambda0+o/this.alpha,a=0,f=s,l=-1e3,c=0;while(Math.abs(f-l)>1e-7){if(++c>20)return;a=1/this.alpha*(Math.log(Math.tan(Math.PI/4+s/2))-this.K)+this.e*Math.log(Math.tan(Math.PI/4+Math.asin(this.e*Math.sin(f))/2)),l=f,f=2*Math.atan(Math.exp(a))-Math.PI/2}return e.x=u,e.y=f,e}function wr(){this.no_off=this.no_off||!1,this.no_rot=this.no_rot||!1,isNaN(this.k0)&&(this.k0=1);var e=Math.sin(this.lat0),t=Math.cos(this.lat0),n=this.e*e;this.bl=Math.sqrt(1+this.es/(1-this.es)*Math.pow(t,4)),this.al=this.a*this.bl*this.k0*Math.sqrt(1-this.es)/(1-n*n);var r=Y(this.e,this.lat0,e),i=this.bl/t*Math.sqrt((1-this.es)/(1-n*n));i*i<1&&(i=1);var s,o;if(!isNaN(this.longc))this.lat0>=0?s=i+Math.sqrt(i*i-1):s=i-Math.sqrt(i*i-1),this.el=s*Math.pow(r,this.bl),o=.5*(s-1/s),this.gamma0=Math.asin(Math.sin(this.alpha)/i),this.long0=this.longc-Math.asin(o*Math.tan(this.gamma0))/this.bl;else{var u=Y(this.e,this.lat1,Math.sin(this.lat1)),a=Y(this.e,this.lat2,Math.sin(this.lat2));this.lat0>=0?this.el=(i+Math.sqrt(i*i-1))*Math.pow(r,this.bl):this.el=(i-Math.sqrt(i*i-1))*Math.pow(r,this.bl);var f=Math.pow(u,this.bl),l=Math.pow(a,this.bl);s=this.el/f,o=.5*(s-1/s);var c=(this.el*this.el-l*f)/(this.el*this.el+l*f),h=(l-f)/(l+f),p=G(this.long1-this.long2);this.long0=.5*(this.long1+this.long2)-Math.atan(c*Math.tan(.5*this.bl*p)/h)/this.bl,this.long0=G(this.long0);var d=G(this.long1-this.long0);this.gamma0=Math.atan(Math.sin(this.bl*d)/o),this.alpha=Math.asin(i*Math.sin(this.gamma0))}this.no_off?this.uc=0:this.lat0>=0?this.uc=this.al/this.bl*Math.atan2(Math.sqrt(i*i-1),Math.cos(this.alpha)):this.uc=-1*this.al/this.bl*Math.atan2(Math.sqrt(i*i-1),Math.cos(this.alpha))}function Er(e){var t=e.x,n=e.y,r=G(t-this.long0),i,s,u;if(Math.abs(Math.abs(n)-o)<=l)n>0?u=-1:u=1,s=this.al/this.bl*Math.log(Math.tan(p+u*this.gamma0*.5)),i=-1*u*o*this.al/this.bl;else{var a=Y(this.e,n,Math.sin(n)),f=this.el/Math.pow(a,this.bl),c=.5*(f-1/f),h=.5*(f+1/f),d=Math.sin(this.bl*r),v=(c*Math.sin(this.gamma0)-d*Math.cos(this.gamma0))/h;Math.abs(Math.abs(v)-1)<=l?s=Number.POSITIVE_INFINITY:s=.5*this.al*Math.log((1-v)/(1+v))/this.bl,Math.abs(Math.cos(this.bl*r))<=l?i=this.al*this.bl*r:i=this.al*Math.atan2(c*Math.cos(this.gamma0)+d*Math.sin(this.gamma0),Math.cos(this.bl*r))/this.bl}return this.no_rot?(e.x=this.x0+i,e.y=this.y0+s):(i-=this.uc,e.x=this.x0+s*Math.cos(this.alpha)+i*Math.sin(this.alpha),e.y=this.y0+i*Math.cos(this.alpha)-s*Math.sin(this.alpha)),e}function Sr(e){var t,n;this.no_rot?(n=e.y-this.y0,t=e.x-this.x0):(n=(e.x-this.x0)*Math.cos(this.alpha)-(e.y-this.y0)*Math.sin(this.alpha),t=(e.y-this.y0)*Math.cos(this.alpha)+(e.x-this.x0)*Math.sin(this.alpha),t+=this.uc);var r=Math.exp(-1*this.bl*n/this.al),i=.5*(r-1/r),s=.5*(r+1/r),u=Math.sin(this.bl*t/this.al),a=(u*Math.cos(this.gamma0)+i*Math.sin(this.gamma0))/s,f=Math.pow(this.el/Math.sqrt((1+a)/(1-a)),1/this.bl);return Math.abs(a-1)<l?(e.x=this.long0,e.y=o):Math.abs(a+1)<l?(e.x=this.long0,e.y=-1*o):(e.y=Z(this.e,f),e.x=G(this.long0-Math.atan2(i*Math.cos(this.gamma0)-u*Math.sin(this.gamma0),Math.cos(this.bl*t/this.al))/this.bl)),e}function Nr(){this.lat2||(this.lat2=this.lat1),this.k0||(this.k0=1),this.x0=this.x0||0,this.y0=this.y0||0;if(Math.abs(this.lat1+this.lat2)<l)return;var e=this.b/this.a;this.e=Math.sqrt(1-e*e);var t=Math.sin(this.lat1),n=Math.cos(this.lat1),r=K(this.e,t,n),i=Y(this.e,this.lat1,t),s=Math.sin(this.lat2),o=Math.cos(this.lat2),u=K(this.e,s,o),a=Y(this.e,this.lat2,s),f=Y(this.e,this.lat0,Math.sin(this.lat0));Math.abs(this.lat1-this.lat2)>l?this.ns=Math.log(r/u)/Math.log(i/a):this.ns=t,isNaN(this.ns)&&(this.ns=t),this.f0=r/(this.ns*Math.pow(i,this.ns)),this.rh=this.a*this.f0*Math.pow(f,this.ns),this.title||(this.title="Lambert Conformal Conic")}function Cr(e){var t=e.x,n=e.y;Math.abs(2*Math.abs(n)-Math.PI)<=l&&(n=Q(n)*(o-2*l));var r=Math.abs(Math.abs(n)-o),i,s;if(r>l)i=Y(this.e,n,Math.sin(n)),s=this.a*this.f0*Math.pow(i,this.ns);else{r=n*this.ns;if(r<=0)return null;s=0}var u=this.ns*G(t-this.long0);return e.x=this.k0*s*Math.sin(u)+this.x0,e.y=this.k0*(this.rh-s*Math.cos(u))+this.y0,e}function kr(e){var t,n,r,i,s,u=(e.x-this.x0)/this.k0,a=this.rh-(e.y-this.y0)/this.k0;this.ns>0?(t=Math.sqrt(u*u+a*a),n=1):(t=-Math.sqrt(u*u+a*a),n=-1);var f=0;t!==0&&(f=Math.atan2(n*u,n*a));if(t!==0||this.ns>0){n=1/this.ns,r=Math.pow(t/(this.a*this.f0),n),i=Z(this.e,r);if(i===-9999)return null}else i=-o;return s=G(f/this.ns+this.long0),e.x=s,e.y=i,e}function Or(){this.a=6377397.155,this.es=.006674372230614,this.e=Math.sqrt(this.es),this.lat0||(this.lat0=.863937979737193),this.long0||(this.long0=.4334234309119251),this.k0||(this.k0=.9999),this.s45=.785398163397448,this.s90=2*this.s45,this.fi0=this.lat0,this.e2=this.es,this.e=Math.sqrt(this.e2),this.alfa=Math.sqrt(1+this.e2*Math.pow(Math.cos(this.fi0),4)/(1-this.e2)),this.uq=1.04216856380474,this.u0=Math.asin(Math.sin(this.fi0)/this.alfa),this.g=Math.pow((1+this.e*Math.sin(this.fi0))/(1-this.e*Math.sin(this.fi0)),this.alfa*this.e/2),this.k=Math.tan(this.u0/2+this.s45)/Math.pow(Math.tan(this.fi0/2+this.s45),this.alfa)*this.g,this.k1=this.k0,this.n0=this.a*Math.sqrt(1-this.e2)/(1-this.e2*Math.pow(Math.sin(this.fi0),2)),this.s0=1.37008346281555,this.n=Math.sin(this.s0),this.ro0=this.k1*this.n0/Math.tan(this.s0),this.ad=this.s90-this.uq}function Mr(e){var t,n,r,i,s,o,u,a=e.x,f=e.y,l=G(a-this.long0);return t=Math.pow((1+this.e*Math.sin(f))/(1-this.e*Math.sin(f)),this.alfa*this.e/2),n=2*(Math.atan(this.k*Math.pow(Math.tan(f/2+this.s45),this.alfa)/t)-this.s45),r=-l*this.alfa,i=Math.asin(Math.cos(this.ad)*Math.sin(n)+Math.sin(this.ad)*Math.cos(n)*Math.cos(r)),s=Math.asin(Math.cos(n)*Math.sin(r)/Math.cos(i)),o=this.n*s,u=this.ro0*Math.pow(Math.tan(this.s0/2+this.s45),this.n)/Math.pow(Math.tan(i/2+this.s45),this.n),e.y=u*Math.cos(o)/1,e.x=u*Math.sin(o)/1,this.czech||(e.y*=-1,e.x*=-1),e}function _r(e){var t,n,r,i,s,o,u,a,f=e.x;e.x=e.y,e.y=f,this.czech||(e.y*=-1,e.x*=-1),o=Math.sqrt(e.x*e.x+e.y*e.y),s=Math.atan2(e.y,e.x),i=s/Math.sin(this.s0),r=2*(Math.atan(Math.pow(this.ro0/o,1/this.n)*Math.tan(this.s0/2+this.s45))-this.s45),t=Math.asin(Math.cos(this.ad)*Math.sin(r)-Math.sin(this.ad)*Math.cos(r)*Math.cos(i)),n=Math.asin(Math.cos(r)*Math.sin(i)/Math.cos(t)),e.x=this.long0-n/this.alfa,u=t,a=0;var l=0;do e.y=2*(Math.atan(Math.pow(this.k,-1/this.alfa)*Math.pow(Math.tan(t/2+this.s45),1/this.alfa)*Math.pow((1+this.e*Math.sin(u))/(1-this.e*Math.sin(u)),this.e/2))-this.s45),Math.abs(u-e.y)<1e-10&&(a=1),u=e.y,l+=1;while(a===0&&l<15);return l>=15?null:e}function zr(){this.sphere||(this.e0=Br(this.es),this.e1=jr(this.es),this.e2=Fr(this.es),this.e3=Ir(this.es),this.ml0=this.a*Hr(this.e0,this.e1,this.e2,this.e3,this.lat0))}function Wr(e){var t,n,r=e.x,i=e.y;r=G(r-this.long0);if(this.sphere)t=this.a*Math.asin(Math.cos(i)*Math.sin(r)),n=this.a*(Math.atan2(Math.tan(i),Math.cos(r))-this.lat0);else{var s=Math.sin(i),o=Math.cos(i),u=qr(this.a,this.e,s),a=Math.tan(i)*Math.tan(i),f=r*Math.cos(i),l=f*f,c=this.es*o*o/(1-this.es),h=this.a*Hr(this.e0,this.e1,this.e2,this.e3,i);t=u*f*(1-l*a*(1/6-(8-a+8*c)*l/120)),n=h-this.ml0+u*s/o*l*(.5+(5-a+6*c)*l/24)}return e.x=t+this.x0,e.y=n+this.y0,e}function Xr(e){e.x-=this.x0,e.y-=this.y0;var t=e.x/this.a,n=e.y/this.a,r,i;if(this.sphere){var s=n+this.lat0;r=Math.asin(Math.sin(s)*Math.cos(t)),i=Math.atan2(Math.tan(t),Math.cos(s))}else{var u=this.ml0/this.a+n,a=Ur(u,this.e0,this.e1,this.e2,this.e3);if(Math.abs(Math.abs(a)-o)<=l)return e.x=this.long0,e.y=o,n<0&&(e.y*=-1),e;var f=qr(this.a,this.e,Math.sin(a)),c=f*f*f/this.a/this.a*(1-this.es),h=Math.pow(Math.tan(a),2),p=t*this.a/f,d=p*p;r=a-f*Math.tan(a)/c*p*p*(.5-(1+3*h)*p*p/24),i=p*(1-d*(h/3+(1+3*h)*h*d/15))/Math.cos(a)}return e.x=G(i+this.long0),e.y=Rr(r),e}function Zr(){var e=Math.abs(this.lat0);Math.abs(e-o)<l?this.mode=this.lat0<0?this.S_POLE:this.N_POLE:Math.abs(e)<l?this.mode=this.EQUIT:this.mode=this.OBLIQ;if(this.es>0){var t;this.qp=Jr(this.e,1),this.mmf=.5/(1-this.es),this.apa=ai(this.es);switch(this.mode){case this.N_POLE:this.dd=1;break;case this.S_POLE:this.dd=1;break;case this.EQUIT:this.rq=Math.sqrt(.5*this.qp),this.dd=1/this.rq,this.xmf=1,this.ymf=.5*this.qp;break;case this.OBLIQ:this.rq=Math.sqrt(.5*this.qp),t=Math.sin(this.lat0),this.sinb1=Jr(this.e,t)/this.qp,this.cosb1=Math.sqrt(1-this.sinb1*this.sinb1),this.dd=Math.cos(this.lat0)/(Math.sqrt(1-this.es*t*t)*this.rq*this.cosb1),this.ymf=(this.xmf=this.rq)/this.dd,this.xmf*=this.dd}}else this.mode===this.OBLIQ&&(this.sinph0=Math.sin(this.lat0),this.cosph0=Math.cos(this.lat0))}function ei(e){var t,n,r,i,s,u,a,f,c,h,d=e.x,v=e.y;d=G(d-this.long0);if(this.sphere){s=Math.sin(v),h=Math.cos(v),r=Math.cos(d);if(this.mode===this.OBLIQ||this.mode===this.EQUIT){n=this.mode===this.EQUIT?1+h*r:1+this.sinph0*s+this.cosph0*h*r;if(n<=l)return null;n=Math.sqrt(2/n),t=n*h*Math.sin(d),n*=this.mode===this.EQUIT?s:this.cosph0*s-this.sinph0*h*r}else if(this.mode===this.N_POLE||this.mode===this.S_POLE){this.mode===this.N_POLE&&(r=-r);if(Math.abs(v+this.phi0)<l)return null;n=p-v*.5,n=2*(this.mode===this.S_POLE?Math.cos(n):Math.sin(n)),t=n*Math.sin(d),n*=r}}else{a=0,f=0,c=0,r=Math.cos(d),i=Math.sin(d),s=Math.sin(v),u=Jr(this.e,s);if(this.mode===this.OBLIQ||this.mode===this.EQUIT)a=u/this.qp,f=Math.sqrt(1-a*a);switch(this.mode){case this.OBLIQ:c=1+this.sinb1*a+this.cosb1*f*r;break;case this.EQUIT:c=1+f*r;break;case this.N_POLE:c=o+v,u=this.qp-u;break;case this.S_POLE:c=v-o,u=this.qp+u}if(Math.abs(c)<l)return null;switch(this.mode){case this.OBLIQ:case this.EQUIT:c=Math.sqrt(2/c),this.mode===this.OBLIQ?n=this.ymf*c*(this.cosb1*a-this.sinb1*f*r):n=(c=Math.sqrt(2/(1+f*r)))*a*this.ymf,t=this.xmf*c*f*i;break;case this.N_POLE:case this.S_POLE:u>=0?(t=(c=Math.sqrt(u))*i,n=r*(this.mode===this.S_POLE?c:-c)):t=n=0}}return e.x=this.a*t+this.x0,e.y=this.a*n+this.y0,e}function ti(e){e.x-=this.x0,e.y-=this.y0;var t=e.x/this.a,n=e.y/this.a,r,i,s,u,a,f,c;if(this.sphere){var h=0,p,d=0;p=Math.sqrt(t*t+n*n),i=p*.5;if(i>1)return null;i=2*Math.asin(i);if(this.mode===this.OBLIQ||this.mode===this.EQUIT)d=Math.sin(i),h=Math.cos(i);switch(this.mode){case this.EQUIT:i=Math.abs(p)<=l?0:Math.asin(n*d/p),t*=d,n=h*p;break;case this.OBLIQ:i=Math.abs(p)<=l?this.phi0:Math.asin(h*this.sinph0+n*d*this.cosph0/p),t*=d*this.cosph0,n=(h-Math.sin(i)*this.sinph0)*p;break;case this.N_POLE:n=-n,i=o-i;break;case this.S_POLE:i-=o}r=n!==0||this.mode!==this.EQUIT&&this.mode!==this.OBLIQ?Math.atan2(t,n):0}else{c=0;if(this.mode===this.OBLIQ||this.mode===this.EQUIT){t/=this.dd,n*=this.dd,f=Math.sqrt(t*t+n*n);if(f<l)return e.x=0,e.y=this.phi0,e;u=2*Math.asin(.5*f/this.rq),s=Math.cos(u),t*=u=Math.sin(u),this.mode===this.OBLIQ?(c=s*this.sinb1+n*u*this.cosb1/f,a=this.qp*c,n=f*this.cosb1*s-n*this.sinb1*u):(c=n*u/f,a=this.qp*c,n=f*s)}else if(this.mode===this.N_POLE||this.mode===this.S_POLE){this.mode===this.N_POLE&&(n=-n),a=t*t+n*n;if(!a)return e.x=0,e.y=this.phi0,e;c=1-a/this.qp,this.mode===this.S_POLE&&(c=-c)}r=Math.atan2(t,n),i=fi(Math.asin(c),this.apa)}return e.x=G(this.long0+r),e.y=i,e}function ai(e){var t,n=[];return n[0]=e*ni,t=e*e,n[0]+=t*ri,n[1]=t*si,t*=e,n[0]+=t*ii,n[1]+=t*oi,n[2]=t*ui,n}function fi(e,t){var n=e+e;return e+t[0]*Math.sin(n)+t[1]*Math.sin(n+n)+t[2]*Math.sin(n+n+n)}function pi(){if(Math.abs(this.lat1+this.lat2)<l)return;this.temp=this.b/this.a,this.es=1-Math.pow(this.temp,2),this.e3=Math.sqrt(this.es),this.sin_po=Math.sin(this.lat1),this.cos_po=Math.cos(this.lat1),this.t1=this.sin_po,this.con=this.sin_po,this.ms1=K(this.e3,this.sin_po,this.cos_po),this.qs1=Jr(this.e3,this.sin_po,this.cos_po),this.sin_po=Math.sin(this.lat2),this.cos_po=Math.cos(this.lat2),this.t2=this.sin_po,this.ms2=K(this.e3,this.sin_po,this.cos_po),this.qs2=Jr(this.e3,this.sin_po,this.cos_po),this.sin_po=Math.sin(this.lat0),this.cos_po=Math.cos(this.lat0),this.t3=this.sin_po,this.qs0=Jr(this.e3,this.sin_po,this.cos_po),Math.abs(this.lat1-this.lat2)>l?this.ns0=(this.ms1*this.ms1-this.ms2*this.ms2)/(this.qs2-this.qs1):this.ns0=this.con,this.c=this.ms1*this.ms1+this.ns0*this.qs1,this.rh=this.a*Math.sqrt(this.c-this.ns0*this.qs0)/this.ns0}function di(e){var t=e.x,n=e.y;this.sin_phi=Math.sin(n),this.cos_phi=Math.cos(n);var r=Jr(this.e3,this.sin_phi,this.cos_phi),i=this.a*Math.sqrt(this.c-this.ns0*r)/this.ns0,s=this.ns0*G(t-this.long0),o=i*Math.sin(s)+this.x0,u=this.rh-i*Math.cos(s)+this.y0;return e.x=o,e.y=u,e}function vi(e){var t,n,r,i,s,o;return e.x-=this.x0,e.y=this.rh-e.y+this.y0,this.ns0>=0?(t=Math.sqrt(e.x*e.x+e.y*e.y),r=1):(t=-Math.sqrt(e.x*e.x+e.y*e.y),r=-1),i=0,t!==0&&(i=Math.atan2(r*e.x,r*e.y)),r=t*this.ns0/this.a,this.sphere?o=Math.asin((this.c-r*r)/(2*this.ns0)):(n=(this.c-r*r)/this.ns0,o=this.phi1z(this.e3,n)),s=G(i/this.ns0+this.long0),e.x=s,e.y=o,e}function mi(e,t){var n,r,i,s,o,u=hi(.5*t);if(e<l)return u;var a=e*e;for(var f=1;f<=25;f++){n=Math.sin(u),r=Math.cos(u),i=e*n,s=1-i*i,o=.5*s*s/r*(t/(1-a)-n/s+.5/e*Math.log((1-i)/(1+i))),u+=o;if(Math.abs(o)<=1e-7)return u}return null}function bi(){this.sin_p14=Math.sin(this.lat0),this.cos_p14=Math.cos(this.lat0),this.infinity_dist=1e3*this.a,this.rc=1}function wi(e){var t,n,r,i,s,o,u,a,f=e.x,c=e.y;return r=G(f-this.long0),t=Math.sin(c),n=Math.cos(c),i=Math.cos(r),o=this.sin_p14*t+this.cos_p14*n*i,s=1,o>0||Math.abs(o)<=l?(u=this.x0+this.a*s*n*Math.sin(r)/o,a=this.y0+this.a*s*(this.cos_p14*t-this.sin_p14*n*i)/o):(u=this.x0+this.infinity_dist*n*Math.sin(r),a=this.y0+this.infinity_dist*(this.cos_p14*t-this.sin_p14*n*i)),e.x=u,e.y=a,e}function Ei(e){var t,n,r,i,s,o;return e.x=(e.x-this.x0)/this.a,e.y=(e.y-this.y0)/this.a,e.x/=this.k0,e.y/=this.k0,(t=Math.sqrt(e.x*e.x+e.y*e.y))?(i=Math.atan2(t,this.rc),n=Math.sin(i),r=Math.cos(i),o=hi(r*this.sin_p14+e.y*n*this.cos_p14/t),s=Math.atan2(e.x*n,t*this.cos_p14*r-e.y*this.sin_p14*n),s=G(this.long0+s)):(o=this.phic0,s=0),e.x=s,e.y=o,e}function Ni(){this.sphere||(this.k0=K(this.e,Math.sin(this.lat_ts),Math.cos(this.lat_ts)))}function Ci(e){var t=e.x,n=e.y,r,i,s=G(t-this.long0);if(this.sphere)r=this.x0+this.a*s*Math.cos(this.lat_ts),i=this.y0+this.a*Math.sin(n)/Math.cos(this.lat_ts);else{var o=Jr(this.e,Math.sin(n));r=this.x0+this.a*this.k0*s,i=this.y0+this.a*o*.5/this.k0}return e.x=r,e.y=i,e}function ki(e){e.x-=this.x0,e.y-=this.y0;var t,n;return this.sphere?(t=G(this.long0+e.x/this.a/Math.cos(this.lat_ts)),n=Math.asin(e.y/this.a*Math.cos(this.lat_ts))):(n=Ti(this.e,2*e.y*this.k0/this.a),t=G(this.long0+e.x/(this.a*this.k0))),e.x=t,e.y=n,e}function Oi(){this.x0=this.x0||0,this.y0=this.y0||0,this.lat0=this.lat0||0,this.long0=this.long0||0,this.lat_ts=this.lat_ts||0,this.title=this.title||"Equidistant Cylindrical (Plate Carre)",this.rc=Math.cos(this.lat_ts)}function Mi(e){var t=e.x,n=e.y,r=G(t-this.long0),i=Rr(n-this.lat0);return e.x=this.x0+this.a*r*this.rc,e.y=this.y0+this.a*i,e}function _i(e){var t=e.x,n=e.y;return e.x=G(this.long0+(t-this.x0)/(this.a*this.rc)),e.y=Rr(this.lat0+(n-this.y0)/this.a),e}function Bi(){this.temp=this.b/this.a,this.es=1-Math.pow(this.temp,2),this.e=Math.sqrt(this.es),this.e0=Br(this.es),this.e1=jr(this.es),this.e2=Fr(this.es),this.e3=Ir(this.es),this.ml0=this.a*Hr(this.e0,this.e1,this.e2,this.e3,this.lat0)}function ji(e){var t=e.x,n=e.y,r,i,s,o=G(t-this.long0);s=o*Math.sin(n);if(this.sphere)Math.abs(n)<=l?(r=this.a*o,i=-1*this.a*this.lat0):(r=this.a*Math.sin(s)/Math.tan(n),i=this.a*(Rr(n-this.lat0)+(1-Math.cos(s))/Math.tan(n)));else if(Math.abs(n)<=l)r=this.a*o,i=-1*this.ml0;else{var u=qr(this.a,this.e,Math.sin(n))/Math.tan(n);r=u*Math.sin(s),i=this.a*Hr(this.e0,this.e1,this.e2,this.e3,n)-this.ml0+u*(1-Math.cos(s))}return e.x=r+this.x0,e.y=i+this.y0,e}function Fi(e){var t,n,r,i,s,o,u,a,f;r=e.x-this.x0,i=e.y-this.y0;if(this.sphere)if(Math.abs(i+this.a*this.lat0)<=l)t=G(r/this.a+this.long0),n=0;else{o=this.lat0+i/this.a,u=r*r/this.a/this.a+o*o,a=o;var c;for(s=Hi;s;--s){c=Math.tan(a),f=-1*(o*(a*c+1)-a-.5*(a*a+u)*c)/((a-o)/c-1),a+=f;if(Math.abs(f)<=l){n=a;break}}t=G(this.long0+Math.asin(r*Math.tan(a)/this.a)/Math.sin(n))}else if(Math.abs(i+this.ml0)<=l)n=0,t=G(this.long0+r/this.a);else{o=(this.ml0+i)/this.a,u=r*r/this.a/this.a+o*o,a=o;var h,p,d,v,m;for(s=Hi;s;--s){m=this.e*Math.sin(a),h=Math.sqrt(1-m*m)*Math.tan(a),p=this.a*Hr(this.e0,this.e1,this.e2,this.e3,a),d=this.e0-2*this.e1*Math.cos(2*a)+4*this.e2*Math.cos(4*a)-6*this.e3*Math.cos(6*a),v=p/this.a,f=(o*(h*v+1)-v-.5*h*(v*v+u))/(this.es*Math.sin(2*a)*(v*v+u-2*o*v)/(4*h)+(o-v)*(h*d-2/Math.sin(2*a))-d),a-=f;if(Math.abs(f)<=l){n=a;break}}h=Math.sqrt(1-this.es*Math.pow(Math.sin(n),2))*Math.tan(n),t=G(this.long0+Math.asin(r*h/this.a)/Math.sin(n))}return e.x=t,e.y=n,e}function Ri(){this.A=[],this.A[1]=.6399175073,this.A[2]=-0.1358797613,this.A[3]=.063294409,this.A[4]=-0.02526853,this.A[5]=.0117879,this.A[6]=-0.0055161,this.A[7]=.0026906,this.A[8]=-0.001333,this.A[9]=67e-5,this.A[10]=-0.00034,this.B_re=[],this.B_im=[],this.B_re[1]=.7557853228,this.B_im[1]=0,this.B_re[2]=.249204646,this.B_im[2]=.003371507,this.B_re[3]=-0.001541739,this.B_im[3]=.04105856,this.B_re[4]=-0.10162907,this.B_im[4]=.01727609,this.B_re[5]=-0.26623489,this.B_im[5]=-0.36249218,this.B_re[6]=-0.6870983,this.B_im[6]=-1.1651967,this.C_re=[],this.C_im=[],this.C_re[1]=1.3231270439,this.C_im[1]=0,this.C_re[2]=-0.577245789,this.C_im[2]=-0.007809598,this.C_re[3]=.508307513,this.C_im[3]=-0.112208952,this.C_re[4]=-0.15094762,this.C_im[4]=.18200602,this.C_re[5]=1.01418179,this.C_im[5]=1.64497696,this.C_re[6]=1.9660549,this.C_im[6]=2.5127645,this.D=[],this.D[1]=1.5627014243,this.D[2]=.5185406398,this.D[3]=-0.03333098,this.D[4]=-0.1052906,this.D[5]=-0.0368594,this.D[6]=.007317,this.D[7]=.0122,this.D[8]=.00394,this.D[9]=-0.0013}function Ui(e){var t,n=e.x,r=e.y,i=r-this.lat0,o=n-this.long0,u=i/s*1e-5,a=o,f=1,l=0;for(t=1;t<=10;t++)f*=u,l+=this.A[t]*f;var c=l,h=a,p=1,d=0,v,m,g=0,y=0;for(t=1;t<=6;t++)v=p*c-d*h,m=d*c+p*h,p=v,d=m,g=g+this.B_re[t]*p-this.B_im[t]*d,y=y+this.B_im[t]*p+this.B_re[t]*d;return e.x=y*this.a+this.x0,e.y=g*this.a+this.y0,e}function zi(e){var t,n=e.x,r=e.y,i=n-this.x0,o=r-this.y0,u=o/this.a,a=i/this.a,f=1,l=0,c,h,p=0,d=0;for(t=1;t<=6;t++)c=f*u-l*a,h=l*u+f*a,f=c,l=h,p=p+this.C_re[t]*f-this.C_im[t]*l,d=d+this.C_im[t]*f+this.C_re[t]*l;for(var v=0;v<this.iterations;v++){var m=p,g=d,y,b,w=u,E=a;for(t=2;t<=6;t++)y=m*p-g*d,b=g*p+m*d,m=y,g=b,w+=(t-1)*(this.B_re[t]*m-this.B_im[t]*g),E+=(t-1)*(this.B_im[t]*m+this.B_re[t]*g);m=1,g=0;var S=this.B_re[1],x=this.B_im[1];for(t=2;t<=6;t++)y=m*p-g*d,b=g*p+m*d,m=y,g=b,S+=t*(this.B_re[t]*m-this.B_im[t]*g),x+=t*(this.B_im[t]*m+this.B_re[t]*g);var T=S*S+x*x;p=(w*S+E*x)/T,d=(E*S-w*x)/T}var N=p,C=d,k=1,L=0;for(t=1;t<=9;t++)k*=N,L+=this.D[t]*k;var A=this.lat0+L*s*1e5,O=this.long0+C;return e.x=O,e.y=A,e}function Vi(){}function $i(e){var t=e.x,n=e.y,r=G(t-this.long0),i=this.x0+this.a*r,s=this.y0+this.a*Math.log(Math.tan(Math.PI/4+n/2.5))*1.25;return e.x=i,e.y=s,e}function Ji(e){e.x-=this.x0,e.y-=this.y0;var t=G(this.long0+e.x/this.a),n=2.5*(Math.atan(Math.exp(.8*e.y/this.a))-Math.PI/4);return e.x=t,e.y=n,e}function Yi(){this.sphere?(this.n=1,this.m=0,this.es=0,this.C_y=Math.sqrt((this.m+1)/this.n),this.C_x=this.C_y/(this.m+1)):this.en=Tn(this.es)}function Zi(e){var t,n,r=e.x,i=e.y;r=G(r-this.long0);if(this.sphere){if(!this.m)i=this.n!==1?Math.asin(this.n*Math.sin(i)):i;else{var s=this.n*Math.sin(i);for(var o=Gi;o;--o){var u=(this.m*i+Math.sin(i)-s)/(this.m+Math.cos(i));i-=u;if(Math.abs(u)<l)break}}t=this.a*this.C_x*r*(this.m+Math.cos(i)),n=this.a*this.C_y*i}else{var a=Math.sin(i),f=Math.cos(i);n=this.a*Nn(i,a,f,this.en),t=this.a*r*f/Math.sqrt(1-this.es*a*a)}return e.x=t,e.y=n,e}function es(e){var t,n,r,i;return e.x-=this.x0,r=e.x/this.a,e.y-=this.y0,t=e.y/this.a,this.sphere?(t/=this.C_y,r/=this.C_x*(this.m+Math.cos(t)),this.m?t=hi((this.m*t+Math.sin(t))/this.n):this.n!==1&&(t=hi(Math.sin(t)/this.n)),r=G(r+this.long0),t=Rr(t)):(t=kn(e.y/this.a,this.es,this.en),i=Math.abs(t),i<o?(i=Math.sin(t),n=this.long0+e.x*Math.sqrt(1-this.es*i*i)/(this.a*Math.cos(t)),r=G(n)):i-l<o&&(r=this.long0)),e.x=r,e.y=t,e}function rs(){}function is(e){var t=e.x,n=e.y,r=G(t-this.long0),i=n,s=Math.PI*Math.sin(n);for(var o=0;!0;o++){var u=-(i+Math.sin(i)-s)/(1+Math.cos(i));i+=u;if(Math.abs(u)<l)break}i/=2,Math.PI/2-Math.abs(n)<l&&(r=0);var a=.900316316158*this.a*r*Math.cos(i)+this.x0,f=1.4142135623731*this.a*Math.sin(i)+this.y0;return e.x=a,e.y=f,e}function ss(e){var t,n;e.x-=this.x0,e.y-=this.y0,n=e.y/(1.4142135623731*this.a),Math.abs(n)>.999999999999&&(n=.999999999999),t=Math.asin(n);var r=G(this.long0+e.x/(.900316316158*this.a*Math.cos(t)));r<-Math.PI&&(r=-Math.PI),r>Math.PI&&(r=Math.PI),n=(2*t+Math.sin(2*t))/Math.PI,Math.abs(n)>1&&(n=1);var i=Math.asin(n);return e.x=r,e.y=i,e}function as(){if(Math.abs(this.lat1+this.lat2)<l)return;this.lat2=this.lat2||this.lat1,this.temp=this.b/this.a,this.es=1-Math.pow(this.temp,2),this.e=Math.sqrt(this.es),this.e0=Br(this.es),this.e1=jr(this.es),this.e2=Fr(this.es),this.e3=Ir(this.es),this.sinphi=Math.sin(this.lat1),this.cosphi=Math.cos(this.lat1),this.ms1=K(this.e,this.sinphi,this.cosphi),this.ml1=Hr(this.e0,this.e1,this.e2,this.e3,this.lat1),Math.abs(this.lat1-this.lat2)<l?this.ns=this.sinphi:(this.sinphi=Math.sin(this.lat2),this.cosphi=Math.cos(this.lat2),this.ms2=K(this.e,this.sinphi,this.cosphi),this.ml2=Hr(this.e0,this.e1,this.e2,this.e3,this.lat2),this.ns=(this.ms1-this.ms2)/(this.ml2-this.ml1)),this.g=this.ml1+this.ms1/this.ns,this.ml0=Hr(this.e0,this.e1,this.e2,this.e3,this.lat0),this.rh=this.a*(this.g-this.ml0)}function fs(e){var t=e.x,n=e.y,r;if(this.sphere)r=this.a*(this.g-n);else{var i=Hr(this.e0,this.e1,this.e2,this.e3,n);r=this.a*(this.g-i)}var s=this.ns*G(t-this.long0),o=this.x0+r*Math.sin(s),u=this.y0+this.rh-r*Math.cos(s);return e.x=o,e.y=u,e}function ls(e){e.x-=this.x0,e.y=this.rh-e.y+this.y0;var t,n,r,i;this.ns>=0?(n=Math.sqrt(e.x*e.x+e.y*e.y),t=1):(n=-Math.sqrt(e.x*e.x+e.y*e.y),t=-1);var s=0;n!==0&&(s=Math.atan2(t*e.x,t*e.y));if(this.sphere)return i=G(this.long0+s/this.ns),r=Rr(this.g-n/this.a),e.x=i,e.y=r,e;var o=this.g-n/this.a;return r=Ur(o,this.e0,this.e1,this.e2,this.e3),i=G(this.long0+s/this.ns),e.x=i,e.y=r,e}function ps(){this.R=this.a}function ds(e){var t=e.x,n=e.y,r=G(t-this.long0),i,s;Math.abs(n)<=l&&(i=this.x0+this.R*r,s=this.y0);var u=hi(2*Math.abs(n/Math.PI));if(Math.abs(r)<=l||Math.abs(Math.abs(n)-o)<=l)i=this.x0,n>=0?s=this.y0+Math.PI*this.R*Math.tan(.5*u):s=this.y0+Math.PI*this.R*-Math.tan(.5*u);var a=.5*Math.abs(Math.PI/r-r/Math.PI),f=a*a,c=Math.sin(u),h=Math.cos(u),p=h/(c+h-1),d=p*p,v=p*(2/c-1),m=v*v,g=Math.PI*this.R*(a*(p-m)+Math.sqrt(f*(p-m)*(p-m)-(m+f)*(d-m)))/(m+f);r<0&&(g=-g),i=this.x0+g;var y=f+p;return g=Math.PI*this.R*(v*y-a*Math.sqrt((m+f)*(f+1)-y*y))/(m+f),n>=0?s=this.y0+g:s=this.y0-g,e.x=i,e.y=s,e}function vs(e){var t,n,r,i,s,o,u,a,f,c,h,p,d;return e.x-=this.x0,e.y-=this.y0,h=Math.PI*this.R,r=e.x/h,i=e.y/h,s=r*r+i*i,o=-Math.abs(i)*(1+s),u=o-2*i*i+r*r,a=-2*o+1+2*i*i+s*s,d=i*i/a+(2*u*u*u/a/a/a-9*o*u/a/a)/27,f=(o-u*u/3/a)/a,c=2*Math.sqrt(-f/3),h=3*d/f/c,Math.abs(h)>1&&(h>=0?h=1:h=-1),p=Math.acos(h)/3,e.y>=0?n=(-c*Math.cos(p+Math.PI/3)-u/3/a)*Math.PI:n=-(-c*Math.cos(p+Math.PI/3)-u/3/a)*Math.PI,Math.abs(r)<l?t=this.long0:t=G(this.long0+Math.PI*(s-1+Math.sqrt(1+2*(r*r-i*i)+s*s))/2/r),e.x=t,e.y=n,e}function ys(){this.sin_p12=Math.sin(this.lat0),this.cos_p12=Math.cos(this.lat0)}function bs(e){var t=e.x,n=e.y,r=Math.sin(e.y),i=Math.cos(e.y),s=G(t-this.long0),u,a,f,c,h,p,d,v,m,g,y,b,w,E,S,x,T,N,C,k,L,A,O;return this.sphere?Math.abs(this.sin_p12-1)<=l?(e.x=this.x0+this.a*(o-n)*Math.sin(s),e.y=this.y0-this.a*(o-n)*Math.cos(s),e):Math.abs(this.sin_p12+1)<=l?(e.x=this.x0+this.a*(o+n)*Math.sin(s),e.y=this.y0+this.a*(o+n)*Math.cos(s),e):(N=this.sin_p12*r+this.cos_p12*i*Math.cos(s),x=Math.acos(N),T=x/Math.sin(x),e.x=this.x0+this.a*T*i*Math.sin(s),e.y=this.y0+this.a*T*(this.cos_p12*r-this.sin_p12*i*Math.cos(s)),e):(u=Br(this.es),a=jr(this.es),f=Fr(this.es),c=Ir(this.es),Math.abs(this.sin_p12-1)<=l?(h=this.a*Hr(u,a,f,c,o),p=this.a*Hr(u,a,f,c,n),e.x=this.x0+(h-p)*Math.sin(s),e.y=this.y0-(h-p)*Math.cos(s),e):Math.abs(this.sin_p12+1)<=l?(h=this.a*Hr(u,a,f,c,o),p=this.a*Hr(u,a,f,c,n),e.x=this.x0+(h+p)*Math.sin(s),e.y=this.y0+(h+p)*Math.cos(s),e):(d=r/i,v=qr(this.a,this.e,this.sin_p12),m=qr(this.a,this.e,r),g=Math.atan((1-this.es)*d+this.es*v*this.sin_p12/(m*i)),y=Math.atan2(Math.sin(s),this.cos_p12*Math.tan(g)-this.sin_p12*Math.cos(s)),y===0?C=Math.asin(this.cos_p12*Math.sin(g)-this.sin_p12*Math.cos(g)):Math.abs(Math.abs(y)-Math.PI)<=l?C=-Math.asin(this.cos_p12*Math.sin(g)-this.sin_p12*Math.cos(g)):C=Math.asin(Math.sin(s)*Math.cos(g)/Math.sin(y)),b=this.e*this.sin_p12/Math.sqrt(1-this.es),w=this.e*this.cos_p12*Math.cos(y)/Math.sqrt(1-this.es),E=b*w,S=w*w,k=C*C,L=k*C,A=L*C,O=A*C,x=v*C*(1-k*S*(1-S)/6+L/8*E*(1-2*S)+A/120*(S*(4-7*S)-3*b*b*(1-7*S))-O/48*E),e.x=this.x0+x*Math.sin(y),e.y=this.y0+x*Math.cos(y),e))}function ws(e){e.x-=this.x0,e.y-=this.y0;var t,n,r,i,s,u,a,f,c,h,p,d,v,m,g,y,b,w,E,S,x,T,N;if(this.sphere){t=Math.sqrt(e.x*e.x+e.y*e.y);if(t>2*o*this.a)return;return n=t/this.a,r=Math.sin(n),i=Math.cos(n),s=this.long0,Math.abs(t)<=l?u=this.lat0:(u=hi(i*this.sin_p12+e.y*r*this.cos_p12/t),a=Math.abs(this.lat0)-o,Math.abs(a)<=l?this.lat0>=0?s=G(this.long0+Math.atan2(e.x,-e.y)):s=G(this.long0-Math.atan2(-e.x,e.y)):s=G(this.long0+Math.atan2(e.x*r,t*this.cos_p12*i-e.y*this.sin_p12*r))),e.x=s,e.y=u,e}return f=Br(this.es),c=jr(this.es),h=Fr(this.es),p=Ir(this.es),Math.abs(this.sin_p12-1)<=l?(d=this.a*Hr(f,c,h,p,o),t=Math.sqrt(e.x*e.x+e.y*e.y),v=d-t,u=Ur(v/this.a,f,c,h,p),s=G(this.long0+Math.atan2(e.x,-1*e.y)),e.x=s,e.y=u,e):Math.abs(this.sin_p12+1)<=l?(d=this.a*Hr(f,c,h,p,o),t=Math.sqrt(e.x*e.x+e.y*e.y),v=t-d,u=Ur(v/this.a,f,c,h,p),s=G(this.long0+Math.atan2(e.x,e.y)),e.x=s,e.y=u,e):(t=Math.sqrt(e.x*e.x+e.y*e.y),y=Math.atan2(e.x,e.y),m=qr(this.a,this.e,this.sin_p12),b=Math.cos(y),w=this.e*this.cos_p12*b,E=-w*w/(1-this.es),S=3*this.es*(1-E)*this.sin_p12*this.cos_p12*b/(1-this.es),x=t/m,T=x-E*(1+E)*Math.pow(x,3)/6-S*(1+3*E)*Math.pow(x,4)/24,N=1-E*T*T/2-x*T*T*T/6,g=Math.asin(this.sin_p12*Math.cos(T)+this.cos_p12*Math.sin(T)*b),s=G(this.long0+Math.asin(Math.sin(y)*Math.sin(T)/Math.cos(g))),u=Math.atan((1-this.es*N*this.sin_p12/Math.sin(g))*Math.tan(g)/(1-this.es)),e.x=s,e.y=u,e)}function xs(){this.sin_p14=Math.sin(this.lat0),this.cos_p14=Math.cos(this.lat0)}function Ts(e){var t,n,r,i,s,o,u,a,f=e.x,c=e.y;r=G(f-this.long0),t=Math.sin(c),n=Math.cos(c),i=Math.cos(r),o=this.sin_p14*t+this.cos_p14*n*i,s=1;if(o>0||Math.abs(o)<=l)u=this.a*s*n*Math.sin(r),a=this.y0+this.a*s*(this.cos_p14*t-this.sin_p14*n*i);return e.x=u,e.y=a,e}function Ns(e){var t,n,r,i,s,u,a;return e.x-=this.x0,e.y-=this.y0,t=Math.sqrt(e.x*e.x+e.y*e.y),n=hi(t/this.a),r=Math.sin(n),i=Math.cos(n),u=this.long0,Math.abs(t)<=l?(a=this.lat0,e.x=u,e.y=a,e):(a=hi(i*this.sin_p14+e.y*r*this.cos_p14/t),s=Math.abs(this.lat0)-o,Math.abs(s)<=l?(this.lat0>=0?u=G(this.long0+Math.atan2(e.x,-e.y)):u=G(this.long0-Math.atan2(-e.x,e.y)),e.x=u,e.y=a,e):(u=G(this.long0+Math.atan2(e.x*r,t*this.cos_p14*i-e.y*this.sin_p14*r)),e.x=u,e.y=a,e))}var e=function(e){e("EPSG:4326","+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees"),e("EPSG:4269","+title=NAD83 (long/lat) +proj=longlat +a=6378137.0 +b=6356752.31414036 +ellps=GRS80 +datum=NAD83 +units=degrees"),e("EPSG:3857","+title=WGS 84 / Pseudo-Mercator +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"),e.WGS84=e["EPSG:4326"],e["EPSG:3785"]=e["EPSG:3857"],e.GOOGLE=e["EPSG:3857"],e["EPSG:900913"]=e["EPSG:3857"],e["EPSG:102113"]=e["EPSG:3857"]},t=1,n=2,r=4,i=5,s=484813681109536e-20,o=Math.PI/2,u=.16666666666666666,a=.04722222222222222,f=.022156084656084655,l=typeof Number.EPSILON=="undefined"?1e-10:Number.EPSILON,c=.017453292519943295,h=57.29577951308232,p=Math.PI/4,d=Math.PI*2,v=3.14159265359,m={};m.greenwich=0,m.lisbon=-9.131906111111,m.paris=2.337229166667,m.bogota=-74.080916666667,m.madrid=-3.687938888889,m.rome=12.452333333333,m.bern=7.439583333333,m.jakarta=106.807719444444,m.ferro=-17.666666666667,m.brussels=4.367975,m.stockholm=18.058277777778,m.athens=23.7163375,m.oslo=10.722916666667;var g={ft:{to_meter:.3048},"us-ft":{to_meter:1200/3937}},y=/[\s_\-\/\(\)]/g,w=function(e){var t={},n=e.split("+").map(function(e){return e.trim()}).filter(function(e){return e}).reduce(function(e,t){var n=t.split("=");return n.push(!0),e[n[0].toLowerCase()]=n[1],e},{}),r,i,s,o={proj:"projName",datum:"datumCode",rf:function(e){t.rf=parseFloat(e)},lat_0:function(e){t.lat0=e*c},lat_1:function(e){t.lat1=e*c},lat_2:function(e){t.lat2=e*c},lat_ts:function(e){t.lat_ts=e*c},lon_0:function(e){t.long0=e*c},lon_1:function(e){t.long1=e*c},lon_2:function(e){t.long2=e*c},alpha:function(e){t.alpha=parseFloat(e)*c},lonc:function(e){t.longc=e*c},x_0:function(e){t.x0=parseFloat(e)},y_0:function(e){t.y0=parseFloat(e)},k_0:function(e){t.k0=parseFloat(e)},k:function(e){t.k0=parseFloat(e)},a:function(e){t.a=parseFloat(e)},b:function(e){t.b=parseFloat(e)},r_a:function(){t.R_A=!0},zone:function(e){t.zone=parseInt(e,10)},south:function(){t.utmSouth=!0},towgs84:function(e){t.datum_params=e.split(",").map(function(e){return parseFloat(e)})},to_meter:function(e){t.to_meter=parseFloat(e)},units:function(e){t.units=e;var n=b(g,e);n&&(t.to_meter=n.to_meter)},from_greenwich:function(e){t.from_greenwich=e*c},pm:function(e){var n=b(m,e);t.from_greenwich=(n?n:parseFloat(e))*c},nadgrids:function(e){e==="@null"?t.datumCode="none":t.nadgrids=e},axis:function(e){var n="ewnsud";e.length===3&&n.indexOf(e.substr(0,1))!==-1&&n.indexOf(e.substr(1,1))!==-1&&n.indexOf(e.substr(2,1))!==-1&&(t.axis=e)}};for(r in n)i=n[r],r in o?(s=o[r],typeof s=="function"?s(i):t[s]=i):t[r]=i;return typeof t.datumCode=="string"&&t.datumCode!=="WGS84"&&(t.datumCode=t.datumCode.toLowerCase()),t},E=1,S=2,x=3,T=4,N=5,C=-1,k=/\s/,L=/[A-Za-z]/,A=/[A-Za-z84]/,O=/[,\]]/,M=/[\d\.E\-\+]/;_.prototype.readCharicter=function(){var e=this.text[this.place++];if(this.state!==T)while(k.test(e)){if(this.place>=this.text.length)return;e=this.text[this.place++]}switch(this.state){case E:return this.neutral(e);case S:return this.keyword(e);case T:return this.quoted(e);case N:return this.afterquote(e);case x:return this.number(e);case C:return}},_.prototype.afterquote=function(e){if(e==='"'){this.word+='"',this.state=T;return}if(O.test(e)){this.word=this.word.trim(),this.afterItem(e);return}throw new Error("havn't handled \""+e+'" in afterquote yet, index '+this.place)},_.prototype.afterItem=function(e){if(e===","){this.word!==null&&this.currentObject.push(this.word),this.word=null,this.state=E;return}if(e==="]"){this.level--,this.word!==null&&(this.currentObject.push(this.word),this.word=null),this.state=E,this.currentObject=this.stack.pop(),this.currentObject||(this.state=C);return}},_.prototype.number=function(e){if(M.test(e)){this.word+=e;return}if(O.test(e)){this.word=parseFloat(this.word),this.afterItem(e);return}throw new Error("havn't handled \""+e+'" in number yet, index '+this.place)},_.prototype.quoted=function(e){if(e==='"'){this.state=N;return}this.word+=e;return},_.prototype.keyword=function(e){if(A.test(e)){this.word+=e;return}if(e==="["){var t=[];t.push(this.word),this.level++,this.root===null?this.root=t:this.currentObject.push(t),this.stack.push(this.currentObject),this.currentObject=t,this.state=E;return}if(O.test(e)){this.afterItem(e);return}throw new Error("havn't handled \""+e+'" in keyword yet, index '+this.place)},_.prototype.neutral=function(e){if(L.test(e)){this.word=e,this.state=S;return}if(e==='"'){this.word="",this.state=T;return}if(M.test(e)){this.word=e,this.state=x;return}if(O.test(e)){this.afterItem(e);return}throw new Error("havn't handled \""+e+'" in neutral yet, index '+this.place)},_.prototype.output=function(){while(this.place<this.text.length)this.readCharicter();if(this.state===C)return this.root;throw new Error('unable to parse string "'+this.text+'". State is '+this.state)};var B=.017453292519943295,q=function(e){var t=D(e),n=t.shift(),r=t.shift();t.unshift(["name",r]),t.unshift(["type",n]);var i={};return H(t,i),I(i),i};e(R);var W=["PROJECTEDCRS","PROJCRS","GEOGCS","GEOCCS","PROJCS","LOCAL_CS","GEODCRS","GEODETICCRS","GEODETICDATUM","ENGCRS","ENGINEERINGCRS"],J=function(e,t){e=e||{};var n,r;if(!t)return e;for(r in t)n=t[r],n!==undefined&&(e[r]=n);return e},K=function(e,t,n){var r=e*t;return n/Math.sqrt(1-r*r)},Q=function(e){return e<0?-1:1},G=function(e){return Math.abs(e)<=v?e:e-Q(e)*d},Y=function(e,t,n){var r=e*n,i=.5*e;return r=Math.pow((1-r)/(1+r),i),Math.tan(.5*(o-t))/r},Z=function(e,t){var n=.5*e,r,i,s=o-2*Math.atan(t);for(var u=0;u<=15;u++){r=e*Math.sin(s),i=o-2*Math.atan(t*Math.pow((1-r)/(1+r),n))-s,s+=i;if(Math.abs(i)<=1e-10)return s}return-9999},rt=["Mercator","Popular Visualisation Pseudo Mercator","Mercator_1SP","Mercator_Auxiliary_Sphere","merc"],it={init:et,forward:tt,inverse:nt,names:rt},ut=["longlat","identity"],at={init:st,forward:ot,inverse:ot,names:ut},ft=[it,at],lt={},ct=[],vt={start:dt,add:ht,get:pt},mt={};mt.MERIT={a:6378137,rf:298.257,ellipseName:"MERIT 1983"},mt.SGS85={a:6378136,rf:298.257,ellipseName:"Soviet Geodetic System 85"},mt.GRS80={a:6378137,rf:298.257222101,ellipseName:"GRS 1980(IUGG, 1980)"},mt.IAU76={a:6378140,rf:298.257,ellipseName:"IAU 1976"},mt.airy={a:6377563.396,b:6356256.91,ellipseName:"Airy 1830"},mt.APL4={a:6378137,rf:298.25,ellipseName:"Appl. Physics. 1965"},mt.NWL9D={a:6378145,rf:298.25,ellipseName:"Naval Weapons Lab., 1965"},mt.mod_airy={a:6377340.189,b:6356034.446,ellipseName:"Modified Airy"},mt.andrae={a:6377104.43,rf:300,ellipseName:"Andrae 1876 (Den., Iclnd.)"},mt.aust_SA={a:6378160,rf:298.25,ellipseName:"Australian Natl & S. Amer. 1969"},mt.GRS67={a:6378160,rf:298.247167427,ellipseName:"GRS 67(IUGG 1967)"},mt.bessel={a:6377397.155,rf:299.1528128,ellipseName:"Bessel 1841"},mt.bess_nam={a:6377483.865,rf:299.1528128,ellipseName:"Bessel 1841 (Namibia)"},mt.clrk66={a:6378206.4,b:6356583.8,ellipseName:"Clarke 1866"},mt.clrk80={a:6378249.145,rf:293.4663,ellipseName:"Clarke 1880 mod."},mt.clrk58={a:6378293.645208759,rf:294.2606763692654,ellipseName:"Clarke 1858"},mt.CPM={a:6375738.7,rf:334.29,ellipseName:"Comm. des Poids et Mesures 1799"},mt.delmbr={a:6376428,rf:311.5,ellipseName:"Delambre 1810 (Belgium)"},mt.engelis={a:6378136.05,rf:298.2566,ellipseName:"Engelis 1985"},mt.evrst30={a:6377276.345,rf:300.8017,ellipseName:"Everest 1830"},mt.evrst48={a:6377304.063,rf:300.8017,ellipseName:"Everest 1948"},mt.evrst56={a:6377301.243,rf:300.8017,ellipseName:"Everest 1956"},mt.evrst69={a:6377295.664,rf:300.8017,ellipseName:"Everest 1969"},mt.evrstSS={a:6377298.556,rf:300.8017,ellipseName:"Everest (Sabah & Sarawak)"},mt.fschr60={a:6378166,rf:298.3,ellipseName:"Fischer (Mercury Datum) 1960"},mt.fschr60m={a:6378155,rf:298.3,ellipseName:"Fischer 1960"},mt.fschr68={a:6378150,rf:298.3,ellipseName:"Fischer 1968"},mt.helmert={a:6378200,rf:298.3,ellipseName:"Helmert 1906"},mt.hough={a:6378270,rf:297,ellipseName:"Hough"},mt.intl={a:6378388,rf:297,ellipseName:"International 1909 (Hayford)"},mt.kaula={a:6378163,rf:298.24,ellipseName:"Kaula 1961"},mt.lerch={a:6378139,rf:298.257,ellipseName:"Lerch 1979"},mt.mprts={a:6397300,rf:191,ellipseName:"Maupertius 1738"},mt.new_intl={a:6378157.5,b:6356772.2,ellipseName:"New International 1967"},mt.plessis={a:6376523,rf:6355863,ellipseName:"Plessis 1817 (France)"},mt.krass={a:6378245,rf:298.3,ellipseName:"Krassovsky, 1942"},mt.SEasia={a:6378155,b:6356773.3205,ellipseName:"Southeast Asia"},mt.walbeck={a:6376896,b:6355834.8467,ellipseName:"Walbeck"},mt.WGS60={a:6378165,rf:298.3,ellipseName:"WGS 60"},mt.WGS66={a:6378145,rf:298.25,ellipseName:"WGS 66"},mt.WGS7={a:6378135,rf:298.26,ellipseName:"WGS 72"};var gt=mt.WGS84={a:6378137,rf:298.257223563,ellipseName:"WGS 84"};mt.sphere={a:6370997,b:6370997,ellipseName:"Normal Sphere (r=6370997)"};var wt={};wt.wgs84={towgs84:"0,0,0",ellipse:"WGS84",datumName:"WGS84"},wt.ch1903={towgs84:"674.374,15.056,405.346",ellipse:"bessel",datumName:"swiss"},wt.ggrs87={towgs84:"-199.87,74.79,246.62",ellipse:"GRS80",datumName:"Greek_Geodetic_Reference_System_1987"},wt.nad83={towgs84:"0,0,0",ellipse:"GRS80",datumName:"North_American_Datum_1983"},wt.nad27={nadgrids:"@conus,@alaska,@ntv2_0.gsb,@ntv1_can.dat",ellipse:"clrk66",datumName:"North_American_Datum_1927"},wt.potsdam={towgs84:"606.0,23.0,413.0",ellipse:"bessel",datumName:"Potsdam Rauenberg 1950 DHDN"},wt.carthage={towgs84:"-263.0,6.0,431.0",ellipse:"clark80",datumName:"Carthage 1934 Tunisia"},wt.hermannskogel={towgs84:"653.0,-212.0,449.0",ellipse:"bessel",datumName:"Hermannskogel"},wt.ire65={towgs84:"482.530,-130.596,564.557,-1.042,-0.214,-0.631,8.15",ellipse:"mod_airy",datumName:"Ireland 1965"},wt.rassadiran={towgs84:"-133.63,-157.5,-158.62",ellipse:"intl",datumName:"Rassadiran"},wt.nzgd49={towgs84:"59.47,-5.04,187.44,0.47,-0.1,1.024,-4.5993",ellipse:"intl",datumName:"New Zealand Geodetic Datum 1949"},wt.osgb36={towgs84:"446.448,-125.157,542.060,0.1502,0.2470,0.8421,-20.4894",ellipse:"airy",datumName:"Airy 1830"},wt.s_jtsk={towgs84:"589,76,480",ellipse:"bessel",datumName:"S-JTSK (Ferro)"},wt.beduaram={towgs84:"-106,-87,188",ellipse:"clrk80",datumName:"Beduaram"},wt.gunung_segara={towgs84:"-403,684,41",ellipse:"bessel",datumName:"Gunung Segara Jakarta"},wt.rnb72={towgs84:"106.869,-52.2978,103.724,-0.33657,0.456955,-1.84218,1",ellipse:"intl",datumName:"Reseau National Belge 1972"},St.projections=vt,St.projections.start();var At=function(e,t,n){return xt(e,t)?n:e.datum_type===i||t.datum_type===i?n:e.es===t.es&&e.a===t.a&&!Lt(e.datum_type)&&!Lt(t.datum_type)?n:(n=Tt(n,e.es,e.a),Lt(e.datum_type)&&(n=Ct(n,e.datum_type,e.datum_params)),Lt(t.datum_type)&&(n=kt(n,t.datum_type,t.datum_params)),Nt(n,t.es,t.a,t.b))},Ot=function(e,t,n){var r=n.x,i=n.y,s=n.z||0,o,u,a,f={};for(a=0;a<3;a++){if(t&&a===2&&n.z===undefined)continue;a===0?(o=r,u="x"):a===1?(o=i,u="y"):(o=s,u="z");switch(e.axis[a]){case"e":f[u]=o;break;case"w":f[u]=-o;break;case"n":f[u]=o;break;case"s":f[u]=-o;break;case"u":n[u]!==undefined&&(f.z=o);break;case"d":n[u]!==undefined&&(f.z=-o);break;default:return null}}return f},Mt=function(e){var t={x:e[0],y:e[1]};return e.length>2&&(t.z=e[2]),e.length>3&&(t.m=e[3]),t},Pt=St("WGS84"),Ft=6,It="AJSAJS",qt="AFAFAF",Rt=65,Ut=73,zt=79,Wt=86,Xt=90,Vt={forward:$t,inverse:Jt,toPoint:Kt};ln.fromMGRS=function(e){return new ln(Kt(e))},ln.prototype.toMGRS=function(e){return $t([this.x,this.y],e)};var cn="2.4.3",hn=1,pn=.25,dn=.046875,vn=.01953125,mn=.01068115234375,gn=.75,yn=.46875,bn=.013020833333333334,wn=.007120768229166667,En=.3645833333333333,Sn=.005696614583333333,xn=.3076171875,Tn=function(e){var t=[];t[0]=hn-e*(pn+e*(dn+e*(vn+e*mn))),t[1]=e*(gn-e*(dn+e*(vn+e*mn)));var n=e*e;return t[2]=n*(yn-e*(bn+e*wn)),n*=e,t[3]=n*(En-e*Sn),t[4]=n*e*xn,t},Nn=function(e,t,n,r){return n*=t,t*=t,r[0]*e-n*(r[1]+t*(r[2]+t*(r[3]+t*r[4])))},Cn=20,kn=function(e,t,n){var r=1/(1-t),i=e;for(var s=Cn;s;--s){var o=Math.sin(i),u=1-t*o*o;u=(Nn(i,o,Math.cos(i),n)-e)*u*Math.sqrt(u)*r,i-=u;if(Math.abs(u)<l)return i}return i},Mn=["Transverse_Mercator","Transverse Mercator","tmerc"],_n={init:Ln,forward:An,inverse:On,names:Mn},Dn=function(e){var t=Math.exp(e);return t=(t-1/t)/2,t},Pn=function(e,t){e=Math.abs(e),t=Math.abs(t);var n=Math.max(e,t),r=Math.min(e,t)/(n?n:1);return n*Math.sqrt(1+Math.pow(r,2))},Hn=function(e){var t=1+e,n=t-1;return n===0?e:e*Math.log(t)/n},Bn=function(e){var t=Math.abs(e);return t=Hn(t*(1+t/(Pn(1,t)+1))),e<0?-t:t},jn=function(e,t){var n=2*Math.cos(2*t),r=e.length-1,i=e[r],s=0,o;while(--r>=0)o=-s+n*i+e[r],s=i,i=o;return t+o*Math.sin(2*t)},Fn=function(e,t){var n=2*Math.cos(t),r=e.length-1,i=e[r],s=0,o;while(--r>=0)o=-s+n*i+e[r],s=i,i=o;return Math.sin(t)*o},In=function(e){var t=Math.exp(e);return t=(t+1/t)/2,t},qn=function(e,t,n){var r=Math.sin(t),i=Math.cos(t),s=Dn(n),o=In(n),u=2*i*o,a=-2*r*s,f=e.length-1,l=e[f],c=0,h=0,p=0,d,v;while(--f>=0)d=h,v=c,h=l,c=p,l=-d+u*h-a*c+e[f],p=-v+a*h+u*c;return u=r*o,a=i*s,[u*l-a*p,u*p+a*l]},Wn=["Extended_Transverse_Mercator","Extended Transverse Mercator","etmerc"],Xn={init:Rn,forward:Un,inverse:zn,names:Wn},Vn=function(e,t){if(e===undefined){e=Math.floor((G(t)+Math.PI)*30/Math.PI)+1;if(e<0)return 0;if(e>60)return 60}return e},$n="etmerc",Kn=["Universal Transverse Mercator System","utm"],Qn={init:Jn,names:Kn,dependsOn:$n},Gn=function(e,t){return Math.pow((1-e)/(1+e),t)},Yn=20,nr=["gauss"],rr={init:Zn,forward:er,inverse:tr,names:nr},ur=["Stereographic_North_Pole","Oblique_Stereographic","Polar_Stereographic","sterea","Oblique Stereographic Alternative"],ar={init:ir,forward:sr,inverse:or,names:ur},pr=["stere","Stereographic_South_Pole","Polar Stereographic (variant B)"],dr={init:lr,forward:cr,inverse:hr,names:pr,ssfn_:fr},yr=["somerc"],br={init:vr,forward:mr,inverse:gr,names:yr},xr=["Hotine_Oblique_Mercator","Hotine Oblique Mercator","Hotine_Oblique_Mercator_Azimuth_Natural_Origin","Hotine_Oblique_Mercator_Azimuth_Center","omerc"],Tr={init:wr,forward:Er,inverse:Sr,names:xr},Lr=["Lambert Tangential Conformal Conic Projection","Lambert_Conformal_Conic","Lambert_Conformal_Conic_2SP","lcc"],Ar={init:Nr,forward:Cr,inverse:kr,names:Lr},Dr=["Krovak","krovak"],Pr={init:Or,forward:Mr,inverse:_r,names:Dr},Hr=function(e,t,n,r,i){return e*i-t*Math.sin(2*i)+n*Math.sin(4*i)-r*Math.sin(6*i)},Br=function(e){return 1-.25*e*(1+e/16*(3+1.25*e))},jr=function(e){return.375*e*(1+.25*e*(1+.46875*e))},Fr=function(e){return.05859375*e*e*(1+.75*e)},Ir=function(e){return e*e*e*(35/3072)},qr=function(e,t,n){var r=t*n;return e/Math.sqrt(1-r*r)},Rr=function(e){return Math.abs(e)<o?e:e-Q(e)*Math.PI},Ur=function(e,t,n,r,i){var s,o;s=e/t;for(var u=0;u<15;u++){o=(e-(t*s-n*Math.sin(2*s)+r*Math.sin(4*s)-i*Math.sin(6*s)))/(t-2*n*Math.cos(2*s)+4*r*Math.cos(4*s)-6*i*Math.cos(6*s)),s+=o;if(Math.abs(o)<=1e-10)return s}return NaN},Vr=["Cassini","Cassini_Soldner","cass"],$r={init:zr,forward:Wr,inverse:Xr,names:Vr},Jr=function(e,t){var n;return e>1e-7?(n=e*t,(1-e*e)*(t/(1-n*n)-.5/e*Math.log((1-n)/(1+n)))):2*t},Kr=1,Qr=2,Gr=3,Yr=4,ni=.3333333333333333,ri=.17222222222222222,ii=.10257936507936508,si=.06388888888888888,oi=.0664021164021164,ui=.016415012942191543,li=["Lambert Azimuthal Equal Area","Lambert_Azimuthal_Equal_Area","laea"],ci={init:Zr,forward:ei,inverse:ti,names:li,S_POLE:Kr,N_POLE:Qr,EQUIT:Gr,OBLIQ:Yr},hi=function(e){return Math.abs(e)>1&&(e=e>1?1:-1),Math.asin(e)},gi=["Albers_Conic_Equal_Area","Albers","aea"],yi={init:pi,forward:di,inverse:vi,names:gi,phi1z:mi},Si=["gnom"],xi={init:bi,forward:wi,inverse:Ei,names:Si},Ti=function(e,t){var n=1-(1-e*e)/(2*e)*Math.log((1-e)/(1+e));if(Math.abs(Math.abs(t)-n)<1e-6)return t<0?-1*o:o;var r=Math.asin(.5*t),i,s,u,a;for(var f=0;f<30;f++){s=Math.sin(r),u=Math.cos(r),a=e*s,i=Math.pow(1-a*a,2)/(2*u)*(t/(1-e*e)-s/(1-a*a)+.5/e*Math.log((1-a)/(1+a))),r+=i;if(Math.abs(i)<=1e-10)return r}return NaN},Li=["cea"],Ai={init:Ni,forward:Ci,inverse:ki,names:Li},Di=["Equirectangular","Equidistant_Cylindrical","eqc"],Pi={init:Oi,forward:Mi,inverse:_i,names:Di},Hi=20,Ii=["Polyconic","poly"],qi={init:Bi,forward:ji,inverse:Fi,names:Ii},Wi=["New_Zealand_Map_Grid","nzmg"],Xi={init:Ri,forward:Ui,inverse:zi,names:Wi},Ki=["Miller_Cylindrical","mill"],Qi={init:Vi,forward:$i,inverse:Ji,names:Ki},Gi=20,ts=["Sinusoidal","sinu"],ns={init:Yi,forward:Zi,inverse:es,names:ts},os=["Mollweide","moll"],us={init:rs,forward:is,inverse:ss,names:os},cs=["Equidistant_Conic","eqdc"],hs={init:as,forward:fs,inverse:ls,names:cs},ms=["Van_der_Grinten_I","VanDerGrinten","vandg"],gs={init:ps,forward:ds,inverse:vs,names:ms},Es=["Azimuthal_Equidistant","aeqd"],Ss={init:ys,forward:bs,inverse:ws,names:Es},Cs=["ortho"],ks={init:xs,forward:Ts,inverse:Ns,names:Cs},Ls=function(e){e.Proj.projections.add(_n),e.Proj.projections.add(Xn),e.Proj.projections.add(Qn),e.Proj.projections.add(ar),e.Proj.projections.add(dr),e.Proj.projections.add(br),e.Proj.projections.add(Tr),e.Proj.projections.add(Ar),e.Proj.projections.add(Pr),e.Proj.projections.add($r),e.Proj.projections.add(ci),e.Proj.projections.add(yi),e.Proj.projections.add(xi),e.Proj.projections.add(Ai),e.Proj.projections.add(Pi),e.Proj.projections.add(qi),e.Proj.projections.add(Xi),e.Proj.projections.add(Qi),e.Proj.projections.add(ns),e.Proj.projections.add(us),e.Proj.projections.add(hs),e.Proj.projections.add(gs),e.Proj.projections.add(Ss),e.Proj.projections.add(ks)};return jt.defaultDatum="WGS84",jt.Proj=St,jt.WGS84=new jt.Proj("WGS84"),jt.Point=ln,jt.toPoint=Mt,jt.defs=R,jt.transform=Dt,jt.mgrs=Vt,jt.version=cn,Ls(jt),jt});
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define(factory) :
+	(global.proj4 = factory());
+}(this, (function () { 'use strict';
+
+	var globals = function(defs) {
+	  defs('EPSG:4326', "+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees");
+	  defs('EPSG:4269', "+title=NAD83 (long/lat) +proj=longlat +a=6378137.0 +b=6356752.31414036 +ellps=GRS80 +datum=NAD83 +units=degrees");
+	  defs('EPSG:3857', "+title=WGS 84 / Pseudo-Mercator +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs");
+
+	  defs.WGS84 = defs['EPSG:4326'];
+	  defs['EPSG:3785'] = defs['EPSG:3857']; // maintain backward compat, official code is 3857
+	  defs.GOOGLE = defs['EPSG:3857'];
+	  defs['EPSG:900913'] = defs['EPSG:3857'];
+	  defs['EPSG:102113'] = defs['EPSG:3857'];
+	};
+
+	var PJD_3PARAM = 1;
+	var PJD_7PARAM = 2;
+	var PJD_WGS84 = 4; // WGS84 or equivalent
+	var PJD_NODATUM = 5; // WGS84 or equivalent
+	var SEC_TO_RAD = 4.84813681109535993589914102357e-6;
+	var HALF_PI = Math.PI/2;
+	// ellipoid pj_set_ell.c
+	var SIXTH = 0.1666666666666666667;
+	/* 1/6 */
+	var RA4 = 0.04722222222222222222;
+	/* 17/360 */
+	var RA6 = 0.02215608465608465608;
+	var EPSLN = (typeof Number.EPSILON === 'undefined') ? 1.0e-10 : Number.EPSILON;
+	var D2R = 0.01745329251994329577;
+	var R2D = 57.29577951308232088;
+	var FORTPI = Math.PI/4;
+	var TWO_PI = Math.PI * 2;
+	// SPI is slightly greater than Math.PI, so values that exceed the -180..180
+	// degree range by a tiny amount don't get wrapped. This prevents points that
+	// have drifted from their original location along the 180th meridian (due to
+	// floating point error) from changing their sign.
+	var SPI = 3.14159265359;
+
+	var exports$1 = {};
+	exports$1.greenwich = 0.0; //"0dE",
+	exports$1.lisbon = -9.131906111111; //"9d07'54.862\"W",
+	exports$1.paris = 2.337229166667; //"2d20'14.025\"E",
+	exports$1.bogota = -74.080916666667; //"74d04'51.3\"W",
+	exports$1.madrid = -3.687938888889; //"3d41'16.58\"W",
+	exports$1.rome = 12.452333333333; //"12d27'8.4\"E",
+	exports$1.bern = 7.439583333333; //"7d26'22.5\"E",
+	exports$1.jakarta = 106.807719444444; //"106d48'27.79\"E",
+	exports$1.ferro = -17.666666666667; //"17d40'W",
+	exports$1.brussels = 4.367975; //"4d22'4.71\"E",
+	exports$1.stockholm = 18.058277777778; //"18d3'29.8\"E",
+	exports$1.athens = 23.7163375; //"23d42'58.815\"E",
+	exports$1.oslo = 10.722916666667; //"10d43'22.5\"E"
+
+	var units = {
+	  ft: {to_meter: 0.3048},
+	  'us-ft': {to_meter: 1200 / 3937}
+	};
+
+	var ignoredChar = /[\s_\-\/\(\)]/g;
+	function match(obj, key) {
+	  if (obj[key]) {
+	    return obj[key];
+	  }
+	  var keys = Object.keys(obj);
+	  var lkey = key.toLowerCase().replace(ignoredChar, '');
+	  var i = -1;
+	  var testkey, processedKey;
+	  while (++i < keys.length) {
+	    testkey = keys[i];
+	    processedKey = testkey.toLowerCase().replace(ignoredChar, '');
+	    if (processedKey === lkey) {
+	      return obj[testkey];
+	    }
+	  }
+	}
+
+	var parseProj = function(defData) {
+	  var self = {};
+	  var paramObj = defData.split('+').map(function(v) {
+	    return v.trim();
+	  }).filter(function(a) {
+	    return a;
+	  }).reduce(function(p, a) {
+	    var split = a.split('=');
+	    split.push(true);
+	    p[split[0].toLowerCase()] = split[1];
+	    return p;
+	  }, {});
+	  var paramName, paramVal, paramOutname;
+	  var params = {
+	    proj: 'projName',
+	    datum: 'datumCode',
+	    rf: function(v) {
+	      self.rf = parseFloat(v);
+	    },
+	    lat_0: function(v) {
+	      self.lat0 = v * D2R;
+	    },
+	    lat_1: function(v) {
+	      self.lat1 = v * D2R;
+	    },
+	    lat_2: function(v) {
+	      self.lat2 = v * D2R;
+	    },
+	    lat_ts: function(v) {
+	      self.lat_ts = v * D2R;
+	    },
+	    lon_0: function(v) {
+	      self.long0 = v * D2R;
+	    },
+	    lon_1: function(v) {
+	      self.long1 = v * D2R;
+	    },
+	    lon_2: function(v) {
+	      self.long2 = v * D2R;
+	    },
+	    alpha: function(v) {
+	      self.alpha = parseFloat(v) * D2R;
+	    },
+	    lonc: function(v) {
+	      self.longc = v * D2R;
+	    },
+	    x_0: function(v) {
+	      self.x0 = parseFloat(v);
+	    },
+	    y_0: function(v) {
+	      self.y0 = parseFloat(v);
+	    },
+	    k_0: function(v) {
+	      self.k0 = parseFloat(v);
+	    },
+	    k: function(v) {
+	      self.k0 = parseFloat(v);
+	    },
+	    a: function(v) {
+	      self.a = parseFloat(v);
+	    },
+	    b: function(v) {
+	      self.b = parseFloat(v);
+	    },
+	    r_a: function() {
+	      self.R_A = true;
+	    },
+	    zone: function(v) {
+	      self.zone = parseInt(v, 10);
+	    },
+	    south: function() {
+	      self.utmSouth = true;
+	    },
+	    towgs84: function(v) {
+	      self.datum_params = v.split(",").map(function(a) {
+	        return parseFloat(a);
+	      });
+	    },
+	    to_meter: function(v) {
+	      self.to_meter = parseFloat(v);
+	    },
+	    units: function(v) {
+	      self.units = v;
+	      var unit = match(units, v);
+	      if (unit) {
+	        self.to_meter = unit.to_meter;
+	      }
+	    },
+	    from_greenwich: function(v) {
+	      self.from_greenwich = v * D2R;
+	    },
+	    pm: function(v) {
+	      var pm = match(exports$1, v);
+	      self.from_greenwich = (pm ? pm : parseFloat(v)) * D2R;
+	    },
+	    nadgrids: function(v) {
+	      if (v === '@null') {
+	        self.datumCode = 'none';
+	      }
+	      else {
+	        self.nadgrids = v;
+	      }
+	    },
+	    axis: function(v) {
+	      var legalAxis = "ewnsud";
+	      if (v.length === 3 && legalAxis.indexOf(v.substr(0, 1)) !== -1 && legalAxis.indexOf(v.substr(1, 1)) !== -1 && legalAxis.indexOf(v.substr(2, 1)) !== -1) {
+	        self.axis = v;
+	      }
+	    }
+	  };
+	  for (paramName in paramObj) {
+	    paramVal = paramObj[paramName];
+	    if (paramName in params) {
+	      paramOutname = params[paramName];
+	      if (typeof paramOutname === 'function') {
+	        paramOutname(paramVal);
+	      }
+	      else {
+	        self[paramOutname] = paramVal;
+	      }
+	    }
+	    else {
+	      self[paramName] = paramVal;
+	    }
+	  }
+	  if(typeof self.datumCode === 'string' && self.datumCode !== "WGS84"){
+	    self.datumCode = self.datumCode.toLowerCase();
+	  }
+	  return self;
+	};
+
+	var NEUTRAL = 1;
+	var KEYWORD = 2;
+	var NUMBER = 3;
+	var QUOTED = 4;
+	var AFTERQUOTE = 5;
+	var ENDED = -1;
+	var whitespace = /\s/;
+	var latin = /[A-Za-z]/;
+	var keyword = /[A-Za-z84]/;
+	var endThings = /[,\]]/;
+	var digets = /[\d\.E\-\+]/;
+	// const ignoredChar = /[\s_\-\/\(\)]/g;
+	function Parser(text) {
+	  if (typeof text !== 'string') {
+	    throw new Error('not a string');
+	  }
+	  this.text = text.trim();
+	  this.level = 0;
+	  this.place = 0;
+	  this.root = null;
+	  this.stack = [];
+	  this.currentObject = null;
+	  this.state = NEUTRAL;
+	}
+	Parser.prototype.readCharicter = function() {
+	  var char = this.text[this.place++];
+	  if (this.state !== QUOTED) {
+	    while (whitespace.test(char)) {
+	      if (this.place >= this.text.length) {
+	        return;
+	      }
+	      char = this.text[this.place++];
+	    }
+	  }
+	  switch (this.state) {
+	    case NEUTRAL:
+	      return this.neutral(char);
+	    case KEYWORD:
+	      return this.keyword(char)
+	    case QUOTED:
+	      return this.quoted(char);
+	    case AFTERQUOTE:
+	      return this.afterquote(char);
+	    case NUMBER:
+	      return this.number(char);
+	    case ENDED:
+	      return;
+	  }
+	};
+	Parser.prototype.afterquote = function(char) {
+	  if (char === '"') {
+	    this.word += '"';
+	    this.state = QUOTED;
+	    return;
+	  }
+	  if (endThings.test(char)) {
+	    this.word = this.word.trim();
+	    this.afterItem(char);
+	    return;
+	  }
+	  throw new Error('havn\'t handled "' +char + '" in afterquote yet, index ' + this.place);
+	};
+	Parser.prototype.afterItem = function(char) {
+	  if (char === ',') {
+	    if (this.word !== null) {
+	      this.currentObject.push(this.word);
+	    }
+	    this.word = null;
+	    this.state = NEUTRAL;
+	    return;
+	  }
+	  if (char === ']') {
+	    this.level--;
+	    if (this.word !== null) {
+	      this.currentObject.push(this.word);
+	      this.word = null;
+	    }
+	    this.state = NEUTRAL;
+	    this.currentObject = this.stack.pop();
+	    if (!this.currentObject) {
+	      this.state = ENDED;
+	    }
+
+	    return;
+	  }
+	};
+	Parser.prototype.number = function(char) {
+	  if (digets.test(char)) {
+	    this.word += char;
+	    return;
+	  }
+	  if (endThings.test(char)) {
+	    this.word = parseFloat(this.word);
+	    this.afterItem(char);
+	    return;
+	  }
+	  throw new Error('havn\'t handled "' +char + '" in number yet, index ' + this.place);
+	};
+	Parser.prototype.quoted = function(char) {
+	  if (char === '"') {
+	    this.state = AFTERQUOTE;
+	    return;
+	  }
+	  this.word += char;
+	  return;
+	};
+	Parser.prototype.keyword = function(char) {
+	  if (keyword.test(char)) {
+	    this.word += char;
+	    return;
+	  }
+	  if (char === '[') {
+	    var newObjects = [];
+	    newObjects.push(this.word);
+	    this.level++;
+	    if (this.root === null) {
+	      this.root = newObjects;
+	    } else {
+	      this.currentObject.push(newObjects);
+	    }
+	    this.stack.push(this.currentObject);
+	    this.currentObject = newObjects;
+	    this.state = NEUTRAL;
+	    return;
+	  }
+	  if (endThings.test(char)) {
+	    this.afterItem(char);
+	    return;
+	  }
+	  throw new Error('havn\'t handled "' +char + '" in keyword yet, index ' + this.place);
+	};
+	Parser.prototype.neutral = function(char) {
+	  if (latin.test(char)) {
+	    this.word = char;
+	    this.state = KEYWORD;
+	    return;
+	  }
+	  if (char === '"') {
+	    this.word = '';
+	    this.state = QUOTED;
+	    return;
+	  }
+	  if (digets.test(char)) {
+	    this.word = char;
+	    this.state = NUMBER;
+	    return;
+	  }
+	  if (endThings.test(char)) {
+	    this.afterItem(char);
+	    return;
+	  }
+	  throw new Error('havn\'t handled "' +char + '" in neutral yet, index ' + this.place);
+	};
+	Parser.prototype.output = function() {
+	  while (this.place < this.text.length) {
+	    this.readCharicter();
+	  }
+	  if (this.state === ENDED) {
+	    return this.root;
+	  }
+	  throw new Error('unable to parse string "' +this.text + '". State is ' + this.state);
+	};
+
+	function parseString(txt) {
+	  var parser = new Parser(txt);
+	  return parser.output();
+	}
+
+	function mapit(obj, key, value) {
+	  if (Array.isArray(key)) {
+	    value.unshift(key);
+	    key = null;
+	  }
+	  var thing = key ? {} : obj;
+
+	  var out = value.reduce(function(newObj, item) {
+	    sExpr(item, newObj);
+	    return newObj
+	  }, thing);
+	  if (key) {
+	    obj[key] = out;
+	  }
+	}
+
+	function sExpr(v, obj) {
+	  if (!Array.isArray(v)) {
+	    obj[v] = true;
+	    return;
+	  }
+	  var key = v.shift();
+	  if (key === 'PARAMETER') {
+	    key = v.shift();
+	  }
+	  if (v.length === 1) {
+	    if (Array.isArray(v[0])) {
+	      obj[key] = {};
+	      sExpr(v[0], obj[key]);
+	      return;
+	    }
+	    obj[key] = v[0];
+	    return;
+	  }
+	  if (!v.length) {
+	    obj[key] = true;
+	    return;
+	  }
+	  if (key === 'TOWGS84') {
+	    obj[key] = v;
+	    return;
+	  }
+	  if (!Array.isArray(key)) {
+	    obj[key] = {};
+	  }
+
+	  var i;
+	  switch (key) {
+	    case 'UNIT':
+	    case 'PRIMEM':
+	    case 'VERT_DATUM':
+	      obj[key] = {
+	        name: v[0].toLowerCase(),
+	        convert: v[1]
+	      };
+	      if (v.length === 3) {
+	        sExpr(v[2], obj[key]);
+	      }
+	      return;
+	    case 'SPHEROID':
+	    case 'ELLIPSOID':
+	      obj[key] = {
+	        name: v[0],
+	        a: v[1],
+	        rf: v[2]
+	      };
+	      if (v.length === 4) {
+	        sExpr(v[3], obj[key]);
+	      }
+	      return;
+	    case 'PROJECTEDCRS':
+	    case 'PROJCRS':
+	    case 'GEOGCS':
+	    case 'GEOCCS':
+	    case 'PROJCS':
+	    case 'LOCAL_CS':
+	    case 'GEODCRS':
+	    case 'GEODETICCRS':
+	    case 'GEODETICDATUM':
+	    case 'EDATUM':
+	    case 'ENGINEERINGDATUM':
+	    case 'VERT_CS':
+	    case 'VERTCRS':
+	    case 'VERTICALCRS':
+	    case 'COMPD_CS':
+	    case 'COMPOUNDCRS':
+	    case 'ENGINEERINGCRS':
+	    case 'ENGCRS':
+	    case 'FITTED_CS':
+	    case 'LOCAL_DATUM':
+	    case 'DATUM':
+	      v[0] = ['name', v[0]];
+	      mapit(obj, key, v);
+	      return;
+	    default:
+	      i = -1;
+	      while (++i < v.length) {
+	        if (!Array.isArray(v[i])) {
+	          return sExpr(v, obj[key]);
+	        }
+	      }
+	      return mapit(obj, key, v);
+	  }
+	}
+
+	var D2R$1 = 0.01745329251994329577;
+	function rename(obj, params) {
+	  var outName = params[0];
+	  var inName = params[1];
+	  if (!(outName in obj) && (inName in obj)) {
+	    obj[outName] = obj[inName];
+	    if (params.length === 3) {
+	      obj[outName] = params[2](obj[outName]);
+	    }
+	  }
+	}
+
+	function d2r(input) {
+	  return input * D2R$1;
+	}
+
+	function cleanWKT(wkt) {
+	  if (wkt.type === 'GEOGCS') {
+	    wkt.projName = 'longlat';
+	  } else if (wkt.type === 'LOCAL_CS') {
+	    wkt.projName = 'identity';
+	    wkt.local = true;
+	  } else {
+	    if (typeof wkt.PROJECTION === 'object') {
+	      wkt.projName = Object.keys(wkt.PROJECTION)[0];
+	    } else {
+	      wkt.projName = wkt.PROJECTION;
+	    }
+	  }
+	  if (wkt.UNIT) {
+	    wkt.units = wkt.UNIT.name.toLowerCase();
+	    if (wkt.units === 'metre') {
+	      wkt.units = 'meter';
+	    }
+	    if (wkt.UNIT.convert) {
+	      if (wkt.type === 'GEOGCS') {
+	        if (wkt.DATUM && wkt.DATUM.SPHEROID) {
+	          wkt.to_meter = wkt.UNIT.convert*wkt.DATUM.SPHEROID.a;
+	        }
+	      } else {
+	        wkt.to_meter = wkt.UNIT.convert, 10;
+	      }
+	    }
+	  }
+	  var geogcs = wkt.GEOGCS;
+	  if (wkt.type === 'GEOGCS') {
+	    geogcs = wkt;
+	  }
+	  if (geogcs) {
+	    //if(wkt.GEOGCS.PRIMEM&&wkt.GEOGCS.PRIMEM.convert){
+	    //  wkt.from_greenwich=wkt.GEOGCS.PRIMEM.convert*D2R;
+	    //}
+	    if (geogcs.DATUM) {
+	      wkt.datumCode = geogcs.DATUM.name.toLowerCase();
+	    } else {
+	      wkt.datumCode = geogcs.name.toLowerCase();
+	    }
+	    if (wkt.datumCode.slice(0, 2) === 'd_') {
+	      wkt.datumCode = wkt.datumCode.slice(2);
+	    }
+	    if (wkt.datumCode === 'new_zealand_geodetic_datum_1949' || wkt.datumCode === 'new_zealand_1949') {
+	      wkt.datumCode = 'nzgd49';
+	    }
+	    if (wkt.datumCode === 'wgs_1984') {
+	      if (wkt.PROJECTION === 'Mercator_Auxiliary_Sphere') {
+	        wkt.sphere = true;
+	      }
+	      wkt.datumCode = 'wgs84';
+	    }
+	    if (wkt.datumCode.slice(-6) === '_ferro') {
+	      wkt.datumCode = wkt.datumCode.slice(0, - 6);
+	    }
+	    if (wkt.datumCode.slice(-8) === '_jakarta') {
+	      wkt.datumCode = wkt.datumCode.slice(0, - 8);
+	    }
+	    if (~wkt.datumCode.indexOf('belge')) {
+	      wkt.datumCode = 'rnb72';
+	    }
+	    if (geogcs.DATUM && geogcs.DATUM.SPHEROID) {
+	      wkt.ellps = geogcs.DATUM.SPHEROID.name.replace('_19', '').replace(/[Cc]larke\_18/, 'clrk');
+	      if (wkt.ellps.toLowerCase().slice(0, 13) === 'international') {
+	        wkt.ellps = 'intl';
+	      }
+
+	      wkt.a = geogcs.DATUM.SPHEROID.a;
+	      wkt.rf = parseFloat(geogcs.DATUM.SPHEROID.rf, 10);
+	    }
+	    if (~wkt.datumCode.indexOf('osgb_1936')) {
+	      wkt.datumCode = 'osgb36';
+	    }
+	  }
+	  if (wkt.b && !isFinite(wkt.b)) {
+	    wkt.b = wkt.a;
+	  }
+
+	  function toMeter(input) {
+	    var ratio = wkt.to_meter || 1;
+	    return input * ratio;
+	  }
+	  var renamer = function(a) {
+	    return rename(wkt, a);
+	  };
+	  var list = [
+	    ['standard_parallel_1', 'Standard_Parallel_1'],
+	    ['standard_parallel_2', 'Standard_Parallel_2'],
+	    ['false_easting', 'False_Easting'],
+	    ['false_northing', 'False_Northing'],
+	    ['central_meridian', 'Central_Meridian'],
+	    ['latitude_of_origin', 'Latitude_Of_Origin'],
+	    ['latitude_of_origin', 'Central_Parallel'],
+	    ['scale_factor', 'Scale_Factor'],
+	    ['k0', 'scale_factor'],
+	    ['latitude_of_center', 'Latitude_of_center'],
+	    ['lat0', 'latitude_of_center', d2r],
+	    ['longitude_of_center', 'Longitude_Of_Center'],
+	    ['longc', 'longitude_of_center', d2r],
+	    ['x0', 'false_easting', toMeter],
+	    ['y0', 'false_northing', toMeter],
+	    ['long0', 'central_meridian', d2r],
+	    ['lat0', 'latitude_of_origin', d2r],
+	    ['lat0', 'standard_parallel_1', d2r],
+	    ['lat1', 'standard_parallel_1', d2r],
+	    ['lat2', 'standard_parallel_2', d2r],
+	    ['alpha', 'azimuth', d2r],
+	    ['srsCode', 'name']
+	  ];
+	  list.forEach(renamer);
+	  if (!wkt.long0 && wkt.longc && (wkt.projName === 'Albers_Conic_Equal_Area' || wkt.projName === 'Lambert_Azimuthal_Equal_Area')) {
+	    wkt.long0 = wkt.longc;
+	  }
+	  if (!wkt.lat_ts && wkt.lat1 && (wkt.projName === 'Stereographic_South_Pole' || wkt.projName === 'Polar Stereographic (variant B)')) {
+	    wkt.lat0 = d2r(wkt.lat1 > 0 ? 90 : -90);
+	    wkt.lat_ts = wkt.lat1;
+	  }
+	}
+	var wkt = function(wkt) {
+	  var lisp = parseString(wkt);
+	  var type = lisp.shift();
+	  var name = lisp.shift();
+	  lisp.unshift(['name', name]);
+	  lisp.unshift(['type', type]);
+	  var obj = {};
+	  sExpr(lisp, obj);
+	  cleanWKT(obj);
+	  return obj;
+	};
+
+	function defs(name) {
+	  /*global console*/
+	  var that = this;
+	  if (arguments.length === 2) {
+	    var def = arguments[1];
+	    if (typeof def === 'string') {
+	      if (def.charAt(0) === '+') {
+	        defs[name] = parseProj(arguments[1]);
+	      }
+	      else {
+	        defs[name] = wkt(arguments[1]);
+	      }
+	    } else {
+	      defs[name] = def;
+	    }
+	  }
+	  else if (arguments.length === 1) {
+	    if (Array.isArray(name)) {
+	      return name.map(function(v) {
+	        if (Array.isArray(v)) {
+	          defs.apply(that, v);
+	        }
+	        else {
+	          defs(v);
+	        }
+	      });
+	    }
+	    else if (typeof name === 'string') {
+	      if (name in defs) {
+	        return defs[name];
+	      }
+	    }
+	    else if ('EPSG' in name) {
+	      defs['EPSG:' + name.EPSG] = name;
+	    }
+	    else if ('ESRI' in name) {
+	      defs['ESRI:' + name.ESRI] = name;
+	    }
+	    else if ('IAU2000' in name) {
+	      defs['IAU2000:' + name.IAU2000] = name;
+	    }
+	    else {
+	      console.log(name);
+	    }
+	    return;
+	  }
+
+
+	}
+	globals(defs);
+
+	function testObj(code){
+	  return typeof code === 'string';
+	}
+	function testDef(code){
+	  return code in defs;
+	}
+	 var codeWords = ['PROJECTEDCRS', 'PROJCRS', 'GEOGCS','GEOCCS','PROJCS','LOCAL_CS', 'GEODCRS', 'GEODETICCRS', 'GEODETICDATUM', 'ENGCRS', 'ENGINEERINGCRS']; 
+	function testWKT(code){
+	  return codeWords.some(function (word) {
+	    return code.indexOf(word) > -1;
+	  });
+	}
+	function testProj(code){
+	  return code[0] === '+';
+	}
+	function parse(code){
+	  if (testObj(code)) {
+	    //check to see if this is a WKT string
+	    if (testDef(code)) {
+	      return defs[code];
+	    }
+	    if (testWKT(code)) {
+	      return wkt(code);
+	    }
+	    if (testProj(code)) {
+	      return parseProj(code);
+	    }
+	  }else{
+	    return code;
+	  }
+	}
+
+	var extend = function(destination, source) {
+	  destination = destination || {};
+	  var value, property;
+	  if (!source) {
+	    return destination;
+	  }
+	  for (property in source) {
+	    value = source[property];
+	    if (value !== undefined) {
+	      destination[property] = value;
+	    }
+	  }
+	  return destination;
+	};
+
+	var msfnz = function(eccent, sinphi, cosphi) {
+	  var con = eccent * sinphi;
+	  return cosphi / (Math.sqrt(1 - con * con));
+	};
+
+	var sign = function(x) {
+	  return x<0 ? -1 : 1;
+	};
+
+	var adjust_lon = function(x) {
+	  return (Math.abs(x) <= SPI) ? x : (x - (sign(x) * TWO_PI));
+	};
+
+	var tsfnz = function(eccent, phi, sinphi) {
+	  var con = eccent * sinphi;
+	  var com = 0.5 * eccent;
+	  con = Math.pow(((1 - con) / (1 + con)), com);
+	  return (Math.tan(0.5 * (HALF_PI - phi)) / con);
+	};
+
+	var phi2z = function(eccent, ts) {
+	  var eccnth = 0.5 * eccent;
+	  var con, dphi;
+	  var phi = HALF_PI - 2 * Math.atan(ts);
+	  for (var i = 0; i <= 15; i++) {
+	    con = eccent * Math.sin(phi);
+	    dphi = HALF_PI - 2 * Math.atan(ts * (Math.pow(((1 - con) / (1 + con)), eccnth))) - phi;
+	    phi += dphi;
+	    if (Math.abs(dphi) <= 0.0000000001) {
+	      return phi;
+	    }
+	  }
+	  //console.log("phi2z has NoConvergence");
+	  return -9999;
+	};
+
+	function init() {
+	  var con = this.b / this.a;
+	  this.es = 1 - con * con;
+	  if(!('x0' in this)){
+	    this.x0 = 0;
+	  }
+	  if(!('y0' in this)){
+	    this.y0 = 0;
+	  }
+	  this.e = Math.sqrt(this.es);
+	  if (this.lat_ts) {
+	    if (this.sphere) {
+	      this.k0 = Math.cos(this.lat_ts);
+	    }
+	    else {
+	      this.k0 = msfnz(this.e, Math.sin(this.lat_ts), Math.cos(this.lat_ts));
+	    }
+	  }
+	  else {
+	    if (!this.k0) {
+	      if (this.k) {
+	        this.k0 = this.k;
+	      }
+	      else {
+	        this.k0 = 1;
+	      }
+	    }
+	  }
+	}
+
+	/* Mercator forward equations--mapping lat,long to x,y
+	  --------------------------------------------------*/
+
+	function forward(p) {
+	  var lon = p.x;
+	  var lat = p.y;
+	  // convert to radians
+	  if (lat * R2D > 90 && lat * R2D < -90 && lon * R2D > 180 && lon * R2D < -180) {
+	    return null;
+	  }
+
+	  var x, y;
+	  if (Math.abs(Math.abs(lat) - HALF_PI) <= EPSLN) {
+	    return null;
+	  }
+	  else {
+	    if (this.sphere) {
+	      x = this.x0 + this.a * this.k0 * adjust_lon(lon - this.long0);
+	      y = this.y0 + this.a * this.k0 * Math.log(Math.tan(FORTPI + 0.5 * lat));
+	    }
+	    else {
+	      var sinphi = Math.sin(lat);
+	      var ts = tsfnz(this.e, lat, sinphi);
+	      x = this.x0 + this.a * this.k0 * adjust_lon(lon - this.long0);
+	      y = this.y0 - this.a * this.k0 * Math.log(ts);
+	    }
+	    p.x = x;
+	    p.y = y;
+	    return p;
+	  }
+	}
+
+	/* Mercator inverse equations--mapping x,y to lat/long
+	  --------------------------------------------------*/
+	function inverse(p) {
+
+	  var x = p.x - this.x0;
+	  var y = p.y - this.y0;
+	  var lon, lat;
+
+	  if (this.sphere) {
+	    lat = HALF_PI - 2 * Math.atan(Math.exp(-y / (this.a * this.k0)));
+	  }
+	  else {
+	    var ts = Math.exp(-y / (this.a * this.k0));
+	    lat = phi2z(this.e, ts);
+	    if (lat === -9999) {
+	      return null;
+	    }
+	  }
+	  lon = adjust_lon(this.long0 + x / (this.a * this.k0));
+
+	  p.x = lon;
+	  p.y = lat;
+	  return p;
+	}
+
+	var names$1 = ["Mercator", "Popular Visualisation Pseudo Mercator", "Mercator_1SP", "Mercator_Auxiliary_Sphere", "merc"];
+	var merc = {
+	  init: init,
+	  forward: forward,
+	  inverse: inverse,
+	  names: names$1
+	};
+
+	function init$1() {
+	  //no-op for longlat
+	}
+
+	function identity(pt) {
+	  return pt;
+	}
+	var names$2 = ["longlat", "identity"];
+	var longlat = {
+	  init: init$1,
+	  forward: identity,
+	  inverse: identity,
+	  names: names$2
+	};
+
+	var projs = [merc, longlat];
+	var names$$1 = {};
+	var projStore = [];
+
+	function add(proj, i) {
+	  var len = projStore.length;
+	  if (!proj.names) {
+	    console.log(i);
+	    return true;
+	  }
+	  projStore[len] = proj;
+	  proj.names.forEach(function(n) {
+	    names$$1[n.toLowerCase()] = len;
+	  });
+	  return this;
+	}
+
+	function get(name) {
+	  if (!name) {
+	    return false;
+	  }
+	  var n = name.toLowerCase();
+	  if (typeof names$$1[n] !== 'undefined' && projStore[names$$1[n]]) {
+	    return projStore[names$$1[n]];
+	  }
+	}
+
+	function start() {
+	  projs.forEach(add);
+	}
+	var projections = {
+	  start: start,
+	  add: add,
+	  get: get
+	};
+
+	var exports$2 = {};
+	exports$2.MERIT = {
+	  a: 6378137.0,
+	  rf: 298.257,
+	  ellipseName: "MERIT 1983"
+	};
+
+	exports$2.SGS85 = {
+	  a: 6378136.0,
+	  rf: 298.257,
+	  ellipseName: "Soviet Geodetic System 85"
+	};
+
+	exports$2.GRS80 = {
+	  a: 6378137.0,
+	  rf: 298.257222101,
+	  ellipseName: "GRS 1980(IUGG, 1980)"
+	};
+
+	exports$2.IAU76 = {
+	  a: 6378140.0,
+	  rf: 298.257,
+	  ellipseName: "IAU 1976"
+	};
+
+	exports$2.airy = {
+	  a: 6377563.396,
+	  b: 6356256.910,
+	  ellipseName: "Airy 1830"
+	};
+
+	exports$2.APL4 = {
+	  a: 6378137,
+	  rf: 298.25,
+	  ellipseName: "Appl. Physics. 1965"
+	};
+
+	exports$2.NWL9D = {
+	  a: 6378145.0,
+	  rf: 298.25,
+	  ellipseName: "Naval Weapons Lab., 1965"
+	};
+
+	exports$2.mod_airy = {
+	  a: 6377340.189,
+	  b: 6356034.446,
+	  ellipseName: "Modified Airy"
+	};
+
+	exports$2.andrae = {
+	  a: 6377104.43,
+	  rf: 300.0,
+	  ellipseName: "Andrae 1876 (Den., Iclnd.)"
+	};
+
+	exports$2.aust_SA = {
+	  a: 6378160.0,
+	  rf: 298.25,
+	  ellipseName: "Australian Natl & S. Amer. 1969"
+	};
+
+	exports$2.GRS67 = {
+	  a: 6378160.0,
+	  rf: 298.2471674270,
+	  ellipseName: "GRS 67(IUGG 1967)"
+	};
+
+	exports$2.bessel = {
+	  a: 6377397.155,
+	  rf: 299.1528128,
+	  ellipseName: "Bessel 1841"
+	};
+
+	exports$2.bess_nam = {
+	  a: 6377483.865,
+	  rf: 299.1528128,
+	  ellipseName: "Bessel 1841 (Namibia)"
+	};
+
+	exports$2.clrk66 = {
+	  a: 6378206.4,
+	  b: 6356583.8,
+	  ellipseName: "Clarke 1866"
+	};
+
+	exports$2.clrk80 = {
+	  a: 6378249.145,
+	  rf: 293.4663,
+	  ellipseName: "Clarke 1880 mod."
+	};
+
+	exports$2.clrk58 = {
+	  a: 6378293.645208759,
+	  rf: 294.2606763692654,
+	  ellipseName: "Clarke 1858"
+	};
+
+	exports$2.CPM = {
+	  a: 6375738.7,
+	  rf: 334.29,
+	  ellipseName: "Comm. des Poids et Mesures 1799"
+	};
+
+	exports$2.delmbr = {
+	  a: 6376428.0,
+	  rf: 311.5,
+	  ellipseName: "Delambre 1810 (Belgium)"
+	};
+
+	exports$2.engelis = {
+	  a: 6378136.05,
+	  rf: 298.2566,
+	  ellipseName: "Engelis 1985"
+	};
+
+	exports$2.evrst30 = {
+	  a: 6377276.345,
+	  rf: 300.8017,
+	  ellipseName: "Everest 1830"
+	};
+
+	exports$2.evrst48 = {
+	  a: 6377304.063,
+	  rf: 300.8017,
+	  ellipseName: "Everest 1948"
+	};
+
+	exports$2.evrst56 = {
+	  a: 6377301.243,
+	  rf: 300.8017,
+	  ellipseName: "Everest 1956"
+	};
+
+	exports$2.evrst69 = {
+	  a: 6377295.664,
+	  rf: 300.8017,
+	  ellipseName: "Everest 1969"
+	};
+
+	exports$2.evrstSS = {
+	  a: 6377298.556,
+	  rf: 300.8017,
+	  ellipseName: "Everest (Sabah & Sarawak)"
+	};
+
+	exports$2.fschr60 = {
+	  a: 6378166.0,
+	  rf: 298.3,
+	  ellipseName: "Fischer (Mercury Datum) 1960"
+	};
+
+	exports$2.fschr60m = {
+	  a: 6378155.0,
+	  rf: 298.3,
+	  ellipseName: "Fischer 1960"
+	};
+
+	exports$2.fschr68 = {
+	  a: 6378150.0,
+	  rf: 298.3,
+	  ellipseName: "Fischer 1968"
+	};
+
+	exports$2.helmert = {
+	  a: 6378200.0,
+	  rf: 298.3,
+	  ellipseName: "Helmert 1906"
+	};
+
+	exports$2.hough = {
+	  a: 6378270.0,
+	  rf: 297.0,
+	  ellipseName: "Hough"
+	};
+
+	exports$2.intl = {
+	  a: 6378388.0,
+	  rf: 297.0,
+	  ellipseName: "International 1909 (Hayford)"
+	};
+
+	exports$2.kaula = {
+	  a: 6378163.0,
+	  rf: 298.24,
+	  ellipseName: "Kaula 1961"
+	};
+
+	exports$2.lerch = {
+	  a: 6378139.0,
+	  rf: 298.257,
+	  ellipseName: "Lerch 1979"
+	};
+
+	exports$2.mprts = {
+	  a: 6397300.0,
+	  rf: 191.0,
+	  ellipseName: "Maupertius 1738"
+	};
+
+	exports$2.new_intl = {
+	  a: 6378157.5,
+	  b: 6356772.2,
+	  ellipseName: "New International 1967"
+	};
+
+	exports$2.plessis = {
+	  a: 6376523.0,
+	  rf: 6355863.0,
+	  ellipseName: "Plessis 1817 (France)"
+	};
+
+	exports$2.krass = {
+	  a: 6378245.0,
+	  rf: 298.3,
+	  ellipseName: "Krassovsky, 1942"
+	};
+
+	exports$2.SEasia = {
+	  a: 6378155.0,
+	  b: 6356773.3205,
+	  ellipseName: "Southeast Asia"
+	};
+
+	exports$2.walbeck = {
+	  a: 6376896.0,
+	  b: 6355834.8467,
+	  ellipseName: "Walbeck"
+	};
+
+	exports$2.WGS60 = {
+	  a: 6378165.0,
+	  rf: 298.3,
+	  ellipseName: "WGS 60"
+	};
+
+	exports$2.WGS66 = {
+	  a: 6378145.0,
+	  rf: 298.25,
+	  ellipseName: "WGS 66"
+	};
+
+	exports$2.WGS7 = {
+	  a: 6378135.0,
+	  rf: 298.26,
+	  ellipseName: "WGS 72"
+	};
+
+	var WGS84 = exports$2.WGS84 = {
+	  a: 6378137.0,
+	  rf: 298.257223563,
+	  ellipseName: "WGS 84"
+	};
+
+	exports$2.sphere = {
+	  a: 6370997.0,
+	  b: 6370997.0,
+	  ellipseName: "Normal Sphere (r=6370997)"
+	};
+
+	function eccentricity(a, b, rf, R_A) {
+	  var a2 = a * a; // used in geocentric
+	  var b2 = b * b; // used in geocentric
+	  var es = (a2 - b2) / a2; // e ^ 2
+	  var e = 0;
+	  if (R_A) {
+	    a *= 1 - es * (SIXTH + es * (RA4 + es * RA6));
+	    a2 = a * a;
+	    es = 0;
+	  } else {
+	    e = Math.sqrt(es); // eccentricity
+	  }
+	  var ep2 = (a2 - b2) / b2; // used in geocentric
+	  return {
+	    es: es,
+	    e: e,
+	    ep2: ep2
+	  };
+	}
+	function sphere(a, b, rf, ellps, sphere) {
+	  if (!a) { // do we have an ellipsoid?
+	    var ellipse = match(exports$2, ellps);
+	    if (!ellipse) {
+	      ellipse = WGS84;
+	    }
+	    a = ellipse.a;
+	    b = ellipse.b;
+	    rf = ellipse.rf;
+	  }
+
+	  if (rf && !b) {
+	    b = (1.0 - 1.0 / rf) * a;
+	  }
+	  if (rf === 0 || Math.abs(a - b) < EPSLN) {
+	    sphere = true;
+	    b = a;
+	  }
+	  return {
+	    a: a,
+	    b: b,
+	    rf: rf,
+	    sphere: sphere
+	  };
+	}
+
+	var exports$3 = {};
+	exports$3.wgs84 = {
+	  towgs84: "0,0,0",
+	  ellipse: "WGS84",
+	  datumName: "WGS84"
+	};
+
+	exports$3.ch1903 = {
+	  towgs84: "674.374,15.056,405.346",
+	  ellipse: "bessel",
+	  datumName: "swiss"
+	};
+
+	exports$3.ggrs87 = {
+	  towgs84: "-199.87,74.79,246.62",
+	  ellipse: "GRS80",
+	  datumName: "Greek_Geodetic_Reference_System_1987"
+	};
+
+	exports$3.nad83 = {
+	  towgs84: "0,0,0",
+	  ellipse: "GRS80",
+	  datumName: "North_American_Datum_1983"
+	};
+
+	exports$3.nad27 = {
+	  nadgrids: "@conus,@alaska,@ntv2_0.gsb,@ntv1_can.dat",
+	  ellipse: "clrk66",
+	  datumName: "North_American_Datum_1927"
+	};
+
+	exports$3.potsdam = {
+	  towgs84: "606.0,23.0,413.0",
+	  ellipse: "bessel",
+	  datumName: "Potsdam Rauenberg 1950 DHDN"
+	};
+
+	exports$3.carthage = {
+	  towgs84: "-263.0,6.0,431.0",
+	  ellipse: "clark80",
+	  datumName: "Carthage 1934 Tunisia"
+	};
+
+	exports$3.hermannskogel = {
+	  towgs84: "653.0,-212.0,449.0",
+	  ellipse: "bessel",
+	  datumName: "Hermannskogel"
+	};
+
+	exports$3.ire65 = {
+	  towgs84: "482.530,-130.596,564.557,-1.042,-0.214,-0.631,8.15",
+	  ellipse: "mod_airy",
+	  datumName: "Ireland 1965"
+	};
+
+	exports$3.rassadiran = {
+	  towgs84: "-133.63,-157.5,-158.62",
+	  ellipse: "intl",
+	  datumName: "Rassadiran"
+	};
+
+	exports$3.nzgd49 = {
+	  towgs84: "59.47,-5.04,187.44,0.47,-0.1,1.024,-4.5993",
+	  ellipse: "intl",
+	  datumName: "New Zealand Geodetic Datum 1949"
+	};
+
+	exports$3.osgb36 = {
+	  towgs84: "446.448,-125.157,542.060,0.1502,0.2470,0.8421,-20.4894",
+	  ellipse: "airy",
+	  datumName: "Airy 1830"
+	};
+
+	exports$3.s_jtsk = {
+	  towgs84: "589,76,480",
+	  ellipse: 'bessel',
+	  datumName: 'S-JTSK (Ferro)'
+	};
+
+	exports$3.beduaram = {
+	  towgs84: '-106,-87,188',
+	  ellipse: 'clrk80',
+	  datumName: 'Beduaram'
+	};
+
+	exports$3.gunung_segara = {
+	  towgs84: '-403,684,41',
+	  ellipse: 'bessel',
+	  datumName: 'Gunung Segara Jakarta'
+	};
+
+	exports$3.rnb72 = {
+	  towgs84: "106.869,-52.2978,103.724,-0.33657,0.456955,-1.84218,1",
+	  ellipse: "intl",
+	  datumName: "Reseau National Belge 1972"
+	};
+
+	function datum(datumCode, datum_params, a, b, es, ep2) {
+	  var out = {};
+
+	  if (datumCode === undefined || datumCode === 'none') {
+	    out.datum_type = PJD_NODATUM;
+	  } else {
+	    out.datum_type = PJD_WGS84;
+	  }
+
+	  if (datum_params) {
+	    out.datum_params = datum_params.map(parseFloat);
+	    if (out.datum_params[0] !== 0 || out.datum_params[1] !== 0 || out.datum_params[2] !== 0) {
+	      out.datum_type = PJD_3PARAM;
+	    }
+	    if (out.datum_params.length > 3) {
+	      if (out.datum_params[3] !== 0 || out.datum_params[4] !== 0 || out.datum_params[5] !== 0 || out.datum_params[6] !== 0) {
+	        out.datum_type = PJD_7PARAM;
+	        out.datum_params[3] *= SEC_TO_RAD;
+	        out.datum_params[4] *= SEC_TO_RAD;
+	        out.datum_params[5] *= SEC_TO_RAD;
+	        out.datum_params[6] = (out.datum_params[6] / 1000000.0) + 1.0;
+	      }
+	    }
+	  }
+
+	  out.a = a; //datum object also uses these values
+	  out.b = b;
+	  out.es = es;
+	  out.ep2 = ep2;
+	  return out;
+	}
+
+	function Projection$1(srsCode,callback) {
+	  if (!(this instanceof Projection$1)) {
+	    return new Projection$1(srsCode);
+	  }
+	  callback = callback || function(error){
+	    if(error){
+	      throw error;
+	    }
+	  };
+	  var json = parse(srsCode);
+	  if(typeof json !== 'object'){
+	    callback(srsCode);
+	    return;
+	  }
+	  var ourProj = Projection$1.projections.get(json.projName);
+	  if(!ourProj){
+	    callback(srsCode);
+	    return;
+	  }
+	  if (json.datumCode && json.datumCode !== 'none') {
+	    var datumDef = match(exports$3, json.datumCode);
+	    if (datumDef) {
+	      json.datum_params = datumDef.towgs84 ? datumDef.towgs84.split(',') : null;
+	      json.ellps = datumDef.ellipse;
+	      json.datumName = datumDef.datumName ? datumDef.datumName : json.datumCode;
+	    }
+	  }
+	  json.k0 = json.k0 || 1.0;
+	  json.axis = json.axis || 'enu';
+	  json.ellps = json.ellps || 'wgs84';
+	  var sphere_ = sphere(json.a, json.b, json.rf, json.ellps, json.sphere);
+	  var ecc = eccentricity(sphere_.a, sphere_.b, sphere_.rf, json.R_A);
+	  var datumObj = json.datum || datum(json.datumCode, json.datum_params, sphere_.a, sphere_.b, ecc.es, ecc.ep2);
+
+	  extend(this, json); // transfer everything over from the projection because we don't know what we'll need
+	  extend(this, ourProj); // transfer all the methods from the projection
+
+	  // copy the 4 things over we calulated in deriveConstants.sphere
+	  this.a = sphere_.a;
+	  this.b = sphere_.b;
+	  this.rf = sphere_.rf;
+	  this.sphere = sphere_.sphere;
+
+	  // copy the 3 things we calculated in deriveConstants.eccentricity
+	  this.es = ecc.es;
+	  this.e = ecc.e;
+	  this.ep2 = ecc.ep2;
+
+	  // add in the datum object
+	  this.datum = datumObj;
+
+	  // init the projection
+	  this.init();
+
+	  // legecy callback from back in the day when it went to spatialreference.org
+	  callback(null, this);
+
+	}
+	Projection$1.projections = projections;
+	Projection$1.projections.start();
+
+	function compareDatums(source, dest) {
+	  if (source.datum_type !== dest.datum_type) {
+	    return false; // false, datums are not equal
+	  } else if (source.a !== dest.a || Math.abs(source.es - dest.es) > 0.000000000050) {
+	    // the tolerance for es is to ensure that GRS80 and WGS84
+	    // are considered identical
+	    return false;
+	  } else if (source.datum_type === PJD_3PARAM) {
+	    return (source.datum_params[0] === dest.datum_params[0] && source.datum_params[1] === dest.datum_params[1] && source.datum_params[2] === dest.datum_params[2]);
+	  } else if (source.datum_type === PJD_7PARAM) {
+	    return (source.datum_params[0] === dest.datum_params[0] && source.datum_params[1] === dest.datum_params[1] && source.datum_params[2] === dest.datum_params[2] && source.datum_params[3] === dest.datum_params[3] && source.datum_params[4] === dest.datum_params[4] && source.datum_params[5] === dest.datum_params[5] && source.datum_params[6] === dest.datum_params[6]);
+	  } else {
+	    return true; // datums are equal
+	  }
+	} // cs_compare_datums()
+
+	/*
+	 * The function Convert_Geodetic_To_Geocentric converts geodetic coordinates
+	 * (latitude, longitude, and height) to geocentric coordinates (X, Y, Z),
+	 * according to the current ellipsoid parameters.
+	 *
+	 *    Latitude  : Geodetic latitude in radians                     (input)
+	 *    Longitude : Geodetic longitude in radians                    (input)
+	 *    Height    : Geodetic height, in meters                       (input)
+	 *    X         : Calculated Geocentric X coordinate, in meters    (output)
+	 *    Y         : Calculated Geocentric Y coordinate, in meters    (output)
+	 *    Z         : Calculated Geocentric Z coordinate, in meters    (output)
+	 *
+	 */
+	function geodeticToGeocentric(p, es, a) {
+	  var Longitude = p.x;
+	  var Latitude = p.y;
+	  var Height = p.z ? p.z : 0; //Z value not always supplied
+
+	  var Rn; /*  Earth radius at location  */
+	  var Sin_Lat; /*  Math.sin(Latitude)  */
+	  var Sin2_Lat; /*  Square of Math.sin(Latitude)  */
+	  var Cos_Lat; /*  Math.cos(Latitude)  */
+
+	  /*
+	   ** Don't blow up if Latitude is just a little out of the value
+	   ** range as it may just be a rounding issue.  Also removed longitude
+	   ** test, it should be wrapped by Math.cos() and Math.sin().  NFW for PROJ.4, Sep/2001.
+	   */
+	  if (Latitude < -HALF_PI && Latitude > -1.001 * HALF_PI) {
+	    Latitude = -HALF_PI;
+	  } else if (Latitude > HALF_PI && Latitude < 1.001 * HALF_PI) {
+	    Latitude = HALF_PI;
+	  } else if ((Latitude < -HALF_PI) || (Latitude > HALF_PI)) {
+	    /* Latitude out of range */
+	    //..reportError('geocent:lat out of range:' + Latitude);
+	    return null;
+	  }
+
+	  if (Longitude > Math.PI) {
+	    Longitude -= (2 * Math.PI);
+	  }
+	  Sin_Lat = Math.sin(Latitude);
+	  Cos_Lat = Math.cos(Latitude);
+	  Sin2_Lat = Sin_Lat * Sin_Lat;
+	  Rn = a / (Math.sqrt(1.0e0 - es * Sin2_Lat));
+	  return {
+	    x: (Rn + Height) * Cos_Lat * Math.cos(Longitude),
+	    y: (Rn + Height) * Cos_Lat * Math.sin(Longitude),
+	    z: ((Rn * (1 - es)) + Height) * Sin_Lat
+	  };
+	} // cs_geodetic_to_geocentric()
+
+	function geocentricToGeodetic(p, es, a, b) {
+	  /* local defintions and variables */
+	  /* end-criterium of loop, accuracy of sin(Latitude) */
+	  var genau = 1e-12;
+	  var genau2 = (genau * genau);
+	  var maxiter = 30;
+
+	  var P; /* distance between semi-minor axis and location */
+	  var RR; /* distance between center and location */
+	  var CT; /* sin of geocentric latitude */
+	  var ST; /* cos of geocentric latitude */
+	  var RX;
+	  var RK;
+	  var RN; /* Earth radius at location */
+	  var CPHI0; /* cos of start or old geodetic latitude in iterations */
+	  var SPHI0; /* sin of start or old geodetic latitude in iterations */
+	  var CPHI; /* cos of searched geodetic latitude */
+	  var SPHI; /* sin of searched geodetic latitude */
+	  var SDPHI; /* end-criterium: addition-theorem of sin(Latitude(iter)-Latitude(iter-1)) */
+	  var iter; /* # of continous iteration, max. 30 is always enough (s.a.) */
+
+	  var X = p.x;
+	  var Y = p.y;
+	  var Z = p.z ? p.z : 0.0; //Z value not always supplied
+	  var Longitude;
+	  var Latitude;
+	  var Height;
+
+	  P = Math.sqrt(X * X + Y * Y);
+	  RR = Math.sqrt(X * X + Y * Y + Z * Z);
+
+	  /*      special cases for latitude and longitude */
+	  if (P / a < genau) {
+
+	    /*  special case, if P=0. (X=0., Y=0.) */
+	    Longitude = 0.0;
+
+	    /*  if (X,Y,Z)=(0.,0.,0.) then Height becomes semi-minor axis
+	     *  of ellipsoid (=center of mass), Latitude becomes PI/2 */
+	    if (RR / a < genau) {
+	      Latitude = HALF_PI;
+	      Height = -b;
+	      return {
+	        x: p.x,
+	        y: p.y,
+	        z: p.z
+	      };
+	    }
+	  } else {
+	    /*  ellipsoidal (geodetic) longitude
+	     *  interval: -PI < Longitude <= +PI */
+	    Longitude = Math.atan2(Y, X);
+	  }
+
+	  /* --------------------------------------------------------------
+	   * Following iterative algorithm was developped by
+	   * "Institut for Erdmessung", University of Hannover, July 1988.
+	   * Internet: www.ife.uni-hannover.de
+	   * Iterative computation of CPHI,SPHI and Height.
+	   * Iteration of CPHI and SPHI to 10**-12 radian resp.
+	   * 2*10**-7 arcsec.
+	   * --------------------------------------------------------------
+	   */
+	  CT = Z / RR;
+	  ST = P / RR;
+	  RX = 1.0 / Math.sqrt(1.0 - es * (2.0 - es) * ST * ST);
+	  CPHI0 = ST * (1.0 - es) * RX;
+	  SPHI0 = CT * RX;
+	  iter = 0;
+
+	  /* loop to find sin(Latitude) resp. Latitude
+	   * until |sin(Latitude(iter)-Latitude(iter-1))| < genau */
+	  do {
+	    iter++;
+	    RN = a / Math.sqrt(1.0 - es * SPHI0 * SPHI0);
+
+	    /*  ellipsoidal (geodetic) height */
+	    Height = P * CPHI0 + Z * SPHI0 - RN * (1.0 - es * SPHI0 * SPHI0);
+
+	    RK = es * RN / (RN + Height);
+	    RX = 1.0 / Math.sqrt(1.0 - RK * (2.0 - RK) * ST * ST);
+	    CPHI = ST * (1.0 - RK) * RX;
+	    SPHI = CT * RX;
+	    SDPHI = SPHI * CPHI0 - CPHI * SPHI0;
+	    CPHI0 = CPHI;
+	    SPHI0 = SPHI;
+	  }
+	  while (SDPHI * SDPHI > genau2 && iter < maxiter);
+
+	  /*      ellipsoidal (geodetic) latitude */
+	  Latitude = Math.atan(SPHI / Math.abs(CPHI));
+	  return {
+	    x: Longitude,
+	    y: Latitude,
+	    z: Height
+	  };
+	} // cs_geocentric_to_geodetic()
+
+	/****************************************************************/
+	// pj_geocentic_to_wgs84( p )
+	//  p = point to transform in geocentric coordinates (x,y,z)
+
+
+	/** point object, nothing fancy, just allows values to be
+	    passed back and forth by reference rather than by value.
+	    Other point classes may be used as long as they have
+	    x and y properties, which will get modified in the transform method.
+	*/
+	function geocentricToWgs84(p, datum_type, datum_params) {
+
+	  if (datum_type === PJD_3PARAM) {
+	    // if( x[io] === HUGE_VAL )
+	    //    continue;
+	    return {
+	      x: p.x + datum_params[0],
+	      y: p.y + datum_params[1],
+	      z: p.z + datum_params[2],
+	    };
+	  } else if (datum_type === PJD_7PARAM) {
+	    var Dx_BF = datum_params[0];
+	    var Dy_BF = datum_params[1];
+	    var Dz_BF = datum_params[2];
+	    var Rx_BF = datum_params[3];
+	    var Ry_BF = datum_params[4];
+	    var Rz_BF = datum_params[5];
+	    var M_BF = datum_params[6];
+	    // if( x[io] === HUGE_VAL )
+	    //    continue;
+	    return {
+	      x: M_BF * (p.x - Rz_BF * p.y + Ry_BF * p.z) + Dx_BF,
+	      y: M_BF * (Rz_BF * p.x + p.y - Rx_BF * p.z) + Dy_BF,
+	      z: M_BF * (-Ry_BF * p.x + Rx_BF * p.y + p.z) + Dz_BF
+	    };
+	  }
+	} // cs_geocentric_to_wgs84
+
+	/****************************************************************/
+	// pj_geocentic_from_wgs84()
+	//  coordinate system definition,
+	//  point to transform in geocentric coordinates (x,y,z)
+	function geocentricFromWgs84(p, datum_type, datum_params) {
+
+	  if (datum_type === PJD_3PARAM) {
+	    //if( x[io] === HUGE_VAL )
+	    //    continue;
+	    return {
+	      x: p.x - datum_params[0],
+	      y: p.y - datum_params[1],
+	      z: p.z - datum_params[2],
+	    };
+
+	  } else if (datum_type === PJD_7PARAM) {
+	    var Dx_BF = datum_params[0];
+	    var Dy_BF = datum_params[1];
+	    var Dz_BF = datum_params[2];
+	    var Rx_BF = datum_params[3];
+	    var Ry_BF = datum_params[4];
+	    var Rz_BF = datum_params[5];
+	    var M_BF = datum_params[6];
+	    var x_tmp = (p.x - Dx_BF) / M_BF;
+	    var y_tmp = (p.y - Dy_BF) / M_BF;
+	    var z_tmp = (p.z - Dz_BF) / M_BF;
+	    //if( x[io] === HUGE_VAL )
+	    //    continue;
+
+	    return {
+	      x: x_tmp + Rz_BF * y_tmp - Ry_BF * z_tmp,
+	      y: -Rz_BF * x_tmp + y_tmp + Rx_BF * z_tmp,
+	      z: Ry_BF * x_tmp - Rx_BF * y_tmp + z_tmp
+	    };
+	  } //cs_geocentric_from_wgs84()
+	}
+
+	function checkParams(type) {
+	  return (type === PJD_3PARAM || type === PJD_7PARAM);
+	}
+
+	var datum_transform = function(source, dest, point) {
+	  // Short cut if the datums are identical.
+	  if (compareDatums(source, dest)) {
+	    return point; // in this case, zero is sucess,
+	    // whereas cs_compare_datums returns 1 to indicate TRUE
+	    // confusing, should fix this
+	  }
+
+	  // Explicitly skip datum transform by setting 'datum=none' as parameter for either source or dest
+	  if (source.datum_type === PJD_NODATUM || dest.datum_type === PJD_NODATUM) {
+	    return point;
+	  }
+
+	  // If this datum requires grid shifts, then apply it to geodetic coordinates.
+
+	  // Do we need to go through geocentric coordinates?
+	  if (source.es === dest.es && source.a === dest.a && !checkParams(source.datum_type) &&  !checkParams(dest.datum_type)) {
+	    return point;
+	  }
+
+	  // Convert to geocentric coordinates.
+	  point = geodeticToGeocentric(point, source.es, source.a);
+	  // Convert between datums
+	  if (checkParams(source.datum_type)) {
+	    point = geocentricToWgs84(point, source.datum_type, source.datum_params);
+	  }
+	  if (checkParams(dest.datum_type)) {
+	    point = geocentricFromWgs84(point, dest.datum_type, dest.datum_params);
+	  }
+	  return geocentricToGeodetic(point, dest.es, dest.a, dest.b);
+
+	};
+
+	var adjust_axis = function(crs, denorm, point) {
+	  var xin = point.x,
+	    yin = point.y,
+	    zin = point.z || 0.0;
+	  var v, t, i;
+	  var out = {};
+	  for (i = 0; i < 3; i++) {
+	    if (denorm && i === 2 && point.z === undefined) {
+	      continue;
+	    }
+	    if (i === 0) {
+	      v = xin;
+	      t = 'x';
+	    }
+	    else if (i === 1) {
+	      v = yin;
+	      t = 'y';
+	    }
+	    else {
+	      v = zin;
+	      t = 'z';
+	    }
+	    switch (crs.axis[i]) {
+	    case 'e':
+	      out[t] = v;
+	      break;
+	    case 'w':
+	      out[t] = -v;
+	      break;
+	    case 'n':
+	      out[t] = v;
+	      break;
+	    case 's':
+	      out[t] = -v;
+	      break;
+	    case 'u':
+	      if (point[t] !== undefined) {
+	        out.z = v;
+	      }
+	      break;
+	    case 'd':
+	      if (point[t] !== undefined) {
+	        out.z = -v;
+	      }
+	      break;
+	    default:
+	      //console.log("ERROR: unknow axis ("+crs.axis[i]+") - check definition of "+crs.projName);
+	      return null;
+	    }
+	  }
+	  return out;
+	};
+
+	var toPoint = function (array){
+	  var out = {
+	    x: array[0],
+	    y: array[1]
+	  };
+	  if (array.length>2) {
+	    out.z = array[2];
+	  }
+	  if (array.length>3) {
+	    out.m = array[3];
+	  }
+	  return out;
+	};
+
+	function checkNotWGS(source, dest) {
+	  return ((source.datum.datum_type === PJD_3PARAM || source.datum.datum_type === PJD_7PARAM) && dest.datumCode !== 'WGS84') || ((dest.datum.datum_type === PJD_3PARAM || dest.datum.datum_type === PJD_7PARAM) && source.datumCode !== 'WGS84');
+	}
+
+	function transform(source, dest, point) {
+	  var wgs84;
+	  if (Array.isArray(point)) {
+	    point = toPoint(point);
+	  }
+
+	  // Workaround for datum shifts towgs84, if either source or destination projection is not wgs84
+	  if (source.datum && dest.datum && checkNotWGS(source, dest)) {
+	    wgs84 = new Projection$1('WGS84');
+	    point = transform(source, wgs84, point);
+	    source = wgs84;
+	  }
+	  // DGR, 2010/11/12
+	  if (source.axis !== 'enu') {
+	    point = adjust_axis(source, false, point);
+	  }
+	  // Transform source points to long/lat, if they aren't already.
+	  if (source.projName === 'longlat') {
+	    point = {
+	      x: point.x * D2R,
+	      y: point.y * D2R
+	    };
+	  }
+	  else {
+	    if (source.to_meter) {
+	      point = {
+	        x: point.x * source.to_meter,
+	        y: point.y * source.to_meter
+	      };
+	    }
+	    point = source.inverse(point); // Convert Cartesian to longlat
+	  }
+	  // Adjust for the prime meridian if necessary
+	  if (source.from_greenwich) {
+	    point.x += source.from_greenwich;
+	  }
+
+	  // Convert datums if needed, and if possible.
+	  point = datum_transform(source.datum, dest.datum, point);
+
+	  // Adjust for the prime meridian if necessary
+	  if (dest.from_greenwich) {
+	    point = {
+	      x: point.x - dest.from_greenwich,
+	      y: point.y
+	    };
+	  }
+
+	  if (dest.projName === 'longlat') {
+	    // convert radians to decimal degrees
+	    point = {
+	      x: point.x * R2D,
+	      y: point.y * R2D
+	    };
+	  } else { // else project
+	    point = dest.forward(point);
+	    if (dest.to_meter) {
+	      point = {
+	        x: point.x / dest.to_meter,
+	        y: point.y / dest.to_meter
+	      };
+	    }
+	  }
+
+	  // DGR, 2010/11/12
+	  if (dest.axis !== 'enu') {
+	    return adjust_axis(dest, true, point);
+	  }
+
+	  return point;
+	}
+
+	var wgs84 = Projection$1('WGS84');
+
+	function transformer(from, to, coords) {
+	  var transformedArray;
+	  if (Array.isArray(coords)) {
+	    transformedArray = transform(from, to, coords);
+	    if (coords.length === 3) {
+	      return [transformedArray.x, transformedArray.y, transformedArray.z];
+	    }
+	    else {
+	      return [transformedArray.x, transformedArray.y];
+	    }
+	  }
+	  else {
+	    return transform(from, to, coords);
+	  }
+	}
+
+	function checkProj(item) {
+	  if (item instanceof Projection$1) {
+	    return item;
+	  }
+	  if (item.oProj) {
+	    return item.oProj;
+	  }
+	  return Projection$1(item);
+	}
+	function proj4$1(fromProj, toProj, coord) {
+	  fromProj = checkProj(fromProj);
+	  var single = false;
+	  var obj;
+	  if (typeof toProj === 'undefined') {
+	    toProj = fromProj;
+	    fromProj = wgs84;
+	    single = true;
+	  }
+	  else if (typeof toProj.x !== 'undefined' || Array.isArray(toProj)) {
+	    coord = toProj;
+	    toProj = fromProj;
+	    fromProj = wgs84;
+	    single = true;
+	  }
+	  toProj = checkProj(toProj);
+	  if (coord) {
+	    return transformer(fromProj, toProj, coord);
+	  }
+	  else {
+	    obj = {
+	      forward: function(coords) {
+	        return transformer(fromProj, toProj, coords);
+	      },
+	      inverse: function(coords) {
+	        return transformer(toProj, fromProj, coords);
+	      }
+	    };
+	    if (single) {
+	      obj.oProj = toProj;
+	    }
+	    return obj;
+	  }
+	}
+
+	/**
+	 * UTM zones are grouped, and assigned to one of a group of 6
+	 * sets.
+	 *
+	 * {int} @private
+	 */
+	var NUM_100K_SETS = 6;
+
+	/**
+	 * The column letters (for easting) of the lower left value, per
+	 * set.
+	 *
+	 * {string} @private
+	 */
+	var SET_ORIGIN_COLUMN_LETTERS = 'AJSAJS';
+
+	/**
+	 * The row letters (for northing) of the lower left value, per
+	 * set.
+	 *
+	 * {string} @private
+	 */
+	var SET_ORIGIN_ROW_LETTERS = 'AFAFAF';
+
+	var A = 65; // A
+	var I = 73; // I
+	var O = 79; // O
+	var V = 86; // V
+	var Z = 90; // Z
+	var mgrs = {
+	  forward: forward$1,
+	  inverse: inverse$1,
+	  toPoint: toPoint$1
+	};
+	/**
+	 * Conversion of lat/lon to MGRS.
+	 *
+	 * @param {object} ll Object literal with lat and lon properties on a
+	 *     WGS84 ellipsoid.
+	 * @param {int} accuracy Accuracy in digits (5 for 1 m, 4 for 10 m, 3 for
+	 *      100 m, 2 for 1000 m or 1 for 10000 m). Optional, default is 5.
+	 * @return {string} the MGRS string for the given location and accuracy.
+	 */
+	function forward$1(ll, accuracy) {
+	  accuracy = accuracy || 5; // default accuracy 1m
+	  return encode(LLtoUTM({
+	    lat: ll[1],
+	    lon: ll[0]
+	  }), accuracy);
+	}
+
+	/**
+	 * Conversion of MGRS to lat/lon.
+	 *
+	 * @param {string} mgrs MGRS string.
+	 * @return {array} An array with left (longitude), bottom (latitude), right
+	 *     (longitude) and top (latitude) values in WGS84, representing the
+	 *     bounding box for the provided MGRS reference.
+	 */
+	function inverse$1(mgrs) {
+	  var bbox = UTMtoLL(decode(mgrs.toUpperCase()));
+	  if (bbox.lat && bbox.lon) {
+	    return [bbox.lon, bbox.lat, bbox.lon, bbox.lat];
+	  }
+	  return [bbox.left, bbox.bottom, bbox.right, bbox.top];
+	}
+
+	function toPoint$1(mgrs) {
+	  var bbox = UTMtoLL(decode(mgrs.toUpperCase()));
+	  if (bbox.lat && bbox.lon) {
+	    return [bbox.lon, bbox.lat];
+	  }
+	  return [(bbox.left + bbox.right) / 2, (bbox.top + bbox.bottom) / 2];
+	}
+	/**
+	 * Conversion from degrees to radians.
+	 *
+	 * @private
+	 * @param {number} deg the angle in degrees.
+	 * @return {number} the angle in radians.
+	 */
+	function degToRad(deg) {
+	  return (deg * (Math.PI / 180.0));
+	}
+
+	/**
+	 * Conversion from radians to degrees.
+	 *
+	 * @private
+	 * @param {number} rad the angle in radians.
+	 * @return {number} the angle in degrees.
+	 */
+	function radToDeg(rad) {
+	  return (180.0 * (rad / Math.PI));
+	}
+
+	/**
+	 * Converts a set of Longitude and Latitude co-ordinates to UTM
+	 * using the WGS84 ellipsoid.
+	 *
+	 * @private
+	 * @param {object} ll Object literal with lat and lon properties
+	 *     representing the WGS84 coordinate to be converted.
+	 * @return {object} Object literal containing the UTM value with easting,
+	 *     northing, zoneNumber and zoneLetter properties, and an optional
+	 *     accuracy property in digits. Returns null if the conversion failed.
+	 */
+	function LLtoUTM(ll) {
+	  var Lat = ll.lat;
+	  var Long = ll.lon;
+	  var a = 6378137.0; //ellip.radius;
+	  var eccSquared = 0.00669438; //ellip.eccsq;
+	  var k0 = 0.9996;
+	  var LongOrigin;
+	  var eccPrimeSquared;
+	  var N, T, C, A, M;
+	  var LatRad = degToRad(Lat);
+	  var LongRad = degToRad(Long);
+	  var LongOriginRad;
+	  var ZoneNumber;
+	  // (int)
+	  ZoneNumber = Math.floor((Long + 180) / 6) + 1;
+
+	  //Make sure the longitude 180.00 is in Zone 60
+	  if (Long === 180) {
+	    ZoneNumber = 60;
+	  }
+
+	  // Special zone for Norway
+	  if (Lat >= 56.0 && Lat < 64.0 && Long >= 3.0 && Long < 12.0) {
+	    ZoneNumber = 32;
+	  }
+
+	  // Special zones for Svalbard
+	  if (Lat >= 72.0 && Lat < 84.0) {
+	    if (Long >= 0.0 && Long < 9.0) {
+	      ZoneNumber = 31;
+	    }
+	    else if (Long >= 9.0 && Long < 21.0) {
+	      ZoneNumber = 33;
+	    }
+	    else if (Long >= 21.0 && Long < 33.0) {
+	      ZoneNumber = 35;
+	    }
+	    else if (Long >= 33.0 && Long < 42.0) {
+	      ZoneNumber = 37;
+	    }
+	  }
+
+	  LongOrigin = (ZoneNumber - 1) * 6 - 180 + 3; //+3 puts origin
+	  // in middle of
+	  // zone
+	  LongOriginRad = degToRad(LongOrigin);
+
+	  eccPrimeSquared = (eccSquared) / (1 - eccSquared);
+
+	  N = a / Math.sqrt(1 - eccSquared * Math.sin(LatRad) * Math.sin(LatRad));
+	  T = Math.tan(LatRad) * Math.tan(LatRad);
+	  C = eccPrimeSquared * Math.cos(LatRad) * Math.cos(LatRad);
+	  A = Math.cos(LatRad) * (LongRad - LongOriginRad);
+
+	  M = a * ((1 - eccSquared / 4 - 3 * eccSquared * eccSquared / 64 - 5 * eccSquared * eccSquared * eccSquared / 256) * LatRad - (3 * eccSquared / 8 + 3 * eccSquared * eccSquared / 32 + 45 * eccSquared * eccSquared * eccSquared / 1024) * Math.sin(2 * LatRad) + (15 * eccSquared * eccSquared / 256 + 45 * eccSquared * eccSquared * eccSquared / 1024) * Math.sin(4 * LatRad) - (35 * eccSquared * eccSquared * eccSquared / 3072) * Math.sin(6 * LatRad));
+
+	  var UTMEasting = (k0 * N * (A + (1 - T + C) * A * A * A / 6.0 + (5 - 18 * T + T * T + 72 * C - 58 * eccPrimeSquared) * A * A * A * A * A / 120.0) + 500000.0);
+
+	  var UTMNorthing = (k0 * (M + N * Math.tan(LatRad) * (A * A / 2 + (5 - T + 9 * C + 4 * C * C) * A * A * A * A / 24.0 + (61 - 58 * T + T * T + 600 * C - 330 * eccPrimeSquared) * A * A * A * A * A * A / 720.0)));
+	  if (Lat < 0.0) {
+	    UTMNorthing += 10000000.0; //10000000 meter offset for
+	    // southern hemisphere
+	  }
+
+	  return {
+	    northing: Math.round(UTMNorthing),
+	    easting: Math.round(UTMEasting),
+	    zoneNumber: ZoneNumber,
+	    zoneLetter: getLetterDesignator(Lat)
+	  };
+	}
+
+	/**
+	 * Converts UTM coords to lat/long, using the WGS84 ellipsoid. This is a convenience
+	 * class where the Zone can be specified as a single string eg."60N" which
+	 * is then broken down into the ZoneNumber and ZoneLetter.
+	 *
+	 * @private
+	 * @param {object} utm An object literal with northing, easting, zoneNumber
+	 *     and zoneLetter properties. If an optional accuracy property is
+	 *     provided (in meters), a bounding box will be returned instead of
+	 *     latitude and longitude.
+	 * @return {object} An object literal containing either lat and lon values
+	 *     (if no accuracy was provided), or top, right, bottom and left values
+	 *     for the bounding box calculated according to the provided accuracy.
+	 *     Returns null if the conversion failed.
+	 */
+	function UTMtoLL(utm) {
+
+	  var UTMNorthing = utm.northing;
+	  var UTMEasting = utm.easting;
+	  var zoneLetter = utm.zoneLetter;
+	  var zoneNumber = utm.zoneNumber;
+	  // check the ZoneNummber is valid
+	  if (zoneNumber < 0 || zoneNumber > 60) {
+	    return null;
+	  }
+
+	  var k0 = 0.9996;
+	  var a = 6378137.0; //ellip.radius;
+	  var eccSquared = 0.00669438; //ellip.eccsq;
+	  var eccPrimeSquared;
+	  var e1 = (1 - Math.sqrt(1 - eccSquared)) / (1 + Math.sqrt(1 - eccSquared));
+	  var N1, T1, C1, R1, D, M;
+	  var LongOrigin;
+	  var mu, phi1Rad;
+
+	  // remove 500,000 meter offset for longitude
+	  var x = UTMEasting - 500000.0;
+	  var y = UTMNorthing;
+
+	  // We must know somehow if we are in the Northern or Southern
+	  // hemisphere, this is the only time we use the letter So even
+	  // if the Zone letter isn't exactly correct it should indicate
+	  // the hemisphere correctly
+	  if (zoneLetter < 'N') {
+	    y -= 10000000.0; // remove 10,000,000 meter offset used
+	    // for southern hemisphere
+	  }
+
+	  // There are 60 zones with zone 1 being at West -180 to -174
+	  LongOrigin = (zoneNumber - 1) * 6 - 180 + 3; // +3 puts origin
+	  // in middle of
+	  // zone
+
+	  eccPrimeSquared = (eccSquared) / (1 - eccSquared);
+
+	  M = y / k0;
+	  mu = M / (a * (1 - eccSquared / 4 - 3 * eccSquared * eccSquared / 64 - 5 * eccSquared * eccSquared * eccSquared / 256));
+
+	  phi1Rad = mu + (3 * e1 / 2 - 27 * e1 * e1 * e1 / 32) * Math.sin(2 * mu) + (21 * e1 * e1 / 16 - 55 * e1 * e1 * e1 * e1 / 32) * Math.sin(4 * mu) + (151 * e1 * e1 * e1 / 96) * Math.sin(6 * mu);
+	  // double phi1 = ProjMath.radToDeg(phi1Rad);
+
+	  N1 = a / Math.sqrt(1 - eccSquared * Math.sin(phi1Rad) * Math.sin(phi1Rad));
+	  T1 = Math.tan(phi1Rad) * Math.tan(phi1Rad);
+	  C1 = eccPrimeSquared * Math.cos(phi1Rad) * Math.cos(phi1Rad);
+	  R1 = a * (1 - eccSquared) / Math.pow(1 - eccSquared * Math.sin(phi1Rad) * Math.sin(phi1Rad), 1.5);
+	  D = x / (N1 * k0);
+
+	  var lat = phi1Rad - (N1 * Math.tan(phi1Rad) / R1) * (D * D / 2 - (5 + 3 * T1 + 10 * C1 - 4 * C1 * C1 - 9 * eccPrimeSquared) * D * D * D * D / 24 + (61 + 90 * T1 + 298 * C1 + 45 * T1 * T1 - 252 * eccPrimeSquared - 3 * C1 * C1) * D * D * D * D * D * D / 720);
+	  lat = radToDeg(lat);
+
+	  var lon = (D - (1 + 2 * T1 + C1) * D * D * D / 6 + (5 - 2 * C1 + 28 * T1 - 3 * C1 * C1 + 8 * eccPrimeSquared + 24 * T1 * T1) * D * D * D * D * D / 120) / Math.cos(phi1Rad);
+	  lon = LongOrigin + radToDeg(lon);
+
+	  var result;
+	  if (utm.accuracy) {
+	    var topRight = UTMtoLL({
+	      northing: utm.northing + utm.accuracy,
+	      easting: utm.easting + utm.accuracy,
+	      zoneLetter: utm.zoneLetter,
+	      zoneNumber: utm.zoneNumber
+	    });
+	    result = {
+	      top: topRight.lat,
+	      right: topRight.lon,
+	      bottom: lat,
+	      left: lon
+	    };
+	  }
+	  else {
+	    result = {
+	      lat: lat,
+	      lon: lon
+	    };
+	  }
+	  return result;
+	}
+
+	/**
+	 * Calculates the MGRS letter designator for the given latitude.
+	 *
+	 * @private
+	 * @param {number} lat The latitude in WGS84 to get the letter designator
+	 *     for.
+	 * @return {char} The letter designator.
+	 */
+	function getLetterDesignator(lat) {
+	  //This is here as an error flag to show that the Latitude is
+	  //outside MGRS limits
+	  var LetterDesignator = 'Z';
+
+	  if ((84 >= lat) && (lat >= 72)) {
+	    LetterDesignator = 'X';
+	  }
+	  else if ((72 > lat) && (lat >= 64)) {
+	    LetterDesignator = 'W';
+	  }
+	  else if ((64 > lat) && (lat >= 56)) {
+	    LetterDesignator = 'V';
+	  }
+	  else if ((56 > lat) && (lat >= 48)) {
+	    LetterDesignator = 'U';
+	  }
+	  else if ((48 > lat) && (lat >= 40)) {
+	    LetterDesignator = 'T';
+	  }
+	  else if ((40 > lat) && (lat >= 32)) {
+	    LetterDesignator = 'S';
+	  }
+	  else if ((32 > lat) && (lat >= 24)) {
+	    LetterDesignator = 'R';
+	  }
+	  else if ((24 > lat) && (lat >= 16)) {
+	    LetterDesignator = 'Q';
+	  }
+	  else if ((16 > lat) && (lat >= 8)) {
+	    LetterDesignator = 'P';
+	  }
+	  else if ((8 > lat) && (lat >= 0)) {
+	    LetterDesignator = 'N';
+	  }
+	  else if ((0 > lat) && (lat >= -8)) {
+	    LetterDesignator = 'M';
+	  }
+	  else if ((-8 > lat) && (lat >= -16)) {
+	    LetterDesignator = 'L';
+	  }
+	  else if ((-16 > lat) && (lat >= -24)) {
+	    LetterDesignator = 'K';
+	  }
+	  else if ((-24 > lat) && (lat >= -32)) {
+	    LetterDesignator = 'J';
+	  }
+	  else if ((-32 > lat) && (lat >= -40)) {
+	    LetterDesignator = 'H';
+	  }
+	  else if ((-40 > lat) && (lat >= -48)) {
+	    LetterDesignator = 'G';
+	  }
+	  else if ((-48 > lat) && (lat >= -56)) {
+	    LetterDesignator = 'F';
+	  }
+	  else if ((-56 > lat) && (lat >= -64)) {
+	    LetterDesignator = 'E';
+	  }
+	  else if ((-64 > lat) && (lat >= -72)) {
+	    LetterDesignator = 'D';
+	  }
+	  else if ((-72 > lat) && (lat >= -80)) {
+	    LetterDesignator = 'C';
+	  }
+	  return LetterDesignator;
+	}
+
+	/**
+	 * Encodes a UTM location as MGRS string.
+	 *
+	 * @private
+	 * @param {object} utm An object literal with easting, northing,
+	 *     zoneLetter, zoneNumber
+	 * @param {number} accuracy Accuracy in digits (1-5).
+	 * @return {string} MGRS string for the given UTM location.
+	 */
+	function encode(utm, accuracy) {
+	  // prepend with leading zeroes
+	  var seasting = "00000" + utm.easting,
+	    snorthing = "00000" + utm.northing;
+
+	  return utm.zoneNumber + utm.zoneLetter + get100kID(utm.easting, utm.northing, utm.zoneNumber) + seasting.substr(seasting.length - 5, accuracy) + snorthing.substr(snorthing.length - 5, accuracy);
+	}
+
+	/**
+	 * Get the two letter 100k designator for a given UTM easting,
+	 * northing and zone number value.
+	 *
+	 * @private
+	 * @param {number} easting
+	 * @param {number} northing
+	 * @param {number} zoneNumber
+	 * @return the two letter 100k designator for the given UTM location.
+	 */
+	function get100kID(easting, northing, zoneNumber) {
+	  var setParm = get100kSetForZone(zoneNumber);
+	  var setColumn = Math.floor(easting / 100000);
+	  var setRow = Math.floor(northing / 100000) % 20;
+	  return getLetter100kID(setColumn, setRow, setParm);
+	}
+
+	/**
+	 * Given a UTM zone number, figure out the MGRS 100K set it is in.
+	 *
+	 * @private
+	 * @param {number} i An UTM zone number.
+	 * @return {number} the 100k set the UTM zone is in.
+	 */
+	function get100kSetForZone(i) {
+	  var setParm = i % NUM_100K_SETS;
+	  if (setParm === 0) {
+	    setParm = NUM_100K_SETS;
+	  }
+
+	  return setParm;
+	}
+
+	/**
+	 * Get the two-letter MGRS 100k designator given information
+	 * translated from the UTM northing, easting and zone number.
+	 *
+	 * @private
+	 * @param {number} column the column index as it relates to the MGRS
+	 *        100k set spreadsheet, created from the UTM easting.
+	 *        Values are 1-8.
+	 * @param {number} row the row index as it relates to the MGRS 100k set
+	 *        spreadsheet, created from the UTM northing value. Values
+	 *        are from 0-19.
+	 * @param {number} parm the set block, as it relates to the MGRS 100k set
+	 *        spreadsheet, created from the UTM zone. Values are from
+	 *        1-60.
+	 * @return two letter MGRS 100k code.
+	 */
+	function getLetter100kID(column, row, parm) {
+	  // colOrigin and rowOrigin are the letters at the origin of the set
+	  var index = parm - 1;
+	  var colOrigin = SET_ORIGIN_COLUMN_LETTERS.charCodeAt(index);
+	  var rowOrigin = SET_ORIGIN_ROW_LETTERS.charCodeAt(index);
+
+	  // colInt and rowInt are the letters to build to return
+	  var colInt = colOrigin + column - 1;
+	  var rowInt = rowOrigin + row;
+	  var rollover = false;
+
+	  if (colInt > Z) {
+	    colInt = colInt - Z + A - 1;
+	    rollover = true;
+	  }
+
+	  if (colInt === I || (colOrigin < I && colInt > I) || ((colInt > I || colOrigin < I) && rollover)) {
+	    colInt++;
+	  }
+
+	  if (colInt === O || (colOrigin < O && colInt > O) || ((colInt > O || colOrigin < O) && rollover)) {
+	    colInt++;
+
+	    if (colInt === I) {
+	      colInt++;
+	    }
+	  }
+
+	  if (colInt > Z) {
+	    colInt = colInt - Z + A - 1;
+	  }
+
+	  if (rowInt > V) {
+	    rowInt = rowInt - V + A - 1;
+	    rollover = true;
+	  }
+	  else {
+	    rollover = false;
+	  }
+
+	  if (((rowInt === I) || ((rowOrigin < I) && (rowInt > I))) || (((rowInt > I) || (rowOrigin < I)) && rollover)) {
+	    rowInt++;
+	  }
+
+	  if (((rowInt === O) || ((rowOrigin < O) && (rowInt > O))) || (((rowInt > O) || (rowOrigin < O)) && rollover)) {
+	    rowInt++;
+
+	    if (rowInt === I) {
+	      rowInt++;
+	    }
+	  }
+
+	  if (rowInt > V) {
+	    rowInt = rowInt - V + A - 1;
+	  }
+
+	  var twoLetter = String.fromCharCode(colInt) + String.fromCharCode(rowInt);
+	  return twoLetter;
+	}
+
+	/**
+	 * Decode the UTM parameters from a MGRS string.
+	 *
+	 * @private
+	 * @param {string} mgrsString an UPPERCASE coordinate string is expected.
+	 * @return {object} An object literal with easting, northing, zoneLetter,
+	 *     zoneNumber and accuracy (in meters) properties.
+	 */
+	function decode(mgrsString) {
+
+	  if (mgrsString && mgrsString.length === 0) {
+	    throw ("MGRSPoint coverting from nothing");
+	  }
+
+	  var length = mgrsString.length;
+
+	  var hunK = null;
+	  var sb = "";
+	  var testChar;
+	  var i = 0;
+
+	  // get Zone number
+	  while (!(/[A-Z]/).test(testChar = mgrsString.charAt(i))) {
+	    if (i >= 2) {
+	      throw ("MGRSPoint bad conversion from: " + mgrsString);
+	    }
+	    sb += testChar;
+	    i++;
+	  }
+
+	  var zoneNumber = parseInt(sb, 10);
+
+	  if (i === 0 || i + 3 > length) {
+	    // A good MGRS string has to be 4-5 digits long,
+	    // ##AAA/#AAA at least.
+	    throw ("MGRSPoint bad conversion from: " + mgrsString);
+	  }
+
+	  var zoneLetter = mgrsString.charAt(i++);
+
+	  // Should we check the zone letter here? Why not.
+	  if (zoneLetter <= 'A' || zoneLetter === 'B' || zoneLetter === 'Y' || zoneLetter >= 'Z' || zoneLetter === 'I' || zoneLetter === 'O') {
+	    throw ("MGRSPoint zone letter " + zoneLetter + " not handled: " + mgrsString);
+	  }
+
+	  hunK = mgrsString.substring(i, i += 2);
+
+	  var set = get100kSetForZone(zoneNumber);
+
+	  var east100k = getEastingFromChar(hunK.charAt(0), set);
+	  var north100k = getNorthingFromChar(hunK.charAt(1), set);
+
+	  // We have a bug where the northing may be 2000000 too low.
+	  // How
+	  // do we know when to roll over?
+
+	  while (north100k < getMinNorthing(zoneLetter)) {
+	    north100k += 2000000;
+	  }
+
+	  // calculate the char index for easting/northing separator
+	  var remainder = length - i;
+
+	  if (remainder % 2 !== 0) {
+	    throw ("MGRSPoint has to have an even number \nof digits after the zone letter and two 100km letters - front \nhalf for easting meters, second half for \nnorthing meters" + mgrsString);
+	  }
+
+	  var sep = remainder / 2;
+
+	  var sepEasting = 0.0;
+	  var sepNorthing = 0.0;
+	  var accuracyBonus, sepEastingString, sepNorthingString, easting, northing;
+	  if (sep > 0) {
+	    accuracyBonus = 100000.0 / Math.pow(10, sep);
+	    sepEastingString = mgrsString.substring(i, i + sep);
+	    sepEasting = parseFloat(sepEastingString) * accuracyBonus;
+	    sepNorthingString = mgrsString.substring(i + sep);
+	    sepNorthing = parseFloat(sepNorthingString) * accuracyBonus;
+	  }
+
+	  easting = sepEasting + east100k;
+	  northing = sepNorthing + north100k;
+
+	  return {
+	    easting: easting,
+	    northing: northing,
+	    zoneLetter: zoneLetter,
+	    zoneNumber: zoneNumber,
+	    accuracy: accuracyBonus
+	  };
+	}
+
+	/**
+	 * Given the first letter from a two-letter MGRS 100k zone, and given the
+	 * MGRS table set for the zone number, figure out the easting value that
+	 * should be added to the other, secondary easting value.
+	 *
+	 * @private
+	 * @param {char} e The first letter from a two-letter MGRS 100´k zone.
+	 * @param {number} set The MGRS table set for the zone number.
+	 * @return {number} The easting value for the given letter and set.
+	 */
+	function getEastingFromChar(e, set) {
+	  // colOrigin is the letter at the origin of the set for the
+	  // column
+	  var curCol = SET_ORIGIN_COLUMN_LETTERS.charCodeAt(set - 1);
+	  var eastingValue = 100000.0;
+	  var rewindMarker = false;
+
+	  while (curCol !== e.charCodeAt(0)) {
+	    curCol++;
+	    if (curCol === I) {
+	      curCol++;
+	    }
+	    if (curCol === O) {
+	      curCol++;
+	    }
+	    if (curCol > Z) {
+	      if (rewindMarker) {
+	        throw ("Bad character: " + e);
+	      }
+	      curCol = A;
+	      rewindMarker = true;
+	    }
+	    eastingValue += 100000.0;
+	  }
+
+	  return eastingValue;
+	}
+
+	/**
+	 * Given the second letter from a two-letter MGRS 100k zone, and given the
+	 * MGRS table set for the zone number, figure out the northing value that
+	 * should be added to the other, secondary northing value. You have to
+	 * remember that Northings are determined from the equator, and the vertical
+	 * cycle of letters mean a 2000000 additional northing meters. This happens
+	 * approx. every 18 degrees of latitude. This method does *NOT* count any
+	 * additional northings. You have to figure out how many 2000000 meters need
+	 * to be added for the zone letter of the MGRS coordinate.
+	 *
+	 * @private
+	 * @param {char} n Second letter of the MGRS 100k zone
+	 * @param {number} set The MGRS table set number, which is dependent on the
+	 *     UTM zone number.
+	 * @return {number} The northing value for the given letter and set.
+	 */
+	function getNorthingFromChar(n, set) {
+
+	  if (n > 'V') {
+	    throw ("MGRSPoint given invalid Northing " + n);
+	  }
+
+	  // rowOrigin is the letter at the origin of the set for the
+	  // column
+	  var curRow = SET_ORIGIN_ROW_LETTERS.charCodeAt(set - 1);
+	  var northingValue = 0.0;
+	  var rewindMarker = false;
+
+	  while (curRow !== n.charCodeAt(0)) {
+	    curRow++;
+	    if (curRow === I) {
+	      curRow++;
+	    }
+	    if (curRow === O) {
+	      curRow++;
+	    }
+	    // fixing a bug making whole application hang in this loop
+	    // when 'n' is a wrong character
+	    if (curRow > V) {
+	      if (rewindMarker) { // making sure that this loop ends
+	        throw ("Bad character: " + n);
+	      }
+	      curRow = A;
+	      rewindMarker = true;
+	    }
+	    northingValue += 100000.0;
+	  }
+
+	  return northingValue;
+	}
+
+	/**
+	 * The function getMinNorthing returns the minimum northing value of a MGRS
+	 * zone.
+	 *
+	 * Ported from Geotrans' c Lattitude_Band_Value structure table.
+	 *
+	 * @private
+	 * @param {char} zoneLetter The MGRS zone to get the min northing for.
+	 * @return {number}
+	 */
+	function getMinNorthing(zoneLetter) {
+	  var northing;
+	  switch (zoneLetter) {
+	  case 'C':
+	    northing = 1100000.0;
+	    break;
+	  case 'D':
+	    northing = 2000000.0;
+	    break;
+	  case 'E':
+	    northing = 2800000.0;
+	    break;
+	  case 'F':
+	    northing = 3700000.0;
+	    break;
+	  case 'G':
+	    northing = 4600000.0;
+	    break;
+	  case 'H':
+	    northing = 5500000.0;
+	    break;
+	  case 'J':
+	    northing = 6400000.0;
+	    break;
+	  case 'K':
+	    northing = 7300000.0;
+	    break;
+	  case 'L':
+	    northing = 8200000.0;
+	    break;
+	  case 'M':
+	    northing = 9100000.0;
+	    break;
+	  case 'N':
+	    northing = 0.0;
+	    break;
+	  case 'P':
+	    northing = 800000.0;
+	    break;
+	  case 'Q':
+	    northing = 1700000.0;
+	    break;
+	  case 'R':
+	    northing = 2600000.0;
+	    break;
+	  case 'S':
+	    northing = 3500000.0;
+	    break;
+	  case 'T':
+	    northing = 4400000.0;
+	    break;
+	  case 'U':
+	    northing = 5300000.0;
+	    break;
+	  case 'V':
+	    northing = 6200000.0;
+	    break;
+	  case 'W':
+	    northing = 7000000.0;
+	    break;
+	  case 'X':
+	    northing = 7900000.0;
+	    break;
+	  default:
+	    northing = -1.0;
+	  }
+	  if (northing >= 0.0) {
+	    return northing;
+	  }
+	  else {
+	    throw ("Invalid zone letter: " + zoneLetter);
+	  }
+
+	}
+
+	function Point(x, y, z) {
+	  if (!(this instanceof Point)) {
+	    return new Point(x, y, z);
+	  }
+	  if (Array.isArray(x)) {
+	    this.x = x[0];
+	    this.y = x[1];
+	    this.z = x[2] || 0.0;
+	  } else if(typeof x === 'object') {
+	    this.x = x.x;
+	    this.y = x.y;
+	    this.z = x.z || 0.0;
+	  } else if (typeof x === 'string' && typeof y === 'undefined') {
+	    var coords = x.split(',');
+	    this.x = parseFloat(coords[0], 10);
+	    this.y = parseFloat(coords[1], 10);
+	    this.z = parseFloat(coords[2], 10) || 0.0;
+	  } else {
+	    this.x = x;
+	    this.y = y;
+	    this.z = z || 0.0;
+	  }
+	  console.warn('proj4.Point will be removed in version 3, use proj4.toPoint');
+	}
+
+	Point.fromMGRS = function(mgrsStr) {
+	  return new Point(toPoint$1(mgrsStr));
+	};
+	Point.prototype.toMGRS = function(accuracy) {
+	  return forward$1([this.x, this.y], accuracy);
+	};
+
+	var version = "2.4.3";
+
+	var C00 = 1;
+	var C02 = 0.25;
+	var C04 = 0.046875;
+	var C06 = 0.01953125;
+	var C08 = 0.01068115234375;
+	var C22 = 0.75;
+	var C44 = 0.46875;
+	var C46 = 0.01302083333333333333;
+	var C48 = 0.00712076822916666666;
+	var C66 = 0.36458333333333333333;
+	var C68 = 0.00569661458333333333;
+	var C88 = 0.3076171875;
+
+	var pj_enfn = function(es) {
+	  var en = [];
+	  en[0] = C00 - es * (C02 + es * (C04 + es * (C06 + es * C08)));
+	  en[1] = es * (C22 - es * (C04 + es * (C06 + es * C08)));
+	  var t = es * es;
+	  en[2] = t * (C44 - es * (C46 + es * C48));
+	  t *= es;
+	  en[3] = t * (C66 - es * C68);
+	  en[4] = t * es * C88;
+	  return en;
+	};
+
+	var pj_mlfn = function(phi, sphi, cphi, en) {
+	  cphi *= sphi;
+	  sphi *= sphi;
+	  return (en[0] * phi - cphi * (en[1] + sphi * (en[2] + sphi * (en[3] + sphi * en[4]))));
+	};
+
+	var MAX_ITER = 20;
+
+	var pj_inv_mlfn = function(arg, es, en) {
+	  var k = 1 / (1 - es);
+	  var phi = arg;
+	  for (var i = MAX_ITER; i; --i) { /* rarely goes over 2 iterations */
+	    var s = Math.sin(phi);
+	    var t = 1 - es * s * s;
+	    //t = this.pj_mlfn(phi, s, Math.cos(phi), en) - arg;
+	    //phi -= t * (t * Math.sqrt(t)) * k;
+	    t = (pj_mlfn(phi, s, Math.cos(phi), en) - arg) * (t * Math.sqrt(t)) * k;
+	    phi -= t;
+	    if (Math.abs(t) < EPSLN) {
+	      return phi;
+	    }
+	  }
+	  //..reportError("cass:pj_inv_mlfn: Convergence error");
+	  return phi;
+	};
+
+	// Heavily based on this tmerc projection implementation
+	// https://github.com/mbloch/mapshaper-proj/blob/master/src/projections/tmerc.js
+
+	function init$2() {
+	  this.x0 = this.x0 !== undefined ? this.x0 : 0;
+	  this.y0 = this.y0 !== undefined ? this.y0 : 0;
+	  this.long0 = this.long0 !== undefined ? this.long0 : 0;
+	  this.lat0 = this.lat0 !== undefined ? this.lat0 : 0;
+
+	  if (this.es) {
+	    this.en = pj_enfn(this.es);
+	    this.ml0 = pj_mlfn(this.lat0, Math.sin(this.lat0), Math.cos(this.lat0), this.en);
+	  }
+	}
+
+	/**
+	    Transverse Mercator Forward  - long/lat to x/y
+	    long/lat in radians
+	  */
+	function forward$2(p) {
+	  var lon = p.x;
+	  var lat = p.y;
+
+	  var delta_lon = adjust_lon(lon - this.long0);
+	  var con;
+	  var x, y;
+	  var sin_phi = Math.sin(lat);
+	  var cos_phi = Math.cos(lat);
+
+	  if (!this.es) {
+	    var b = cos_phi * Math.sin(delta_lon);
+
+	    if ((Math.abs(Math.abs(b) - 1)) < EPSLN) {
+	      return (93);
+	    }
+	    else {
+	      x = 0.5 * this.a * this.k0 * Math.log((1 + b) / (1 - b)) + this.x0;
+	      y = cos_phi * Math.cos(delta_lon) / Math.sqrt(1 - Math.pow(b, 2));
+	      b = Math.abs(y);
+
+	      if (b >= 1) {
+	        if ((b - 1) > EPSLN) {
+	          return (93);
+	        }
+	        else {
+	          y = 0;
+	        }
+	      }
+	      else {
+	        y = Math.acos(y);
+	      }
+
+	      if (lat < 0) {
+	        y = -y;
+	      }
+
+	      y = this.a * this.k0 * (y - this.lat0) + this.y0;
+	    }
+	  }
+	  else {
+	    var al = cos_phi * delta_lon;
+	    var als = Math.pow(al, 2);
+	    var c = this.ep2 * Math.pow(cos_phi, 2);
+	    var cs = Math.pow(c, 2);
+	    var tq = Math.abs(cos_phi) > EPSLN ? Math.tan(lat) : 0;
+	    var t = Math.pow(tq, 2);
+	    var ts = Math.pow(t, 2);
+	    con = 1 - this.es * Math.pow(sin_phi, 2);
+	    al = al / Math.sqrt(con);
+	    var ml = pj_mlfn(lat, sin_phi, cos_phi, this.en);
+
+	    x = this.a * (this.k0 * al * (1 +
+	      als / 6 * (1 - t + c +
+	      als / 20 * (5 - 18 * t + ts + 14 * c - 58 * t * c +
+	      als / 42 * (61 + 179 * ts - ts * t - 479 * t))))) +
+	      this.x0;
+
+	    y = this.a * (this.k0 * (ml - this.ml0 +
+	      sin_phi * delta_lon * al / 2 * (1 +
+	      als / 12 * (5 - t + 9 * c + 4 * cs +
+	      als / 30 * (61 + ts - 58 * t + 270 * c - 330 * t * c +
+	      als / 56 * (1385 + 543 * ts - ts * t - 3111 * t)))))) +
+	      this.y0;
+	  }
+
+	  p.x = x;
+	  p.y = y;
+
+	  return p;
+	}
+
+	/**
+	    Transverse Mercator Inverse  -  x/y to long/lat
+	  */
+	function inverse$2(p) {
+	  var con, phi;
+	  var lat, lon;
+	  var x = (p.x - this.x0) * (1 / this.a);
+	  var y = (p.y - this.y0) * (1 / this.a);
+
+	  if (!this.es) {
+	    var f = Math.exp(x / this.k0);
+	    var g = 0.5 * (f - 1 / f);
+	    var temp = this.lat0 + y / this.k0;
+	    var h = Math.cos(temp);
+	    con = Math.sqrt((1 - Math.pow(h, 2)) / (1 + Math.pow(g, 2)));
+	    lat = Math.asin(con);
+
+	    if (y < 0) {
+	      lat = -lat;
+	    }
+
+	    if ((g === 0) && (h === 0)) {
+	      lon = 0;
+	    }
+	    else {
+	      lon = adjust_lon(Math.atan2(g, h) + this.long0);
+	    }
+	  }
+	  else { // ellipsoidal form
+	    con = this.ml0 + y / this.k0;
+	    phi = pj_inv_mlfn(con, this.es, this.en);
+
+	    if (Math.abs(phi) < HALF_PI) {
+	      var sin_phi = Math.sin(phi);
+	      var cos_phi = Math.cos(phi);
+	      var tan_phi = Math.abs(cos_phi) > EPSLN ? Math.tan(phi) : 0;
+	      var c = this.ep2 * Math.pow(cos_phi, 2);
+	      var cs = Math.pow(c, 2);
+	      var t = Math.pow(tan_phi, 2);
+	      var ts = Math.pow(t, 2);
+	      con = 1 - this.es * Math.pow(sin_phi, 2);
+	      var d = x * Math.sqrt(con) / this.k0;
+	      var ds = Math.pow(d, 2);
+	      con = con * tan_phi;
+
+	      lat = phi - (con * ds / (1 - this.es)) * 0.5 * (1 -
+	        ds / 12 * (5 + 3 * t - 9 * c * t + c - 4 * cs -
+	        ds / 30 * (61 + 90 * t - 252 * c * t + 45 * ts + 46 * c -
+	        ds / 56 * (1385 + 3633 * t + 4095 * ts + 1574 * ts * t))));
+
+	      lon = adjust_lon(this.long0 + (d * (1 -
+	        ds / 6 * (1 + 2 * t + c -
+	        ds / 20 * (5 + 28 * t + 24 * ts + 8 * c * t + 6 * c -
+	        ds / 42 * (61 + 662 * t + 1320 * ts + 720 * ts * t)))) / cos_phi));
+	    }
+	    else {
+	      lat = HALF_PI * sign(y);
+	      lon = 0;
+	    }
+	  }
+
+	  p.x = lon;
+	  p.y = lat;
+
+	  return p;
+	}
+
+	var names$3 = ["Transverse_Mercator", "Transverse Mercator", "tmerc"];
+	var tmerc = {
+	  init: init$2,
+	  forward: forward$2,
+	  inverse: inverse$2,
+	  names: names$3
+	};
+
+	var sinh = function(x) {
+	  var r = Math.exp(x);
+	  r = (r - 1 / r) / 2;
+	  return r;
+	};
+
+	var hypot = function(x, y) {
+	  x = Math.abs(x);
+	  y = Math.abs(y);
+	  var a = Math.max(x, y);
+	  var b = Math.min(x, y) / (a ? a : 1);
+
+	  return a * Math.sqrt(1 + Math.pow(b, 2));
+	};
+
+	var log1py = function(x) {
+	  var y = 1 + x;
+	  var z = y - 1;
+
+	  return z === 0 ? x : x * Math.log(y) / z;
+	};
+
+	var asinhy = function(x) {
+	  var y = Math.abs(x);
+	  y = log1py(y * (1 + y / (hypot(1, y) + 1)));
+
+	  return x < 0 ? -y : y;
+	};
+
+	var gatg = function(pp, B) {
+	  var cos_2B = 2 * Math.cos(2 * B);
+	  var i = pp.length - 1;
+	  var h1 = pp[i];
+	  var h2 = 0;
+	  var h;
+
+	  while (--i >= 0) {
+	    h = -h2 + cos_2B * h1 + pp[i];
+	    h2 = h1;
+	    h1 = h;
+	  }
+
+	  return (B + h * Math.sin(2 * B));
+	};
+
+	var clens = function(pp, arg_r) {
+	  var r = 2 * Math.cos(arg_r);
+	  var i = pp.length - 1;
+	  var hr1 = pp[i];
+	  var hr2 = 0;
+	  var hr;
+
+	  while (--i >= 0) {
+	    hr = -hr2 + r * hr1 + pp[i];
+	    hr2 = hr1;
+	    hr1 = hr;
+	  }
+
+	  return Math.sin(arg_r) * hr;
+	};
+
+	var cosh = function(x) {
+	  var r = Math.exp(x);
+	  r = (r + 1 / r) / 2;
+	  return r;
+	};
+
+	var clens_cmplx = function(pp, arg_r, arg_i) {
+	  var sin_arg_r = Math.sin(arg_r);
+	  var cos_arg_r = Math.cos(arg_r);
+	  var sinh_arg_i = sinh(arg_i);
+	  var cosh_arg_i = cosh(arg_i);
+	  var r = 2 * cos_arg_r * cosh_arg_i;
+	  var i = -2 * sin_arg_r * sinh_arg_i;
+	  var j = pp.length - 1;
+	  var hr = pp[j];
+	  var hi1 = 0;
+	  var hr1 = 0;
+	  var hi = 0;
+	  var hr2;
+	  var hi2;
+
+	  while (--j >= 0) {
+	    hr2 = hr1;
+	    hi2 = hi1;
+	    hr1 = hr;
+	    hi1 = hi;
+	    hr = -hr2 + r * hr1 - i * hi1 + pp[j];
+	    hi = -hi2 + i * hr1 + r * hi1;
+	  }
+
+	  r = sin_arg_r * cosh_arg_i;
+	  i = cos_arg_r * sinh_arg_i;
+
+	  return [r * hr - i * hi, r * hi + i * hr];
+	};
+
+	// Heavily based on this etmerc projection implementation
+	// https://github.com/mbloch/mapshaper-proj/blob/master/src/projections/etmerc.js
+
+	function init$3() {
+	  if (this.es === undefined || this.es <= 0) {
+	    throw new Error('incorrect elliptical usage');
+	  }
+
+	  this.x0 = this.x0 !== undefined ? this.x0 : 0;
+	  this.y0 = this.y0 !== undefined ? this.y0 : 0;
+	  this.long0 = this.long0 !== undefined ? this.long0 : 0;
+	  this.lat0 = this.lat0 !== undefined ? this.lat0 : 0;
+
+	  this.cgb = [];
+	  this.cbg = [];
+	  this.utg = [];
+	  this.gtu = [];
+
+	  var f = this.es / (1 + Math.sqrt(1 - this.es));
+	  var n = f / (2 - f);
+	  var np = n;
+
+	  this.cgb[0] = n * (2 + n * (-2 / 3 + n * (-2 + n * (116 / 45 + n * (26 / 45 + n * (-2854 / 675 ))))));
+	  this.cbg[0] = n * (-2 + n * ( 2 / 3 + n * ( 4 / 3 + n * (-82 / 45 + n * (32 / 45 + n * (4642 / 4725))))));
+
+	  np = np * n;
+	  this.cgb[1] = np * (7 / 3 + n * (-8 / 5 + n * (-227 / 45 + n * (2704 / 315 + n * (2323 / 945)))));
+	  this.cbg[1] = np * (5 / 3 + n * (-16 / 15 + n * ( -13 / 9 + n * (904 / 315 + n * (-1522 / 945)))));
+
+	  np = np * n;
+	  this.cgb[2] = np * (56 / 15 + n * (-136 / 35 + n * (-1262 / 105 + n * (73814 / 2835))));
+	  this.cbg[2] = np * (-26 / 15 + n * (34 / 21 + n * (8 / 5 + n * (-12686 / 2835))));
+
+	  np = np * n;
+	  this.cgb[3] = np * (4279 / 630 + n * (-332 / 35 + n * (-399572 / 14175)));
+	  this.cbg[3] = np * (1237 / 630 + n * (-12 / 5 + n * ( -24832 / 14175)));
+
+	  np = np * n;
+	  this.cgb[4] = np * (4174 / 315 + n * (-144838 / 6237));
+	  this.cbg[4] = np * (-734 / 315 + n * (109598 / 31185));
+
+	  np = np * n;
+	  this.cgb[5] = np * (601676 / 22275);
+	  this.cbg[5] = np * (444337 / 155925);
+
+	  np = Math.pow(n, 2);
+	  this.Qn = this.k0 / (1 + n) * (1 + np * (1 / 4 + np * (1 / 64 + np / 256)));
+
+	  this.utg[0] = n * (-0.5 + n * ( 2 / 3 + n * (-37 / 96 + n * ( 1 / 360 + n * (81 / 512 + n * (-96199 / 604800))))));
+	  this.gtu[0] = n * (0.5 + n * (-2 / 3 + n * (5 / 16 + n * (41 / 180 + n * (-127 / 288 + n * (7891 / 37800))))));
+
+	  this.utg[1] = np * (-1 / 48 + n * (-1 / 15 + n * (437 / 1440 + n * (-46 / 105 + n * (1118711 / 3870720)))));
+	  this.gtu[1] = np * (13 / 48 + n * (-3 / 5 + n * (557 / 1440 + n * (281 / 630 + n * (-1983433 / 1935360)))));
+
+	  np = np * n;
+	  this.utg[2] = np * (-17 / 480 + n * (37 / 840 + n * (209 / 4480 + n * (-5569 / 90720 ))));
+	  this.gtu[2] = np * (61 / 240 + n * (-103 / 140 + n * (15061 / 26880 + n * (167603 / 181440))));
+
+	  np = np * n;
+	  this.utg[3] = np * (-4397 / 161280 + n * (11 / 504 + n * (830251 / 7257600)));
+	  this.gtu[3] = np * (49561 / 161280 + n * (-179 / 168 + n * (6601661 / 7257600)));
+
+	  np = np * n;
+	  this.utg[4] = np * (-4583 / 161280 + n * (108847 / 3991680));
+	  this.gtu[4] = np * (34729 / 80640 + n * (-3418889 / 1995840));
+
+	  np = np * n;
+	  this.utg[5] = np * (-20648693 / 638668800);
+	  this.gtu[5] = np * (212378941 / 319334400);
+
+	  var Z = gatg(this.cbg, this.lat0);
+	  this.Zb = -this.Qn * (Z + clens(this.gtu, 2 * Z));
+	}
+
+	function forward$3(p) {
+	  var Ce = adjust_lon(p.x - this.long0);
+	  var Cn = p.y;
+
+	  Cn = gatg(this.cbg, Cn);
+	  var sin_Cn = Math.sin(Cn);
+	  var cos_Cn = Math.cos(Cn);
+	  var sin_Ce = Math.sin(Ce);
+	  var cos_Ce = Math.cos(Ce);
+
+	  Cn = Math.atan2(sin_Cn, cos_Ce * cos_Cn);
+	  Ce = Math.atan2(sin_Ce * cos_Cn, hypot(sin_Cn, cos_Cn * cos_Ce));
+	  Ce = asinhy(Math.tan(Ce));
+
+	  var tmp = clens_cmplx(this.gtu, 2 * Cn, 2 * Ce);
+
+	  Cn = Cn + tmp[0];
+	  Ce = Ce + tmp[1];
+
+	  var x;
+	  var y;
+
+	  if (Math.abs(Ce) <= 2.623395162778) {
+	    x = this.a * (this.Qn * Ce) + this.x0;
+	    y = this.a * (this.Qn * Cn + this.Zb) + this.y0;
+	  }
+	  else {
+	    x = Infinity;
+	    y = Infinity;
+	  }
+
+	  p.x = x;
+	  p.y = y;
+
+	  return p;
+	}
+
+	function inverse$3(p) {
+	  var Ce = (p.x - this.x0) * (1 / this.a);
+	  var Cn = (p.y - this.y0) * (1 / this.a);
+
+	  Cn = (Cn - this.Zb) / this.Qn;
+	  Ce = Ce / this.Qn;
+
+	  var lon;
+	  var lat;
+
+	  if (Math.abs(Ce) <= 2.623395162778) {
+	    var tmp = clens_cmplx(this.utg, 2 * Cn, 2 * Ce);
+
+	    Cn = Cn + tmp[0];
+	    Ce = Ce + tmp[1];
+	    Ce = Math.atan(sinh(Ce));
+
+	    var sin_Cn = Math.sin(Cn);
+	    var cos_Cn = Math.cos(Cn);
+	    var sin_Ce = Math.sin(Ce);
+	    var cos_Ce = Math.cos(Ce);
+
+	    Cn = Math.atan2(sin_Cn * cos_Ce, hypot(sin_Ce, cos_Ce * cos_Cn));
+	    Ce = Math.atan2(sin_Ce, cos_Ce * cos_Cn);
+
+	    lon = adjust_lon(Ce + this.long0);
+	    lat = gatg(this.cgb, Cn);
+	  }
+	  else {
+	    lon = Infinity;
+	    lat = Infinity;
+	  }
+
+	  p.x = lon;
+	  p.y = lat;
+
+	  return p;
+	}
+
+	var names$4 = ["Extended_Transverse_Mercator", "Extended Transverse Mercator", "etmerc"];
+	var etmerc = {
+	  init: init$3,
+	  forward: forward$3,
+	  inverse: inverse$3,
+	  names: names$4
+	};
+
+	var adjust_zone = function(zone, lon) {
+	  if (zone === undefined) {
+	    zone = Math.floor((adjust_lon(lon) + Math.PI) * 30 / Math.PI) + 1;
+
+	    if (zone < 0) {
+	      return 0;
+	    } else if (zone > 60) {
+	      return 60;
+	    }
+	  }
+	  return zone;
+	};
+
+	var dependsOn = 'etmerc';
+	function init$4() {
+	  var zone = adjust_zone(this.zone, this.long0);
+	  if (zone === undefined) {
+	    throw new Error('unknown utm zone');
+	  }
+	  this.lat0 = 0;
+	  this.long0 =  ((6 * Math.abs(zone)) - 183) * D2R;
+	  this.x0 = 500000;
+	  this.y0 = this.utmSouth ? 10000000 : 0;
+	  this.k0 = 0.9996;
+
+	  etmerc.init.apply(this);
+	  this.forward = etmerc.forward;
+	  this.inverse = etmerc.inverse;
+	}
+
+	var names$5 = ["Universal Transverse Mercator System", "utm"];
+	var utm = {
+	  init: init$4,
+	  names: names$5,
+	  dependsOn: dependsOn
+	};
+
+	var srat = function(esinp, exp) {
+	  return (Math.pow((1 - esinp) / (1 + esinp), exp));
+	};
+
+	var MAX_ITER$1 = 20;
+	function init$6() {
+	  var sphi = Math.sin(this.lat0);
+	  var cphi = Math.cos(this.lat0);
+	  cphi *= cphi;
+	  this.rc = Math.sqrt(1 - this.es) / (1 - this.es * sphi * sphi);
+	  this.C = Math.sqrt(1 + this.es * cphi * cphi / (1 - this.es));
+	  this.phic0 = Math.asin(sphi / this.C);
+	  this.ratexp = 0.5 * this.C * this.e;
+	  this.K = Math.tan(0.5 * this.phic0 + FORTPI) / (Math.pow(Math.tan(0.5 * this.lat0 + FORTPI), this.C) * srat(this.e * sphi, this.ratexp));
+	}
+
+	function forward$5(p) {
+	  var lon = p.x;
+	  var lat = p.y;
+
+	  p.y = 2 * Math.atan(this.K * Math.pow(Math.tan(0.5 * lat + FORTPI), this.C) * srat(this.e * Math.sin(lat), this.ratexp)) - HALF_PI;
+	  p.x = this.C * lon;
+	  return p;
+	}
+
+	function inverse$5(p) {
+	  var DEL_TOL = 1e-14;
+	  var lon = p.x / this.C;
+	  var lat = p.y;
+	  var num = Math.pow(Math.tan(0.5 * lat + FORTPI) / this.K, 1 / this.C);
+	  for (var i = MAX_ITER$1; i > 0; --i) {
+	    lat = 2 * Math.atan(num * srat(this.e * Math.sin(p.y), - 0.5 * this.e)) - HALF_PI;
+	    if (Math.abs(lat - p.y) < DEL_TOL) {
+	      break;
+	    }
+	    p.y = lat;
+	  }
+	  /* convergence failed */
+	  if (!i) {
+	    return null;
+	  }
+	  p.x = lon;
+	  p.y = lat;
+	  return p;
+	}
+
+	var names$7 = ["gauss"];
+	var gauss = {
+	  init: init$6,
+	  forward: forward$5,
+	  inverse: inverse$5,
+	  names: names$7
+	};
+
+	function init$5() {
+	  gauss.init.apply(this);
+	  if (!this.rc) {
+	    return;
+	  }
+	  this.sinc0 = Math.sin(this.phic0);
+	  this.cosc0 = Math.cos(this.phic0);
+	  this.R2 = 2 * this.rc;
+	  if (!this.title) {
+	    this.title = "Oblique Stereographic Alternative";
+	  }
+	}
+
+	function forward$4(p) {
+	  var sinc, cosc, cosl, k;
+	  p.x = adjust_lon(p.x - this.long0);
+	  gauss.forward.apply(this, [p]);
+	  sinc = Math.sin(p.y);
+	  cosc = Math.cos(p.y);
+	  cosl = Math.cos(p.x);
+	  k = this.k0 * this.R2 / (1 + this.sinc0 * sinc + this.cosc0 * cosc * cosl);
+	  p.x = k * cosc * Math.sin(p.x);
+	  p.y = k * (this.cosc0 * sinc - this.sinc0 * cosc * cosl);
+	  p.x = this.a * p.x + this.x0;
+	  p.y = this.a * p.y + this.y0;
+	  return p;
+	}
+
+	function inverse$4(p) {
+	  var sinc, cosc, lon, lat, rho;
+	  p.x = (p.x - this.x0) / this.a;
+	  p.y = (p.y - this.y0) / this.a;
+
+	  p.x /= this.k0;
+	  p.y /= this.k0;
+	  if ((rho = Math.sqrt(p.x * p.x + p.y * p.y))) {
+	    var c = 2 * Math.atan2(rho, this.R2);
+	    sinc = Math.sin(c);
+	    cosc = Math.cos(c);
+	    lat = Math.asin(cosc * this.sinc0 + p.y * sinc * this.cosc0 / rho);
+	    lon = Math.atan2(p.x * sinc, rho * this.cosc0 * cosc - p.y * this.sinc0 * sinc);
+	  }
+	  else {
+	    lat = this.phic0;
+	    lon = 0;
+	  }
+
+	  p.x = lon;
+	  p.y = lat;
+	  gauss.inverse.apply(this, [p]);
+	  p.x = adjust_lon(p.x + this.long0);
+	  return p;
+	}
+
+	var names$6 = ["Stereographic_North_Pole", "Oblique_Stereographic", "Polar_Stereographic", "sterea","Oblique Stereographic Alternative"];
+	var sterea = {
+	  init: init$5,
+	  forward: forward$4,
+	  inverse: inverse$4,
+	  names: names$6
+	};
+
+	function ssfn_(phit, sinphi, eccen) {
+	  sinphi *= eccen;
+	  return (Math.tan(0.5 * (HALF_PI + phit)) * Math.pow((1 - sinphi) / (1 + sinphi), 0.5 * eccen));
+	}
+
+	function init$7() {
+	  this.coslat0 = Math.cos(this.lat0);
+	  this.sinlat0 = Math.sin(this.lat0);
+	  if (this.sphere) {
+	    if (this.k0 === 1 && !isNaN(this.lat_ts) && Math.abs(this.coslat0) <= EPSLN) {
+	      this.k0 = 0.5 * (1 + sign(this.lat0) * Math.sin(this.lat_ts));
+	    }
+	  }
+	  else {
+	    if (Math.abs(this.coslat0) <= EPSLN) {
+	      if (this.lat0 > 0) {
+	        //North pole
+	        //trace('stere:north pole');
+	        this.con = 1;
+	      }
+	      else {
+	        //South pole
+	        //trace('stere:south pole');
+	        this.con = -1;
+	      }
+	    }
+	    this.cons = Math.sqrt(Math.pow(1 + this.e, 1 + this.e) * Math.pow(1 - this.e, 1 - this.e));
+	    if (this.k0 === 1 && !isNaN(this.lat_ts) && Math.abs(this.coslat0) <= EPSLN) {
+	      this.k0 = 0.5 * this.cons * msfnz(this.e, Math.sin(this.lat_ts), Math.cos(this.lat_ts)) / tsfnz(this.e, this.con * this.lat_ts, this.con * Math.sin(this.lat_ts));
+	    }
+	    this.ms1 = msfnz(this.e, this.sinlat0, this.coslat0);
+	    this.X0 = 2 * Math.atan(this.ssfn_(this.lat0, this.sinlat0, this.e)) - HALF_PI;
+	    this.cosX0 = Math.cos(this.X0);
+	    this.sinX0 = Math.sin(this.X0);
+	  }
+	}
+
+	// Stereographic forward equations--mapping lat,long to x,y
+	function forward$6(p) {
+	  var lon = p.x;
+	  var lat = p.y;
+	  var sinlat = Math.sin(lat);
+	  var coslat = Math.cos(lat);
+	  var A, X, sinX, cosX, ts, rh;
+	  var dlon = adjust_lon(lon - this.long0);
+
+	  if (Math.abs(Math.abs(lon - this.long0) - Math.PI) <= EPSLN && Math.abs(lat + this.lat0) <= EPSLN) {
+	    //case of the origine point
+	    //trace('stere:this is the origin point');
+	    p.x = NaN;
+	    p.y = NaN;
+	    return p;
+	  }
+	  if (this.sphere) {
+	    //trace('stere:sphere case');
+	    A = 2 * this.k0 / (1 + this.sinlat0 * sinlat + this.coslat0 * coslat * Math.cos(dlon));
+	    p.x = this.a * A * coslat * Math.sin(dlon) + this.x0;
+	    p.y = this.a * A * (this.coslat0 * sinlat - this.sinlat0 * coslat * Math.cos(dlon)) + this.y0;
+	    return p;
+	  }
+	  else {
+	    X = 2 * Math.atan(this.ssfn_(lat, sinlat, this.e)) - HALF_PI;
+	    cosX = Math.cos(X);
+	    sinX = Math.sin(X);
+	    if (Math.abs(this.coslat0) <= EPSLN) {
+	      ts = tsfnz(this.e, lat * this.con, this.con * sinlat);
+	      rh = 2 * this.a * this.k0 * ts / this.cons;
+	      p.x = this.x0 + rh * Math.sin(lon - this.long0);
+	      p.y = this.y0 - this.con * rh * Math.cos(lon - this.long0);
+	      //trace(p.toString());
+	      return p;
+	    }
+	    else if (Math.abs(this.sinlat0) < EPSLN) {
+	      //Eq
+	      //trace('stere:equateur');
+	      A = 2 * this.a * this.k0 / (1 + cosX * Math.cos(dlon));
+	      p.y = A * sinX;
+	    }
+	    else {
+	      //other case
+	      //trace('stere:normal case');
+	      A = 2 * this.a * this.k0 * this.ms1 / (this.cosX0 * (1 + this.sinX0 * sinX + this.cosX0 * cosX * Math.cos(dlon)));
+	      p.y = A * (this.cosX0 * sinX - this.sinX0 * cosX * Math.cos(dlon)) + this.y0;
+	    }
+	    p.x = A * cosX * Math.sin(dlon) + this.x0;
+	  }
+	  //trace(p.toString());
+	  return p;
+	}
+
+	//* Stereographic inverse equations--mapping x,y to lat/long
+	function inverse$6(p) {
+	  p.x -= this.x0;
+	  p.y -= this.y0;
+	  var lon, lat, ts, ce, Chi;
+	  var rh = Math.sqrt(p.x * p.x + p.y * p.y);
+	  if (this.sphere) {
+	    var c = 2 * Math.atan(rh / (0.5 * this.a * this.k0));
+	    lon = this.long0;
+	    lat = this.lat0;
+	    if (rh <= EPSLN) {
+	      p.x = lon;
+	      p.y = lat;
+	      return p;
+	    }
+	    lat = Math.asin(Math.cos(c) * this.sinlat0 + p.y * Math.sin(c) * this.coslat0 / rh);
+	    if (Math.abs(this.coslat0) < EPSLN) {
+	      if (this.lat0 > 0) {
+	        lon = adjust_lon(this.long0 + Math.atan2(p.x, - 1 * p.y));
+	      }
+	      else {
+	        lon = adjust_lon(this.long0 + Math.atan2(p.x, p.y));
+	      }
+	    }
+	    else {
+	      lon = adjust_lon(this.long0 + Math.atan2(p.x * Math.sin(c), rh * this.coslat0 * Math.cos(c) - p.y * this.sinlat0 * Math.sin(c)));
+	    }
+	    p.x = lon;
+	    p.y = lat;
+	    return p;
+	  }
+	  else {
+	    if (Math.abs(this.coslat0) <= EPSLN) {
+	      if (rh <= EPSLN) {
+	        lat = this.lat0;
+	        lon = this.long0;
+	        p.x = lon;
+	        p.y = lat;
+	        //trace(p.toString());
+	        return p;
+	      }
+	      p.x *= this.con;
+	      p.y *= this.con;
+	      ts = rh * this.cons / (2 * this.a * this.k0);
+	      lat = this.con * phi2z(this.e, ts);
+	      lon = this.con * adjust_lon(this.con * this.long0 + Math.atan2(p.x, - 1 * p.y));
+	    }
+	    else {
+	      ce = 2 * Math.atan(rh * this.cosX0 / (2 * this.a * this.k0 * this.ms1));
+	      lon = this.long0;
+	      if (rh <= EPSLN) {
+	        Chi = this.X0;
+	      }
+	      else {
+	        Chi = Math.asin(Math.cos(ce) * this.sinX0 + p.y * Math.sin(ce) * this.cosX0 / rh);
+	        lon = adjust_lon(this.long0 + Math.atan2(p.x * Math.sin(ce), rh * this.cosX0 * Math.cos(ce) - p.y * this.sinX0 * Math.sin(ce)));
+	      }
+	      lat = -1 * phi2z(this.e, Math.tan(0.5 * (HALF_PI + Chi)));
+	    }
+	  }
+	  p.x = lon;
+	  p.y = lat;
+
+	  //trace(p.toString());
+	  return p;
+
+	}
+
+	var names$8 = ["stere", "Stereographic_South_Pole", "Polar Stereographic (variant B)"];
+	var stere = {
+	  init: init$7,
+	  forward: forward$6,
+	  inverse: inverse$6,
+	  names: names$8,
+	  ssfn_: ssfn_
+	};
+
+	/*
+	  references:
+	    Formules et constantes pour le Calcul pour la
+	    projection cylindrique conforme à axe oblique et pour la transformation entre
+	    des systèmes de référence.
+	    http://www.swisstopo.admin.ch/internet/swisstopo/fr/home/topics/survey/sys/refsys/switzerland.parsysrelated1.31216.downloadList.77004.DownloadFile.tmp/swissprojectionfr.pdf
+	  */
+
+	function init$8() {
+	  var phy0 = this.lat0;
+	  this.lambda0 = this.long0;
+	  var sinPhy0 = Math.sin(phy0);
+	  var semiMajorAxis = this.a;
+	  var invF = this.rf;
+	  var flattening = 1 / invF;
+	  var e2 = 2 * flattening - Math.pow(flattening, 2);
+	  var e = this.e = Math.sqrt(e2);
+	  this.R = this.k0 * semiMajorAxis * Math.sqrt(1 - e2) / (1 - e2 * Math.pow(sinPhy0, 2));
+	  this.alpha = Math.sqrt(1 + e2 / (1 - e2) * Math.pow(Math.cos(phy0), 4));
+	  this.b0 = Math.asin(sinPhy0 / this.alpha);
+	  var k1 = Math.log(Math.tan(Math.PI / 4 + this.b0 / 2));
+	  var k2 = Math.log(Math.tan(Math.PI / 4 + phy0 / 2));
+	  var k3 = Math.log((1 + e * sinPhy0) / (1 - e * sinPhy0));
+	  this.K = k1 - this.alpha * k2 + this.alpha * e / 2 * k3;
+	}
+
+	function forward$7(p) {
+	  var Sa1 = Math.log(Math.tan(Math.PI / 4 - p.y / 2));
+	  var Sa2 = this.e / 2 * Math.log((1 + this.e * Math.sin(p.y)) / (1 - this.e * Math.sin(p.y)));
+	  var S = -this.alpha * (Sa1 + Sa2) + this.K;
+
+	  // spheric latitude
+	  var b = 2 * (Math.atan(Math.exp(S)) - Math.PI / 4);
+
+	  // spheric longitude
+	  var I = this.alpha * (p.x - this.lambda0);
+
+	  // psoeudo equatorial rotation
+	  var rotI = Math.atan(Math.sin(I) / (Math.sin(this.b0) * Math.tan(b) + Math.cos(this.b0) * Math.cos(I)));
+
+	  var rotB = Math.asin(Math.cos(this.b0) * Math.sin(b) - Math.sin(this.b0) * Math.cos(b) * Math.cos(I));
+
+	  p.y = this.R / 2 * Math.log((1 + Math.sin(rotB)) / (1 - Math.sin(rotB))) + this.y0;
+	  p.x = this.R * rotI + this.x0;
+	  return p;
+	}
+
+	function inverse$7(p) {
+	  var Y = p.x - this.x0;
+	  var X = p.y - this.y0;
+
+	  var rotI = Y / this.R;
+	  var rotB = 2 * (Math.atan(Math.exp(X / this.R)) - Math.PI / 4);
+
+	  var b = Math.asin(Math.cos(this.b0) * Math.sin(rotB) + Math.sin(this.b0) * Math.cos(rotB) * Math.cos(rotI));
+	  var I = Math.atan(Math.sin(rotI) / (Math.cos(this.b0) * Math.cos(rotI) - Math.sin(this.b0) * Math.tan(rotB)));
+
+	  var lambda = this.lambda0 + I / this.alpha;
+
+	  var S = 0;
+	  var phy = b;
+	  var prevPhy = -1000;
+	  var iteration = 0;
+	  while (Math.abs(phy - prevPhy) > 0.0000001) {
+	    if (++iteration > 20) {
+	      //...reportError("omercFwdInfinity");
+	      return;
+	    }
+	    //S = Math.log(Math.tan(Math.PI / 4 + phy / 2));
+	    S = 1 / this.alpha * (Math.log(Math.tan(Math.PI / 4 + b / 2)) - this.K) + this.e * Math.log(Math.tan(Math.PI / 4 + Math.asin(this.e * Math.sin(phy)) / 2));
+	    prevPhy = phy;
+	    phy = 2 * Math.atan(Math.exp(S)) - Math.PI / 2;
+	  }
+
+	  p.x = lambda;
+	  p.y = phy;
+	  return p;
+	}
+
+	var names$9 = ["somerc"];
+	var somerc = {
+	  init: init$8,
+	  forward: forward$7,
+	  inverse: inverse$7,
+	  names: names$9
+	};
+
+	/* Initialize the Oblique Mercator  projection
+	    ------------------------------------------*/
+	function init$9() {
+	  this.no_off = this.no_off || false;
+	  this.no_rot = this.no_rot || false;
+
+	  if (isNaN(this.k0)) {
+	    this.k0 = 1;
+	  }
+	  var sinlat = Math.sin(this.lat0);
+	  var coslat = Math.cos(this.lat0);
+	  var con = this.e * sinlat;
+
+	  this.bl = Math.sqrt(1 + this.es / (1 - this.es) * Math.pow(coslat, 4));
+	  this.al = this.a * this.bl * this.k0 * Math.sqrt(1 - this.es) / (1 - con * con);
+	  var t0 = tsfnz(this.e, this.lat0, sinlat);
+	  var dl = this.bl / coslat * Math.sqrt((1 - this.es) / (1 - con * con));
+	  if (dl * dl < 1) {
+	    dl = 1;
+	  }
+	  var fl;
+	  var gl;
+	  if (!isNaN(this.longc)) {
+	    //Central point and azimuth method
+
+	    if (this.lat0 >= 0) {
+	      fl = dl + Math.sqrt(dl * dl - 1);
+	    }
+	    else {
+	      fl = dl - Math.sqrt(dl * dl - 1);
+	    }
+	    this.el = fl * Math.pow(t0, this.bl);
+	    gl = 0.5 * (fl - 1 / fl);
+	    this.gamma0 = Math.asin(Math.sin(this.alpha) / dl);
+	    this.long0 = this.longc - Math.asin(gl * Math.tan(this.gamma0)) / this.bl;
+
+	  }
+	  else {
+	    //2 points method
+	    var t1 = tsfnz(this.e, this.lat1, Math.sin(this.lat1));
+	    var t2 = tsfnz(this.e, this.lat2, Math.sin(this.lat2));
+	    if (this.lat0 >= 0) {
+	      this.el = (dl + Math.sqrt(dl * dl - 1)) * Math.pow(t0, this.bl);
+	    }
+	    else {
+	      this.el = (dl - Math.sqrt(dl * dl - 1)) * Math.pow(t0, this.bl);
+	    }
+	    var hl = Math.pow(t1, this.bl);
+	    var ll = Math.pow(t2, this.bl);
+	    fl = this.el / hl;
+	    gl = 0.5 * (fl - 1 / fl);
+	    var jl = (this.el * this.el - ll * hl) / (this.el * this.el + ll * hl);
+	    var pl = (ll - hl) / (ll + hl);
+	    var dlon12 = adjust_lon(this.long1 - this.long2);
+	    this.long0 = 0.5 * (this.long1 + this.long2) - Math.atan(jl * Math.tan(0.5 * this.bl * (dlon12)) / pl) / this.bl;
+	    this.long0 = adjust_lon(this.long0);
+	    var dlon10 = adjust_lon(this.long1 - this.long0);
+	    this.gamma0 = Math.atan(Math.sin(this.bl * (dlon10)) / gl);
+	    this.alpha = Math.asin(dl * Math.sin(this.gamma0));
+	  }
+
+	  if (this.no_off) {
+	    this.uc = 0;
+	  }
+	  else {
+	    if (this.lat0 >= 0) {
+	      this.uc = this.al / this.bl * Math.atan2(Math.sqrt(dl * dl - 1), Math.cos(this.alpha));
+	    }
+	    else {
+	      this.uc = -1 * this.al / this.bl * Math.atan2(Math.sqrt(dl * dl - 1), Math.cos(this.alpha));
+	    }
+	  }
+
+	}
+
+	/* Oblique Mercator forward equations--mapping lat,long to x,y
+	    ----------------------------------------------------------*/
+	function forward$8(p) {
+	  var lon = p.x;
+	  var lat = p.y;
+	  var dlon = adjust_lon(lon - this.long0);
+	  var us, vs;
+	  var con;
+	  if (Math.abs(Math.abs(lat) - HALF_PI) <= EPSLN) {
+	    if (lat > 0) {
+	      con = -1;
+	    }
+	    else {
+	      con = 1;
+	    }
+	    vs = this.al / this.bl * Math.log(Math.tan(FORTPI + con * this.gamma0 * 0.5));
+	    us = -1 * con * HALF_PI * this.al / this.bl;
+	  }
+	  else {
+	    var t = tsfnz(this.e, lat, Math.sin(lat));
+	    var ql = this.el / Math.pow(t, this.bl);
+	    var sl = 0.5 * (ql - 1 / ql);
+	    var tl = 0.5 * (ql + 1 / ql);
+	    var vl = Math.sin(this.bl * (dlon));
+	    var ul = (sl * Math.sin(this.gamma0) - vl * Math.cos(this.gamma0)) / tl;
+	    if (Math.abs(Math.abs(ul) - 1) <= EPSLN) {
+	      vs = Number.POSITIVE_INFINITY;
+	    }
+	    else {
+	      vs = 0.5 * this.al * Math.log((1 - ul) / (1 + ul)) / this.bl;
+	    }
+	    if (Math.abs(Math.cos(this.bl * (dlon))) <= EPSLN) {
+	      us = this.al * this.bl * (dlon);
+	    }
+	    else {
+	      us = this.al * Math.atan2(sl * Math.cos(this.gamma0) + vl * Math.sin(this.gamma0), Math.cos(this.bl * dlon)) / this.bl;
+	    }
+	  }
+
+	  if (this.no_rot) {
+	    p.x = this.x0 + us;
+	    p.y = this.y0 + vs;
+	  }
+	  else {
+
+	    us -= this.uc;
+	    p.x = this.x0 + vs * Math.cos(this.alpha) + us * Math.sin(this.alpha);
+	    p.y = this.y0 + us * Math.cos(this.alpha) - vs * Math.sin(this.alpha);
+	  }
+	  return p;
+	}
+
+	function inverse$8(p) {
+	  var us, vs;
+	  if (this.no_rot) {
+	    vs = p.y - this.y0;
+	    us = p.x - this.x0;
+	  }
+	  else {
+	    vs = (p.x - this.x0) * Math.cos(this.alpha) - (p.y - this.y0) * Math.sin(this.alpha);
+	    us = (p.y - this.y0) * Math.cos(this.alpha) + (p.x - this.x0) * Math.sin(this.alpha);
+	    us += this.uc;
+	  }
+	  var qp = Math.exp(-1 * this.bl * vs / this.al);
+	  var sp = 0.5 * (qp - 1 / qp);
+	  var tp = 0.5 * (qp + 1 / qp);
+	  var vp = Math.sin(this.bl * us / this.al);
+	  var up = (vp * Math.cos(this.gamma0) + sp * Math.sin(this.gamma0)) / tp;
+	  var ts = Math.pow(this.el / Math.sqrt((1 + up) / (1 - up)), 1 / this.bl);
+	  if (Math.abs(up - 1) < EPSLN) {
+	    p.x = this.long0;
+	    p.y = HALF_PI;
+	  }
+	  else if (Math.abs(up + 1) < EPSLN) {
+	    p.x = this.long0;
+	    p.y = -1 * HALF_PI;
+	  }
+	  else {
+	    p.y = phi2z(this.e, ts);
+	    p.x = adjust_lon(this.long0 - Math.atan2(sp * Math.cos(this.gamma0) - vp * Math.sin(this.gamma0), Math.cos(this.bl * us / this.al)) / this.bl);
+	  }
+	  return p;
+	}
+
+	var names$10 = ["Hotine_Oblique_Mercator", "Hotine Oblique Mercator", "Hotine_Oblique_Mercator_Azimuth_Natural_Origin", "Hotine_Oblique_Mercator_Azimuth_Center", "omerc"];
+	var omerc = {
+	  init: init$9,
+	  forward: forward$8,
+	  inverse: inverse$8,
+	  names: names$10
+	};
+
+	function init$10() {
+
+	  // array of:  r_maj,r_min,lat1,lat2,c_lon,c_lat,false_east,false_north
+	  //double c_lat;                   /* center latitude                      */
+	  //double c_lon;                   /* center longitude                     */
+	  //double lat1;                    /* first standard parallel              */
+	  //double lat2;                    /* second standard parallel             */
+	  //double r_maj;                   /* major axis                           */
+	  //double r_min;                   /* minor axis                           */
+	  //double false_east;              /* x offset in meters                   */
+	  //double false_north;             /* y offset in meters                   */
+
+	  if (!this.lat2) {
+	    this.lat2 = this.lat1;
+	  } //if lat2 is not defined
+	  if (!this.k0) {
+	    this.k0 = 1;
+	  }
+	  this.x0 = this.x0 || 0;
+	  this.y0 = this.y0 || 0;
+	  // Standard Parallels cannot be equal and on opposite sides of the equator
+	  if (Math.abs(this.lat1 + this.lat2) < EPSLN) {
+	    return;
+	  }
+
+	  var temp = this.b / this.a;
+	  this.e = Math.sqrt(1 - temp * temp);
+
+	  var sin1 = Math.sin(this.lat1);
+	  var cos1 = Math.cos(this.lat1);
+	  var ms1 = msfnz(this.e, sin1, cos1);
+	  var ts1 = tsfnz(this.e, this.lat1, sin1);
+
+	  var sin2 = Math.sin(this.lat2);
+	  var cos2 = Math.cos(this.lat2);
+	  var ms2 = msfnz(this.e, sin2, cos2);
+	  var ts2 = tsfnz(this.e, this.lat2, sin2);
+
+	  var ts0 = tsfnz(this.e, this.lat0, Math.sin(this.lat0));
+
+	  if (Math.abs(this.lat1 - this.lat2) > EPSLN) {
+	    this.ns = Math.log(ms1 / ms2) / Math.log(ts1 / ts2);
+	  }
+	  else {
+	    this.ns = sin1;
+	  }
+	  if (isNaN(this.ns)) {
+	    this.ns = sin1;
+	  }
+	  this.f0 = ms1 / (this.ns * Math.pow(ts1, this.ns));
+	  this.rh = this.a * this.f0 * Math.pow(ts0, this.ns);
+	  if (!this.title) {
+	    this.title = "Lambert Conformal Conic";
+	  }
+	}
+
+	// Lambert Conformal conic forward equations--mapping lat,long to x,y
+	// -----------------------------------------------------------------
+	function forward$9(p) {
+
+	  var lon = p.x;
+	  var lat = p.y;
+
+	  // singular cases :
+	  if (Math.abs(2 * Math.abs(lat) - Math.PI) <= EPSLN) {
+	    lat = sign(lat) * (HALF_PI - 2 * EPSLN);
+	  }
+
+	  var con = Math.abs(Math.abs(lat) - HALF_PI);
+	  var ts, rh1;
+	  if (con > EPSLN) {
+	    ts = tsfnz(this.e, lat, Math.sin(lat));
+	    rh1 = this.a * this.f0 * Math.pow(ts, this.ns);
+	  }
+	  else {
+	    con = lat * this.ns;
+	    if (con <= 0) {
+	      return null;
+	    }
+	    rh1 = 0;
+	  }
+	  var theta = this.ns * adjust_lon(lon - this.long0);
+	  p.x = this.k0 * (rh1 * Math.sin(theta)) + this.x0;
+	  p.y = this.k0 * (this.rh - rh1 * Math.cos(theta)) + this.y0;
+
+	  return p;
+	}
+
+	// Lambert Conformal Conic inverse equations--mapping x,y to lat/long
+	// -----------------------------------------------------------------
+	function inverse$9(p) {
+
+	  var rh1, con, ts;
+	  var lat, lon;
+	  var x = (p.x - this.x0) / this.k0;
+	  var y = (this.rh - (p.y - this.y0) / this.k0);
+	  if (this.ns > 0) {
+	    rh1 = Math.sqrt(x * x + y * y);
+	    con = 1;
+	  }
+	  else {
+	    rh1 = -Math.sqrt(x * x + y * y);
+	    con = -1;
+	  }
+	  var theta = 0;
+	  if (rh1 !== 0) {
+	    theta = Math.atan2((con * x), (con * y));
+	  }
+	  if ((rh1 !== 0) || (this.ns > 0)) {
+	    con = 1 / this.ns;
+	    ts = Math.pow((rh1 / (this.a * this.f0)), con);
+	    lat = phi2z(this.e, ts);
+	    if (lat === -9999) {
+	      return null;
+	    }
+	  }
+	  else {
+	    lat = -HALF_PI;
+	  }
+	  lon = adjust_lon(theta / this.ns + this.long0);
+
+	  p.x = lon;
+	  p.y = lat;
+	  return p;
+	}
+
+	var names$11 = ["Lambert Tangential Conformal Conic Projection", "Lambert_Conformal_Conic", "Lambert_Conformal_Conic_2SP", "lcc"];
+	var lcc = {
+	  init: init$10,
+	  forward: forward$9,
+	  inverse: inverse$9,
+	  names: names$11
+	};
+
+	function init$11() {
+	  this.a = 6377397.155;
+	  this.es = 0.006674372230614;
+	  this.e = Math.sqrt(this.es);
+	  if (!this.lat0) {
+	    this.lat0 = 0.863937979737193;
+	  }
+	  if (!this.long0) {
+	    this.long0 = 0.7417649320975901 - 0.308341501185665;
+	  }
+	  /* if scale not set default to 0.9999 */
+	  if (!this.k0) {
+	    this.k0 = 0.9999;
+	  }
+	  this.s45 = 0.785398163397448; /* 45 */
+	  this.s90 = 2 * this.s45;
+	  this.fi0 = this.lat0;
+	  this.e2 = this.es;
+	  this.e = Math.sqrt(this.e2);
+	  this.alfa = Math.sqrt(1 + (this.e2 * Math.pow(Math.cos(this.fi0), 4)) / (1 - this.e2));
+	  this.uq = 1.04216856380474;
+	  this.u0 = Math.asin(Math.sin(this.fi0) / this.alfa);
+	  this.g = Math.pow((1 + this.e * Math.sin(this.fi0)) / (1 - this.e * Math.sin(this.fi0)), this.alfa * this.e / 2);
+	  this.k = Math.tan(this.u0 / 2 + this.s45) / Math.pow(Math.tan(this.fi0 / 2 + this.s45), this.alfa) * this.g;
+	  this.k1 = this.k0;
+	  this.n0 = this.a * Math.sqrt(1 - this.e2) / (1 - this.e2 * Math.pow(Math.sin(this.fi0), 2));
+	  this.s0 = 1.37008346281555;
+	  this.n = Math.sin(this.s0);
+	  this.ro0 = this.k1 * this.n0 / Math.tan(this.s0);
+	  this.ad = this.s90 - this.uq;
+	}
+
+	/* ellipsoid */
+	/* calculate xy from lat/lon */
+	/* Constants, identical to inverse transform function */
+	function forward$10(p) {
+	  var gfi, u, deltav, s, d, eps, ro;
+	  var lon = p.x;
+	  var lat = p.y;
+	  var delta_lon = adjust_lon(lon - this.long0);
+	  /* Transformation */
+	  gfi = Math.pow(((1 + this.e * Math.sin(lat)) / (1 - this.e * Math.sin(lat))), (this.alfa * this.e / 2));
+	  u = 2 * (Math.atan(this.k * Math.pow(Math.tan(lat / 2 + this.s45), this.alfa) / gfi) - this.s45);
+	  deltav = -delta_lon * this.alfa;
+	  s = Math.asin(Math.cos(this.ad) * Math.sin(u) + Math.sin(this.ad) * Math.cos(u) * Math.cos(deltav));
+	  d = Math.asin(Math.cos(u) * Math.sin(deltav) / Math.cos(s));
+	  eps = this.n * d;
+	  ro = this.ro0 * Math.pow(Math.tan(this.s0 / 2 + this.s45), this.n) / Math.pow(Math.tan(s / 2 + this.s45), this.n);
+	  p.y = ro * Math.cos(eps) / 1;
+	  p.x = ro * Math.sin(eps) / 1;
+
+	  if (!this.czech) {
+	    p.y *= -1;
+	    p.x *= -1;
+	  }
+	  return (p);
+	}
+
+	/* calculate lat/lon from xy */
+	function inverse$10(p) {
+	  var u, deltav, s, d, eps, ro, fi1;
+	  var ok;
+
+	  /* Transformation */
+	  /* revert y, x*/
+	  var tmp = p.x;
+	  p.x = p.y;
+	  p.y = tmp;
+	  if (!this.czech) {
+	    p.y *= -1;
+	    p.x *= -1;
+	  }
+	  ro = Math.sqrt(p.x * p.x + p.y * p.y);
+	  eps = Math.atan2(p.y, p.x);
+	  d = eps / Math.sin(this.s0);
+	  s = 2 * (Math.atan(Math.pow(this.ro0 / ro, 1 / this.n) * Math.tan(this.s0 / 2 + this.s45)) - this.s45);
+	  u = Math.asin(Math.cos(this.ad) * Math.sin(s) - Math.sin(this.ad) * Math.cos(s) * Math.cos(d));
+	  deltav = Math.asin(Math.cos(s) * Math.sin(d) / Math.cos(u));
+	  p.x = this.long0 - deltav / this.alfa;
+	  fi1 = u;
+	  ok = 0;
+	  var iter = 0;
+	  do {
+	    p.y = 2 * (Math.atan(Math.pow(this.k, - 1 / this.alfa) * Math.pow(Math.tan(u / 2 + this.s45), 1 / this.alfa) * Math.pow((1 + this.e * Math.sin(fi1)) / (1 - this.e * Math.sin(fi1)), this.e / 2)) - this.s45);
+	    if (Math.abs(fi1 - p.y) < 0.0000000001) {
+	      ok = 1;
+	    }
+	    fi1 = p.y;
+	    iter += 1;
+	  } while (ok === 0 && iter < 15);
+	  if (iter >= 15) {
+	    return null;
+	  }
+
+	  return (p);
+	}
+
+	var names$12 = ["Krovak", "krovak"];
+	var krovak = {
+	  init: init$11,
+	  forward: forward$10,
+	  inverse: inverse$10,
+	  names: names$12
+	};
+
+	var mlfn = function(e0, e1, e2, e3, phi) {
+	  return (e0 * phi - e1 * Math.sin(2 * phi) + e2 * Math.sin(4 * phi) - e3 * Math.sin(6 * phi));
+	};
+
+	var e0fn = function(x) {
+	  return (1 - 0.25 * x * (1 + x / 16 * (3 + 1.25 * x)));
+	};
+
+	var e1fn = function(x) {
+	  return (0.375 * x * (1 + 0.25 * x * (1 + 0.46875 * x)));
+	};
+
+	var e2fn = function(x) {
+	  return (0.05859375 * x * x * (1 + 0.75 * x));
+	};
+
+	var e3fn = function(x) {
+	  return (x * x * x * (35 / 3072));
+	};
+
+	var gN = function(a, e, sinphi) {
+	  var temp = e * sinphi;
+	  return a / Math.sqrt(1 - temp * temp);
+	};
+
+	var adjust_lat = function(x) {
+	  return (Math.abs(x) < HALF_PI) ? x : (x - (sign(x) * Math.PI));
+	};
+
+	var imlfn = function(ml, e0, e1, e2, e3) {
+	  var phi;
+	  var dphi;
+
+	  phi = ml / e0;
+	  for (var i = 0; i < 15; i++) {
+	    dphi = (ml - (e0 * phi - e1 * Math.sin(2 * phi) + e2 * Math.sin(4 * phi) - e3 * Math.sin(6 * phi))) / (e0 - 2 * e1 * Math.cos(2 * phi) + 4 * e2 * Math.cos(4 * phi) - 6 * e3 * Math.cos(6 * phi));
+	    phi += dphi;
+	    if (Math.abs(dphi) <= 0.0000000001) {
+	      return phi;
+	    }
+	  }
+
+	  //..reportError("IMLFN-CONV:Latitude failed to converge after 15 iterations");
+	  return NaN;
+	};
+
+	function init$12() {
+	  if (!this.sphere) {
+	    this.e0 = e0fn(this.es);
+	    this.e1 = e1fn(this.es);
+	    this.e2 = e2fn(this.es);
+	    this.e3 = e3fn(this.es);
+	    this.ml0 = this.a * mlfn(this.e0, this.e1, this.e2, this.e3, this.lat0);
+	  }
+	}
+
+	/* Cassini forward equations--mapping lat,long to x,y
+	  -----------------------------------------------------------------------*/
+	function forward$11(p) {
+
+	  /* Forward equations
+	      -----------------*/
+	  var x, y;
+	  var lam = p.x;
+	  var phi = p.y;
+	  lam = adjust_lon(lam - this.long0);
+
+	  if (this.sphere) {
+	    x = this.a * Math.asin(Math.cos(phi) * Math.sin(lam));
+	    y = this.a * (Math.atan2(Math.tan(phi), Math.cos(lam)) - this.lat0);
+	  }
+	  else {
+	    //ellipsoid
+	    var sinphi = Math.sin(phi);
+	    var cosphi = Math.cos(phi);
+	    var nl = gN(this.a, this.e, sinphi);
+	    var tl = Math.tan(phi) * Math.tan(phi);
+	    var al = lam * Math.cos(phi);
+	    var asq = al * al;
+	    var cl = this.es * cosphi * cosphi / (1 - this.es);
+	    var ml = this.a * mlfn(this.e0, this.e1, this.e2, this.e3, phi);
+
+	    x = nl * al * (1 - asq * tl * (1 / 6 - (8 - tl + 8 * cl) * asq / 120));
+	    y = ml - this.ml0 + nl * sinphi / cosphi * asq * (0.5 + (5 - tl + 6 * cl) * asq / 24);
+
+
+	  }
+
+	  p.x = x + this.x0;
+	  p.y = y + this.y0;
+	  return p;
+	}
+
+	/* Inverse equations
+	  -----------------*/
+	function inverse$11(p) {
+	  p.x -= this.x0;
+	  p.y -= this.y0;
+	  var x = p.x / this.a;
+	  var y = p.y / this.a;
+	  var phi, lam;
+
+	  if (this.sphere) {
+	    var dd = y + this.lat0;
+	    phi = Math.asin(Math.sin(dd) * Math.cos(x));
+	    lam = Math.atan2(Math.tan(x), Math.cos(dd));
+	  }
+	  else {
+	    /* ellipsoid */
+	    var ml1 = this.ml0 / this.a + y;
+	    var phi1 = imlfn(ml1, this.e0, this.e1, this.e2, this.e3);
+	    if (Math.abs(Math.abs(phi1) - HALF_PI) <= EPSLN) {
+	      p.x = this.long0;
+	      p.y = HALF_PI;
+	      if (y < 0) {
+	        p.y *= -1;
+	      }
+	      return p;
+	    }
+	    var nl1 = gN(this.a, this.e, Math.sin(phi1));
+
+	    var rl1 = nl1 * nl1 * nl1 / this.a / this.a * (1 - this.es);
+	    var tl1 = Math.pow(Math.tan(phi1), 2);
+	    var dl = x * this.a / nl1;
+	    var dsq = dl * dl;
+	    phi = phi1 - nl1 * Math.tan(phi1) / rl1 * dl * dl * (0.5 - (1 + 3 * tl1) * dl * dl / 24);
+	    lam = dl * (1 - dsq * (tl1 / 3 + (1 + 3 * tl1) * tl1 * dsq / 15)) / Math.cos(phi1);
+
+	  }
+
+	  p.x = adjust_lon(lam + this.long0);
+	  p.y = adjust_lat(phi);
+	  return p;
+
+	}
+
+	var names$13 = ["Cassini", "Cassini_Soldner", "cass"];
+	var cass = {
+	  init: init$12,
+	  forward: forward$11,
+	  inverse: inverse$11,
+	  names: names$13
+	};
+
+	var qsfnz = function(eccent, sinphi) {
+	  var con;
+	  if (eccent > 1.0e-7) {
+	    con = eccent * sinphi;
+	    return ((1 - eccent * eccent) * (sinphi / (1 - con * con) - (0.5 / eccent) * Math.log((1 - con) / (1 + con))));
+	  }
+	  else {
+	    return (2 * sinphi);
+	  }
+	};
+
+	/*
+	  reference
+	    "New Equal-Area Map Projections for Noncircular Regions", John P. Snyder,
+	    The American Cartographer, Vol 15, No. 4, October 1988, pp. 341-355.
+	  */
+
+	var S_POLE = 1;
+
+	var N_POLE = 2;
+	var EQUIT = 3;
+	var OBLIQ = 4;
+
+	/* Initialize the Lambert Azimuthal Equal Area projection
+	  ------------------------------------------------------*/
+	function init$13() {
+	  var t = Math.abs(this.lat0);
+	  if (Math.abs(t - HALF_PI) < EPSLN) {
+	    this.mode = this.lat0 < 0 ? this.S_POLE : this.N_POLE;
+	  }
+	  else if (Math.abs(t) < EPSLN) {
+	    this.mode = this.EQUIT;
+	  }
+	  else {
+	    this.mode = this.OBLIQ;
+	  }
+	  if (this.es > 0) {
+	    var sinphi;
+
+	    this.qp = qsfnz(this.e, 1);
+	    this.mmf = 0.5 / (1 - this.es);
+	    this.apa = authset(this.es);
+	    switch (this.mode) {
+	    case this.N_POLE:
+	      this.dd = 1;
+	      break;
+	    case this.S_POLE:
+	      this.dd = 1;
+	      break;
+	    case this.EQUIT:
+	      this.rq = Math.sqrt(0.5 * this.qp);
+	      this.dd = 1 / this.rq;
+	      this.xmf = 1;
+	      this.ymf = 0.5 * this.qp;
+	      break;
+	    case this.OBLIQ:
+	      this.rq = Math.sqrt(0.5 * this.qp);
+	      sinphi = Math.sin(this.lat0);
+	      this.sinb1 = qsfnz(this.e, sinphi) / this.qp;
+	      this.cosb1 = Math.sqrt(1 - this.sinb1 * this.sinb1);
+	      this.dd = Math.cos(this.lat0) / (Math.sqrt(1 - this.es * sinphi * sinphi) * this.rq * this.cosb1);
+	      this.ymf = (this.xmf = this.rq) / this.dd;
+	      this.xmf *= this.dd;
+	      break;
+	    }
+	  }
+	  else {
+	    if (this.mode === this.OBLIQ) {
+	      this.sinph0 = Math.sin(this.lat0);
+	      this.cosph0 = Math.cos(this.lat0);
+	    }
+	  }
+	}
+
+	/* Lambert Azimuthal Equal Area forward equations--mapping lat,long to x,y
+	  -----------------------------------------------------------------------*/
+	function forward$12(p) {
+
+	  /* Forward equations
+	      -----------------*/
+	  var x, y, coslam, sinlam, sinphi, q, sinb, cosb, b, cosphi;
+	  var lam = p.x;
+	  var phi = p.y;
+
+	  lam = adjust_lon(lam - this.long0);
+	  if (this.sphere) {
+	    sinphi = Math.sin(phi);
+	    cosphi = Math.cos(phi);
+	    coslam = Math.cos(lam);
+	    if (this.mode === this.OBLIQ || this.mode === this.EQUIT) {
+	      y = (this.mode === this.EQUIT) ? 1 + cosphi * coslam : 1 + this.sinph0 * sinphi + this.cosph0 * cosphi * coslam;
+	      if (y <= EPSLN) {
+	        return null;
+	      }
+	      y = Math.sqrt(2 / y);
+	      x = y * cosphi * Math.sin(lam);
+	      y *= (this.mode === this.EQUIT) ? sinphi : this.cosph0 * sinphi - this.sinph0 * cosphi * coslam;
+	    }
+	    else if (this.mode === this.N_POLE || this.mode === this.S_POLE) {
+	      if (this.mode === this.N_POLE) {
+	        coslam = -coslam;
+	      }
+	      if (Math.abs(phi + this.phi0) < EPSLN) {
+	        return null;
+	      }
+	      y = FORTPI - phi * 0.5;
+	      y = 2 * ((this.mode === this.S_POLE) ? Math.cos(y) : Math.sin(y));
+	      x = y * Math.sin(lam);
+	      y *= coslam;
+	    }
+	  }
+	  else {
+	    sinb = 0;
+	    cosb = 0;
+	    b = 0;
+	    coslam = Math.cos(lam);
+	    sinlam = Math.sin(lam);
+	    sinphi = Math.sin(phi);
+	    q = qsfnz(this.e, sinphi);
+	    if (this.mode === this.OBLIQ || this.mode === this.EQUIT) {
+	      sinb = q / this.qp;
+	      cosb = Math.sqrt(1 - sinb * sinb);
+	    }
+	    switch (this.mode) {
+	    case this.OBLIQ:
+	      b = 1 + this.sinb1 * sinb + this.cosb1 * cosb * coslam;
+	      break;
+	    case this.EQUIT:
+	      b = 1 + cosb * coslam;
+	      break;
+	    case this.N_POLE:
+	      b = HALF_PI + phi;
+	      q = this.qp - q;
+	      break;
+	    case this.S_POLE:
+	      b = phi - HALF_PI;
+	      q = this.qp + q;
+	      break;
+	    }
+	    if (Math.abs(b) < EPSLN) {
+	      return null;
+	    }
+	    switch (this.mode) {
+	    case this.OBLIQ:
+	    case this.EQUIT:
+	      b = Math.sqrt(2 / b);
+	      if (this.mode === this.OBLIQ) {
+	        y = this.ymf * b * (this.cosb1 * sinb - this.sinb1 * cosb * coslam);
+	      }
+	      else {
+	        y = (b = Math.sqrt(2 / (1 + cosb * coslam))) * sinb * this.ymf;
+	      }
+	      x = this.xmf * b * cosb * sinlam;
+	      break;
+	    case this.N_POLE:
+	    case this.S_POLE:
+	      if (q >= 0) {
+	        x = (b = Math.sqrt(q)) * sinlam;
+	        y = coslam * ((this.mode === this.S_POLE) ? b : -b);
+	      }
+	      else {
+	        x = y = 0;
+	      }
+	      break;
+	    }
+	  }
+
+	  p.x = this.a * x + this.x0;
+	  p.y = this.a * y + this.y0;
+	  return p;
+	}
+
+	/* Inverse equations
+	  -----------------*/
+	function inverse$12(p) {
+	  p.x -= this.x0;
+	  p.y -= this.y0;
+	  var x = p.x / this.a;
+	  var y = p.y / this.a;
+	  var lam, phi, cCe, sCe, q, rho, ab;
+	  if (this.sphere) {
+	    var cosz = 0,
+	      rh, sinz = 0;
+
+	    rh = Math.sqrt(x * x + y * y);
+	    phi = rh * 0.5;
+	    if (phi > 1) {
+	      return null;
+	    }
+	    phi = 2 * Math.asin(phi);
+	    if (this.mode === this.OBLIQ || this.mode === this.EQUIT) {
+	      sinz = Math.sin(phi);
+	      cosz = Math.cos(phi);
+	    }
+	    switch (this.mode) {
+	    case this.EQUIT:
+	      phi = (Math.abs(rh) <= EPSLN) ? 0 : Math.asin(y * sinz / rh);
+	      x *= sinz;
+	      y = cosz * rh;
+	      break;
+	    case this.OBLIQ:
+	      phi = (Math.abs(rh) <= EPSLN) ? this.phi0 : Math.asin(cosz * this.sinph0 + y * sinz * this.cosph0 / rh);
+	      x *= sinz * this.cosph0;
+	      y = (cosz - Math.sin(phi) * this.sinph0) * rh;
+	      break;
+	    case this.N_POLE:
+	      y = -y;
+	      phi = HALF_PI - phi;
+	      break;
+	    case this.S_POLE:
+	      phi -= HALF_PI;
+	      break;
+	    }
+	    lam = (y === 0 && (this.mode === this.EQUIT || this.mode === this.OBLIQ)) ? 0 : Math.atan2(x, y);
+	  }
+	  else {
+	    ab = 0;
+	    if (this.mode === this.OBLIQ || this.mode === this.EQUIT) {
+	      x /= this.dd;
+	      y *= this.dd;
+	      rho = Math.sqrt(x * x + y * y);
+	      if (rho < EPSLN) {
+	        p.x = 0;
+	        p.y = this.phi0;
+	        return p;
+	      }
+	      sCe = 2 * Math.asin(0.5 * rho / this.rq);
+	      cCe = Math.cos(sCe);
+	      x *= (sCe = Math.sin(sCe));
+	      if (this.mode === this.OBLIQ) {
+	        ab = cCe * this.sinb1 + y * sCe * this.cosb1 / rho;
+	        q = this.qp * ab;
+	        y = rho * this.cosb1 * cCe - y * this.sinb1 * sCe;
+	      }
+	      else {
+	        ab = y * sCe / rho;
+	        q = this.qp * ab;
+	        y = rho * cCe;
+	      }
+	    }
+	    else if (this.mode === this.N_POLE || this.mode === this.S_POLE) {
+	      if (this.mode === this.N_POLE) {
+	        y = -y;
+	      }
+	      q = (x * x + y * y);
+	      if (!q) {
+	        p.x = 0;
+	        p.y = this.phi0;
+	        return p;
+	      }
+	      ab = 1 - q / this.qp;
+	      if (this.mode === this.S_POLE) {
+	        ab = -ab;
+	      }
+	    }
+	    lam = Math.atan2(x, y);
+	    phi = authlat(Math.asin(ab), this.apa);
+	  }
+
+	  p.x = adjust_lon(this.long0 + lam);
+	  p.y = phi;
+	  return p;
+	}
+
+	/* determine latitude from authalic latitude */
+	var P00 = 0.33333333333333333333;
+
+	var P01 = 0.17222222222222222222;
+	var P02 = 0.10257936507936507936;
+	var P10 = 0.06388888888888888888;
+	var P11 = 0.06640211640211640211;
+	var P20 = 0.01641501294219154443;
+
+	function authset(es) {
+	  var t;
+	  var APA = [];
+	  APA[0] = es * P00;
+	  t = es * es;
+	  APA[0] += t * P01;
+	  APA[1] = t * P10;
+	  t *= es;
+	  APA[0] += t * P02;
+	  APA[1] += t * P11;
+	  APA[2] = t * P20;
+	  return APA;
+	}
+
+	function authlat(beta, APA) {
+	  var t = beta + beta;
+	  return (beta + APA[0] * Math.sin(t) + APA[1] * Math.sin(t + t) + APA[2] * Math.sin(t + t + t));
+	}
+
+	var names$14 = ["Lambert Azimuthal Equal Area", "Lambert_Azimuthal_Equal_Area", "laea"];
+	var laea = {
+	  init: init$13,
+	  forward: forward$12,
+	  inverse: inverse$12,
+	  names: names$14,
+	  S_POLE: S_POLE,
+	  N_POLE: N_POLE,
+	  EQUIT: EQUIT,
+	  OBLIQ: OBLIQ
+	};
+
+	var asinz = function(x) {
+	  if (Math.abs(x) > 1) {
+	    x = (x > 1) ? 1 : -1;
+	  }
+	  return Math.asin(x);
+	};
+
+	function init$14() {
+
+	  if (Math.abs(this.lat1 + this.lat2) < EPSLN) {
+	    return;
+	  }
+	  this.temp = this.b / this.a;
+	  this.es = 1 - Math.pow(this.temp, 2);
+	  this.e3 = Math.sqrt(this.es);
+
+	  this.sin_po = Math.sin(this.lat1);
+	  this.cos_po = Math.cos(this.lat1);
+	  this.t1 = this.sin_po;
+	  this.con = this.sin_po;
+	  this.ms1 = msfnz(this.e3, this.sin_po, this.cos_po);
+	  this.qs1 = qsfnz(this.e3, this.sin_po, this.cos_po);
+
+	  this.sin_po = Math.sin(this.lat2);
+	  this.cos_po = Math.cos(this.lat2);
+	  this.t2 = this.sin_po;
+	  this.ms2 = msfnz(this.e3, this.sin_po, this.cos_po);
+	  this.qs2 = qsfnz(this.e3, this.sin_po, this.cos_po);
+
+	  this.sin_po = Math.sin(this.lat0);
+	  this.cos_po = Math.cos(this.lat0);
+	  this.t3 = this.sin_po;
+	  this.qs0 = qsfnz(this.e3, this.sin_po, this.cos_po);
+
+	  if (Math.abs(this.lat1 - this.lat2) > EPSLN) {
+	    this.ns0 = (this.ms1 * this.ms1 - this.ms2 * this.ms2) / (this.qs2 - this.qs1);
+	  }
+	  else {
+	    this.ns0 = this.con;
+	  }
+	  this.c = this.ms1 * this.ms1 + this.ns0 * this.qs1;
+	  this.rh = this.a * Math.sqrt(this.c - this.ns0 * this.qs0) / this.ns0;
+	}
+
+	/* Albers Conical Equal Area forward equations--mapping lat,long to x,y
+	  -------------------------------------------------------------------*/
+	function forward$13(p) {
+
+	  var lon = p.x;
+	  var lat = p.y;
+
+	  this.sin_phi = Math.sin(lat);
+	  this.cos_phi = Math.cos(lat);
+
+	  var qs = qsfnz(this.e3, this.sin_phi, this.cos_phi);
+	  var rh1 = this.a * Math.sqrt(this.c - this.ns0 * qs) / this.ns0;
+	  var theta = this.ns0 * adjust_lon(lon - this.long0);
+	  var x = rh1 * Math.sin(theta) + this.x0;
+	  var y = this.rh - rh1 * Math.cos(theta) + this.y0;
+
+	  p.x = x;
+	  p.y = y;
+	  return p;
+	}
+
+	function inverse$13(p) {
+	  var rh1, qs, con, theta, lon, lat;
+
+	  p.x -= this.x0;
+	  p.y = this.rh - p.y + this.y0;
+	  if (this.ns0 >= 0) {
+	    rh1 = Math.sqrt(p.x * p.x + p.y * p.y);
+	    con = 1;
+	  }
+	  else {
+	    rh1 = -Math.sqrt(p.x * p.x + p.y * p.y);
+	    con = -1;
+	  }
+	  theta = 0;
+	  if (rh1 !== 0) {
+	    theta = Math.atan2(con * p.x, con * p.y);
+	  }
+	  con = rh1 * this.ns0 / this.a;
+	  if (this.sphere) {
+	    lat = Math.asin((this.c - con * con) / (2 * this.ns0));
+	  }
+	  else {
+	    qs = (this.c - con * con) / this.ns0;
+	    lat = this.phi1z(this.e3, qs);
+	  }
+
+	  lon = adjust_lon(theta / this.ns0 + this.long0);
+	  p.x = lon;
+	  p.y = lat;
+	  return p;
+	}
+
+	/* Function to compute phi1, the latitude for the inverse of the
+	   Albers Conical Equal-Area projection.
+	-------------------------------------------*/
+	function phi1z(eccent, qs) {
+	  var sinphi, cosphi, con, com, dphi;
+	  var phi = asinz(0.5 * qs);
+	  if (eccent < EPSLN) {
+	    return phi;
+	  }
+
+	  var eccnts = eccent * eccent;
+	  for (var i = 1; i <= 25; i++) {
+	    sinphi = Math.sin(phi);
+	    cosphi = Math.cos(phi);
+	    con = eccent * sinphi;
+	    com = 1 - con * con;
+	    dphi = 0.5 * com * com / cosphi * (qs / (1 - eccnts) - sinphi / com + 0.5 / eccent * Math.log((1 - con) / (1 + con)));
+	    phi = phi + dphi;
+	    if (Math.abs(dphi) <= 1e-7) {
+	      return phi;
+	    }
+	  }
+	  return null;
+	}
+
+	var names$15 = ["Albers_Conic_Equal_Area", "Albers", "aea"];
+	var aea = {
+	  init: init$14,
+	  forward: forward$13,
+	  inverse: inverse$13,
+	  names: names$15,
+	  phi1z: phi1z
+	};
+
+	/*
+	  reference:
+	    Wolfram Mathworld "Gnomonic Projection"
+	    http://mathworld.wolfram.com/GnomonicProjection.html
+	    Accessed: 12th November 2009
+	  */
+	function init$15() {
+
+	  /* Place parameters in static storage for common use
+	      -------------------------------------------------*/
+	  this.sin_p14 = Math.sin(this.lat0);
+	  this.cos_p14 = Math.cos(this.lat0);
+	  // Approximation for projecting points to the horizon (infinity)
+	  this.infinity_dist = 1000 * this.a;
+	  this.rc = 1;
+	}
+
+	/* Gnomonic forward equations--mapping lat,long to x,y
+	    ---------------------------------------------------*/
+	function forward$14(p) {
+	  var sinphi, cosphi; /* sin and cos value        */
+	  var dlon; /* delta longitude value      */
+	  var coslon; /* cos of longitude        */
+	  var ksp; /* scale factor          */
+	  var g;
+	  var x, y;
+	  var lon = p.x;
+	  var lat = p.y;
+	  /* Forward equations
+	      -----------------*/
+	  dlon = adjust_lon(lon - this.long0);
+
+	  sinphi = Math.sin(lat);
+	  cosphi = Math.cos(lat);
+
+	  coslon = Math.cos(dlon);
+	  g = this.sin_p14 * sinphi + this.cos_p14 * cosphi * coslon;
+	  ksp = 1;
+	  if ((g > 0) || (Math.abs(g) <= EPSLN)) {
+	    x = this.x0 + this.a * ksp * cosphi * Math.sin(dlon) / g;
+	    y = this.y0 + this.a * ksp * (this.cos_p14 * sinphi - this.sin_p14 * cosphi * coslon) / g;
+	  }
+	  else {
+
+	    // Point is in the opposing hemisphere and is unprojectable
+	    // We still need to return a reasonable point, so we project
+	    // to infinity, on a bearing
+	    // equivalent to the northern hemisphere equivalent
+	    // This is a reasonable approximation for short shapes and lines that
+	    // straddle the horizon.
+
+	    x = this.x0 + this.infinity_dist * cosphi * Math.sin(dlon);
+	    y = this.y0 + this.infinity_dist * (this.cos_p14 * sinphi - this.sin_p14 * cosphi * coslon);
+
+	  }
+	  p.x = x;
+	  p.y = y;
+	  return p;
+	}
+
+	function inverse$14(p) {
+	  var rh; /* Rho */
+	  var sinc, cosc;
+	  var c;
+	  var lon, lat;
+
+	  /* Inverse equations
+	      -----------------*/
+	  p.x = (p.x - this.x0) / this.a;
+	  p.y = (p.y - this.y0) / this.a;
+
+	  p.x /= this.k0;
+	  p.y /= this.k0;
+
+	  if ((rh = Math.sqrt(p.x * p.x + p.y * p.y))) {
+	    c = Math.atan2(rh, this.rc);
+	    sinc = Math.sin(c);
+	    cosc = Math.cos(c);
+
+	    lat = asinz(cosc * this.sin_p14 + (p.y * sinc * this.cos_p14) / rh);
+	    lon = Math.atan2(p.x * sinc, rh * this.cos_p14 * cosc - p.y * this.sin_p14 * sinc);
+	    lon = adjust_lon(this.long0 + lon);
+	  }
+	  else {
+	    lat = this.phic0;
+	    lon = 0;
+	  }
+
+	  p.x = lon;
+	  p.y = lat;
+	  return p;
+	}
+
+	var names$16 = ["gnom"];
+	var gnom = {
+	  init: init$15,
+	  forward: forward$14,
+	  inverse: inverse$14,
+	  names: names$16
+	};
+
+	var iqsfnz = function(eccent, q) {
+	  var temp = 1 - (1 - eccent * eccent) / (2 * eccent) * Math.log((1 - eccent) / (1 + eccent));
+	  if (Math.abs(Math.abs(q) - temp) < 1.0E-6) {
+	    if (q < 0) {
+	      return (-1 * HALF_PI);
+	    }
+	    else {
+	      return HALF_PI;
+	    }
+	  }
+	  //var phi = 0.5* q/(1-eccent*eccent);
+	  var phi = Math.asin(0.5 * q);
+	  var dphi;
+	  var sin_phi;
+	  var cos_phi;
+	  var con;
+	  for (var i = 0; i < 30; i++) {
+	    sin_phi = Math.sin(phi);
+	    cos_phi = Math.cos(phi);
+	    con = eccent * sin_phi;
+	    dphi = Math.pow(1 - con * con, 2) / (2 * cos_phi) * (q / (1 - eccent * eccent) - sin_phi / (1 - con * con) + 0.5 / eccent * Math.log((1 - con) / (1 + con)));
+	    phi += dphi;
+	    if (Math.abs(dphi) <= 0.0000000001) {
+	      return phi;
+	    }
+	  }
+
+	  //console.log("IQSFN-CONV:Latitude failed to converge after 30 iterations");
+	  return NaN;
+	};
+
+	/*
+	  reference:
+	    "Cartographic Projection Procedures for the UNIX Environment-
+	    A User's Manual" by Gerald I. Evenden,
+	    USGS Open File Report 90-284and Release 4 Interim Reports (2003)
+	*/
+	function init$16() {
+	  //no-op
+	  if (!this.sphere) {
+	    this.k0 = msfnz(this.e, Math.sin(this.lat_ts), Math.cos(this.lat_ts));
+	  }
+	}
+
+	/* Cylindrical Equal Area forward equations--mapping lat,long to x,y
+	    ------------------------------------------------------------*/
+	function forward$15(p) {
+	  var lon = p.x;
+	  var lat = p.y;
+	  var x, y;
+	  /* Forward equations
+	      -----------------*/
+	  var dlon = adjust_lon(lon - this.long0);
+	  if (this.sphere) {
+	    x = this.x0 + this.a * dlon * Math.cos(this.lat_ts);
+	    y = this.y0 + this.a * Math.sin(lat) / Math.cos(this.lat_ts);
+	  }
+	  else {
+	    var qs = qsfnz(this.e, Math.sin(lat));
+	    x = this.x0 + this.a * this.k0 * dlon;
+	    y = this.y0 + this.a * qs * 0.5 / this.k0;
+	  }
+
+	  p.x = x;
+	  p.y = y;
+	  return p;
+	}
+
+	/* Cylindrical Equal Area inverse equations--mapping x,y to lat/long
+	    ------------------------------------------------------------*/
+	function inverse$15(p) {
+	  p.x -= this.x0;
+	  p.y -= this.y0;
+	  var lon, lat;
+
+	  if (this.sphere) {
+	    lon = adjust_lon(this.long0 + (p.x / this.a) / Math.cos(this.lat_ts));
+	    lat = Math.asin((p.y / this.a) * Math.cos(this.lat_ts));
+	  }
+	  else {
+	    lat = iqsfnz(this.e, 2 * p.y * this.k0 / this.a);
+	    lon = adjust_lon(this.long0 + p.x / (this.a * this.k0));
+	  }
+
+	  p.x = lon;
+	  p.y = lat;
+	  return p;
+	}
+
+	var names$17 = ["cea"];
+	var cea = {
+	  init: init$16,
+	  forward: forward$15,
+	  inverse: inverse$15,
+	  names: names$17
+	};
+
+	function init$17() {
+
+	  this.x0 = this.x0 || 0;
+	  this.y0 = this.y0 || 0;
+	  this.lat0 = this.lat0 || 0;
+	  this.long0 = this.long0 || 0;
+	  this.lat_ts = this.lat_ts || 0;
+	  this.title = this.title || "Equidistant Cylindrical (Plate Carre)";
+
+	  this.rc = Math.cos(this.lat_ts);
+	}
+
+	// forward equations--mapping lat,long to x,y
+	// -----------------------------------------------------------------
+	function forward$16(p) {
+
+	  var lon = p.x;
+	  var lat = p.y;
+
+	  var dlon = adjust_lon(lon - this.long0);
+	  var dlat = adjust_lat(lat - this.lat0);
+	  p.x = this.x0 + (this.a * dlon * this.rc);
+	  p.y = this.y0 + (this.a * dlat);
+	  return p;
+	}
+
+	// inverse equations--mapping x,y to lat/long
+	// -----------------------------------------------------------------
+	function inverse$16(p) {
+
+	  var x = p.x;
+	  var y = p.y;
+
+	  p.x = adjust_lon(this.long0 + ((x - this.x0) / (this.a * this.rc)));
+	  p.y = adjust_lat(this.lat0 + ((y - this.y0) / (this.a)));
+	  return p;
+	}
+
+	var names$18 = ["Equirectangular", "Equidistant_Cylindrical", "eqc"];
+	var eqc = {
+	  init: init$17,
+	  forward: forward$16,
+	  inverse: inverse$16,
+	  names: names$18
+	};
+
+	var MAX_ITER$2 = 20;
+
+	function init$18() {
+	  /* Place parameters in static storage for common use
+	      -------------------------------------------------*/
+	  this.temp = this.b / this.a;
+	  this.es = 1 - Math.pow(this.temp, 2); // devait etre dans tmerc.js mais n y est pas donc je commente sinon retour de valeurs nulles
+	  this.e = Math.sqrt(this.es);
+	  this.e0 = e0fn(this.es);
+	  this.e1 = e1fn(this.es);
+	  this.e2 = e2fn(this.es);
+	  this.e3 = e3fn(this.es);
+	  this.ml0 = this.a * mlfn(this.e0, this.e1, this.e2, this.e3, this.lat0); //si que des zeros le calcul ne se fait pas
+	}
+
+	/* Polyconic forward equations--mapping lat,long to x,y
+	    ---------------------------------------------------*/
+	function forward$17(p) {
+	  var lon = p.x;
+	  var lat = p.y;
+	  var x, y, el;
+	  var dlon = adjust_lon(lon - this.long0);
+	  el = dlon * Math.sin(lat);
+	  if (this.sphere) {
+	    if (Math.abs(lat) <= EPSLN) {
+	      x = this.a * dlon;
+	      y = -1 * this.a * this.lat0;
+	    }
+	    else {
+	      x = this.a * Math.sin(el) / Math.tan(lat);
+	      y = this.a * (adjust_lat(lat - this.lat0) + (1 - Math.cos(el)) / Math.tan(lat));
+	    }
+	  }
+	  else {
+	    if (Math.abs(lat) <= EPSLN) {
+	      x = this.a * dlon;
+	      y = -1 * this.ml0;
+	    }
+	    else {
+	      var nl = gN(this.a, this.e, Math.sin(lat)) / Math.tan(lat);
+	      x = nl * Math.sin(el);
+	      y = this.a * mlfn(this.e0, this.e1, this.e2, this.e3, lat) - this.ml0 + nl * (1 - Math.cos(el));
+	    }
+
+	  }
+	  p.x = x + this.x0;
+	  p.y = y + this.y0;
+	  return p;
+	}
+
+	/* Inverse equations
+	  -----------------*/
+	function inverse$17(p) {
+	  var lon, lat, x, y, i;
+	  var al, bl;
+	  var phi, dphi;
+	  x = p.x - this.x0;
+	  y = p.y - this.y0;
+
+	  if (this.sphere) {
+	    if (Math.abs(y + this.a * this.lat0) <= EPSLN) {
+	      lon = adjust_lon(x / this.a + this.long0);
+	      lat = 0;
+	    }
+	    else {
+	      al = this.lat0 + y / this.a;
+	      bl = x * x / this.a / this.a + al * al;
+	      phi = al;
+	      var tanphi;
+	      for (i = MAX_ITER$2; i; --i) {
+	        tanphi = Math.tan(phi);
+	        dphi = -1 * (al * (phi * tanphi + 1) - phi - 0.5 * (phi * phi + bl) * tanphi) / ((phi - al) / tanphi - 1);
+	        phi += dphi;
+	        if (Math.abs(dphi) <= EPSLN) {
+	          lat = phi;
+	          break;
+	        }
+	      }
+	      lon = adjust_lon(this.long0 + (Math.asin(x * Math.tan(phi) / this.a)) / Math.sin(lat));
+	    }
+	  }
+	  else {
+	    if (Math.abs(y + this.ml0) <= EPSLN) {
+	      lat = 0;
+	      lon = adjust_lon(this.long0 + x / this.a);
+	    }
+	    else {
+
+	      al = (this.ml0 + y) / this.a;
+	      bl = x * x / this.a / this.a + al * al;
+	      phi = al;
+	      var cl, mln, mlnp, ma;
+	      var con;
+	      for (i = MAX_ITER$2; i; --i) {
+	        con = this.e * Math.sin(phi);
+	        cl = Math.sqrt(1 - con * con) * Math.tan(phi);
+	        mln = this.a * mlfn(this.e0, this.e1, this.e2, this.e3, phi);
+	        mlnp = this.e0 - 2 * this.e1 * Math.cos(2 * phi) + 4 * this.e2 * Math.cos(4 * phi) - 6 * this.e3 * Math.cos(6 * phi);
+	        ma = mln / this.a;
+	        dphi = (al * (cl * ma + 1) - ma - 0.5 * cl * (ma * ma + bl)) / (this.es * Math.sin(2 * phi) * (ma * ma + bl - 2 * al * ma) / (4 * cl) + (al - ma) * (cl * mlnp - 2 / Math.sin(2 * phi)) - mlnp);
+	        phi -= dphi;
+	        if (Math.abs(dphi) <= EPSLN) {
+	          lat = phi;
+	          break;
+	        }
+	      }
+
+	      //lat=phi4z(this.e,this.e0,this.e1,this.e2,this.e3,al,bl,0,0);
+	      cl = Math.sqrt(1 - this.es * Math.pow(Math.sin(lat), 2)) * Math.tan(lat);
+	      lon = adjust_lon(this.long0 + Math.asin(x * cl / this.a) / Math.sin(lat));
+	    }
+	  }
+
+	  p.x = lon;
+	  p.y = lat;
+	  return p;
+	}
+
+	var names$19 = ["Polyconic", "poly"];
+	var poly = {
+	  init: init$18,
+	  forward: forward$17,
+	  inverse: inverse$17,
+	  names: names$19
+	};
+
+	/*
+	  reference
+	    Department of Land and Survey Technical Circular 1973/32
+	      http://www.linz.govt.nz/docs/miscellaneous/nz-map-definition.pdf
+	    OSG Technical Report 4.1
+	      http://www.linz.govt.nz/docs/miscellaneous/nzmg.pdf
+	  */
+
+	/**
+	 * iterations: Number of iterations to refine inverse transform.
+	 *     0 -> km accuracy
+	 *     1 -> m accuracy -- suitable for most mapping applications
+	 *     2 -> mm accuracy
+	 */
+
+
+	function init$19() {
+	  this.A = [];
+	  this.A[1] = 0.6399175073;
+	  this.A[2] = -0.1358797613;
+	  this.A[3] = 0.063294409;
+	  this.A[4] = -0.02526853;
+	  this.A[5] = 0.0117879;
+	  this.A[6] = -0.0055161;
+	  this.A[7] = 0.0026906;
+	  this.A[8] = -0.001333;
+	  this.A[9] = 0.00067;
+	  this.A[10] = -0.00034;
+
+	  this.B_re = [];
+	  this.B_im = [];
+	  this.B_re[1] = 0.7557853228;
+	  this.B_im[1] = 0;
+	  this.B_re[2] = 0.249204646;
+	  this.B_im[2] = 0.003371507;
+	  this.B_re[3] = -0.001541739;
+	  this.B_im[3] = 0.041058560;
+	  this.B_re[4] = -0.10162907;
+	  this.B_im[4] = 0.01727609;
+	  this.B_re[5] = -0.26623489;
+	  this.B_im[5] = -0.36249218;
+	  this.B_re[6] = -0.6870983;
+	  this.B_im[6] = -1.1651967;
+
+	  this.C_re = [];
+	  this.C_im = [];
+	  this.C_re[1] = 1.3231270439;
+	  this.C_im[1] = 0;
+	  this.C_re[2] = -0.577245789;
+	  this.C_im[2] = -0.007809598;
+	  this.C_re[3] = 0.508307513;
+	  this.C_im[3] = -0.112208952;
+	  this.C_re[4] = -0.15094762;
+	  this.C_im[4] = 0.18200602;
+	  this.C_re[5] = 1.01418179;
+	  this.C_im[5] = 1.64497696;
+	  this.C_re[6] = 1.9660549;
+	  this.C_im[6] = 2.5127645;
+
+	  this.D = [];
+	  this.D[1] = 1.5627014243;
+	  this.D[2] = 0.5185406398;
+	  this.D[3] = -0.03333098;
+	  this.D[4] = -0.1052906;
+	  this.D[5] = -0.0368594;
+	  this.D[6] = 0.007317;
+	  this.D[7] = 0.01220;
+	  this.D[8] = 0.00394;
+	  this.D[9] = -0.0013;
+	}
+
+	/**
+	    New Zealand Map Grid Forward  - long/lat to x/y
+	    long/lat in radians
+	  */
+	function forward$18(p) {
+	  var n;
+	  var lon = p.x;
+	  var lat = p.y;
+
+	  var delta_lat = lat - this.lat0;
+	  var delta_lon = lon - this.long0;
+
+	  // 1. Calculate d_phi and d_psi    ...                          // and d_lambda
+	  // For this algorithm, delta_latitude is in seconds of arc x 10-5, so we need to scale to those units. Longitude is radians.
+	  var d_phi = delta_lat / SEC_TO_RAD * 1E-5;
+	  var d_lambda = delta_lon;
+	  var d_phi_n = 1; // d_phi^0
+
+	  var d_psi = 0;
+	  for (n = 1; n <= 10; n++) {
+	    d_phi_n = d_phi_n * d_phi;
+	    d_psi = d_psi + this.A[n] * d_phi_n;
+	  }
+
+	  // 2. Calculate theta
+	  var th_re = d_psi;
+	  var th_im = d_lambda;
+
+	  // 3. Calculate z
+	  var th_n_re = 1;
+	  var th_n_im = 0; // theta^0
+	  var th_n_re1;
+	  var th_n_im1;
+
+	  var z_re = 0;
+	  var z_im = 0;
+	  for (n = 1; n <= 6; n++) {
+	    th_n_re1 = th_n_re * th_re - th_n_im * th_im;
+	    th_n_im1 = th_n_im * th_re + th_n_re * th_im;
+	    th_n_re = th_n_re1;
+	    th_n_im = th_n_im1;
+	    z_re = z_re + this.B_re[n] * th_n_re - this.B_im[n] * th_n_im;
+	    z_im = z_im + this.B_im[n] * th_n_re + this.B_re[n] * th_n_im;
+	  }
+
+	  // 4. Calculate easting and northing
+	  p.x = (z_im * this.a) + this.x0;
+	  p.y = (z_re * this.a) + this.y0;
+
+	  return p;
+	}
+
+	/**
+	    New Zealand Map Grid Inverse  -  x/y to long/lat
+	  */
+	function inverse$18(p) {
+	  var n;
+	  var x = p.x;
+	  var y = p.y;
+
+	  var delta_x = x - this.x0;
+	  var delta_y = y - this.y0;
+
+	  // 1. Calculate z
+	  var z_re = delta_y / this.a;
+	  var z_im = delta_x / this.a;
+
+	  // 2a. Calculate theta - first approximation gives km accuracy
+	  var z_n_re = 1;
+	  var z_n_im = 0; // z^0
+	  var z_n_re1;
+	  var z_n_im1;
+
+	  var th_re = 0;
+	  var th_im = 0;
+	  for (n = 1; n <= 6; n++) {
+	    z_n_re1 = z_n_re * z_re - z_n_im * z_im;
+	    z_n_im1 = z_n_im * z_re + z_n_re * z_im;
+	    z_n_re = z_n_re1;
+	    z_n_im = z_n_im1;
+	    th_re = th_re + this.C_re[n] * z_n_re - this.C_im[n] * z_n_im;
+	    th_im = th_im + this.C_im[n] * z_n_re + this.C_re[n] * z_n_im;
+	  }
+
+	  // 2b. Iterate to refine the accuracy of the calculation
+	  //        0 iterations gives km accuracy
+	  //        1 iteration gives m accuracy -- good enough for most mapping applications
+	  //        2 iterations bives mm accuracy
+	  for (var i = 0; i < this.iterations; i++) {
+	    var th_n_re = th_re;
+	    var th_n_im = th_im;
+	    var th_n_re1;
+	    var th_n_im1;
+
+	    var num_re = z_re;
+	    var num_im = z_im;
+	    for (n = 2; n <= 6; n++) {
+	      th_n_re1 = th_n_re * th_re - th_n_im * th_im;
+	      th_n_im1 = th_n_im * th_re + th_n_re * th_im;
+	      th_n_re = th_n_re1;
+	      th_n_im = th_n_im1;
+	      num_re = num_re + (n - 1) * (this.B_re[n] * th_n_re - this.B_im[n] * th_n_im);
+	      num_im = num_im + (n - 1) * (this.B_im[n] * th_n_re + this.B_re[n] * th_n_im);
+	    }
+
+	    th_n_re = 1;
+	    th_n_im = 0;
+	    var den_re = this.B_re[1];
+	    var den_im = this.B_im[1];
+	    for (n = 2; n <= 6; n++) {
+	      th_n_re1 = th_n_re * th_re - th_n_im * th_im;
+	      th_n_im1 = th_n_im * th_re + th_n_re * th_im;
+	      th_n_re = th_n_re1;
+	      th_n_im = th_n_im1;
+	      den_re = den_re + n * (this.B_re[n] * th_n_re - this.B_im[n] * th_n_im);
+	      den_im = den_im + n * (this.B_im[n] * th_n_re + this.B_re[n] * th_n_im);
+	    }
+
+	    // Complex division
+	    var den2 = den_re * den_re + den_im * den_im;
+	    th_re = (num_re * den_re + num_im * den_im) / den2;
+	    th_im = (num_im * den_re - num_re * den_im) / den2;
+	  }
+
+	  // 3. Calculate d_phi              ...                                    // and d_lambda
+	  var d_psi = th_re;
+	  var d_lambda = th_im;
+	  var d_psi_n = 1; // d_psi^0
+
+	  var d_phi = 0;
+	  for (n = 1; n <= 9; n++) {
+	    d_psi_n = d_psi_n * d_psi;
+	    d_phi = d_phi + this.D[n] * d_psi_n;
+	  }
+
+	  // 4. Calculate latitude and longitude
+	  // d_phi is calcuated in second of arc * 10^-5, so we need to scale back to radians. d_lambda is in radians.
+	  var lat = this.lat0 + (d_phi * SEC_TO_RAD * 1E5);
+	  var lon = this.long0 + d_lambda;
+
+	  p.x = lon;
+	  p.y = lat;
+
+	  return p;
+	}
+
+	var names$20 = ["New_Zealand_Map_Grid", "nzmg"];
+	var nzmg = {
+	  init: init$19,
+	  forward: forward$18,
+	  inverse: inverse$18,
+	  names: names$20
+	};
+
+	/*
+	  reference
+	    "New Equal-Area Map Projections for Noncircular Regions", John P. Snyder,
+	    The American Cartographer, Vol 15, No. 4, October 1988, pp. 341-355.
+	  */
+
+
+	/* Initialize the Miller Cylindrical projection
+	  -------------------------------------------*/
+	function init$20() {
+	  //no-op
+	}
+
+	/* Miller Cylindrical forward equations--mapping lat,long to x,y
+	    ------------------------------------------------------------*/
+	function forward$19(p) {
+	  var lon = p.x;
+	  var lat = p.y;
+	  /* Forward equations
+	      -----------------*/
+	  var dlon = adjust_lon(lon - this.long0);
+	  var x = this.x0 + this.a * dlon;
+	  var y = this.y0 + this.a * Math.log(Math.tan((Math.PI / 4) + (lat / 2.5))) * 1.25;
+
+	  p.x = x;
+	  p.y = y;
+	  return p;
+	}
+
+	/* Miller Cylindrical inverse equations--mapping x,y to lat/long
+	    ------------------------------------------------------------*/
+	function inverse$19(p) {
+	  p.x -= this.x0;
+	  p.y -= this.y0;
+
+	  var lon = adjust_lon(this.long0 + p.x / this.a);
+	  var lat = 2.5 * (Math.atan(Math.exp(0.8 * p.y / this.a)) - Math.PI / 4);
+
+	  p.x = lon;
+	  p.y = lat;
+	  return p;
+	}
+
+	var names$21 = ["Miller_Cylindrical", "mill"];
+	var mill = {
+	  init: init$20,
+	  forward: forward$19,
+	  inverse: inverse$19,
+	  names: names$21
+	};
+
+	var MAX_ITER$3 = 20;
+	function init$21() {
+	  /* Place parameters in static storage for common use
+	    -------------------------------------------------*/
+
+
+	  if (!this.sphere) {
+	    this.en = pj_enfn(this.es);
+	  }
+	  else {
+	    this.n = 1;
+	    this.m = 0;
+	    this.es = 0;
+	    this.C_y = Math.sqrt((this.m + 1) / this.n);
+	    this.C_x = this.C_y / (this.m + 1);
+	  }
+
+	}
+
+	/* Sinusoidal forward equations--mapping lat,long to x,y
+	  -----------------------------------------------------*/
+	function forward$20(p) {
+	  var x, y;
+	  var lon = p.x;
+	  var lat = p.y;
+	  /* Forward equations
+	    -----------------*/
+	  lon = adjust_lon(lon - this.long0);
+
+	  if (this.sphere) {
+	    if (!this.m) {
+	      lat = this.n !== 1 ? Math.asin(this.n * Math.sin(lat)) : lat;
+	    }
+	    else {
+	      var k = this.n * Math.sin(lat);
+	      for (var i = MAX_ITER$3; i; --i) {
+	        var V = (this.m * lat + Math.sin(lat) - k) / (this.m + Math.cos(lat));
+	        lat -= V;
+	        if (Math.abs(V) < EPSLN) {
+	          break;
+	        }
+	      }
+	    }
+	    x = this.a * this.C_x * lon * (this.m + Math.cos(lat));
+	    y = this.a * this.C_y * lat;
+
+	  }
+	  else {
+
+	    var s = Math.sin(lat);
+	    var c = Math.cos(lat);
+	    y = this.a * pj_mlfn(lat, s, c, this.en);
+	    x = this.a * lon * c / Math.sqrt(1 - this.es * s * s);
+	  }
+
+	  p.x = x;
+	  p.y = y;
+	  return p;
+	}
+
+	function inverse$20(p) {
+	  var lat, temp, lon, s;
+
+	  p.x -= this.x0;
+	  lon = p.x / this.a;
+	  p.y -= this.y0;
+	  lat = p.y / this.a;
+
+	  if (this.sphere) {
+	    lat /= this.C_y;
+	    lon = lon / (this.C_x * (this.m + Math.cos(lat)));
+	    if (this.m) {
+	      lat = asinz((this.m * lat + Math.sin(lat)) / this.n);
+	    }
+	    else if (this.n !== 1) {
+	      lat = asinz(Math.sin(lat) / this.n);
+	    }
+	    lon = adjust_lon(lon + this.long0);
+	    lat = adjust_lat(lat);
+	  }
+	  else {
+	    lat = pj_inv_mlfn(p.y / this.a, this.es, this.en);
+	    s = Math.abs(lat);
+	    if (s < HALF_PI) {
+	      s = Math.sin(lat);
+	      temp = this.long0 + p.x * Math.sqrt(1 - this.es * s * s) / (this.a * Math.cos(lat));
+	      //temp = this.long0 + p.x / (this.a * Math.cos(lat));
+	      lon = adjust_lon(temp);
+	    }
+	    else if ((s - EPSLN) < HALF_PI) {
+	      lon = this.long0;
+	    }
+	  }
+	  p.x = lon;
+	  p.y = lat;
+	  return p;
+	}
+
+	var names$22 = ["Sinusoidal", "sinu"];
+	var sinu = {
+	  init: init$21,
+	  forward: forward$20,
+	  inverse: inverse$20,
+	  names: names$22
+	};
+
+	function init$22() {}
+	/* Mollweide forward equations--mapping lat,long to x,y
+	    ----------------------------------------------------*/
+	function forward$21(p) {
+
+	  /* Forward equations
+	      -----------------*/
+	  var lon = p.x;
+	  var lat = p.y;
+
+	  var delta_lon = adjust_lon(lon - this.long0);
+	  var theta = lat;
+	  var con = Math.PI * Math.sin(lat);
+
+	  /* Iterate using the Newton-Raphson method to find theta
+	      -----------------------------------------------------*/
+	  for (var i = 0; true; i++) {
+	    var delta_theta = -(theta + Math.sin(theta) - con) / (1 + Math.cos(theta));
+	    theta += delta_theta;
+	    if (Math.abs(delta_theta) < EPSLN) {
+	      break;
+	    }
+	  }
+	  theta /= 2;
+
+	  /* If the latitude is 90 deg, force the x coordinate to be "0 + false easting"
+	       this is done here because of precision problems with "cos(theta)"
+	       --------------------------------------------------------------------------*/
+	  if (Math.PI / 2 - Math.abs(lat) < EPSLN) {
+	    delta_lon = 0;
+	  }
+	  var x = 0.900316316158 * this.a * delta_lon * Math.cos(theta) + this.x0;
+	  var y = 1.4142135623731 * this.a * Math.sin(theta) + this.y0;
+
+	  p.x = x;
+	  p.y = y;
+	  return p;
+	}
+
+	function inverse$21(p) {
+	  var theta;
+	  var arg;
+
+	  /* Inverse equations
+	      -----------------*/
+	  p.x -= this.x0;
+	  p.y -= this.y0;
+	  arg = p.y / (1.4142135623731 * this.a);
+
+	  /* Because of division by zero problems, 'arg' can not be 1.  Therefore
+	       a number very close to one is used instead.
+	       -------------------------------------------------------------------*/
+	  if (Math.abs(arg) > 0.999999999999) {
+	    arg = 0.999999999999;
+	  }
+	  theta = Math.asin(arg);
+	  var lon = adjust_lon(this.long0 + (p.x / (0.900316316158 * this.a * Math.cos(theta))));
+	  if (lon < (-Math.PI)) {
+	    lon = -Math.PI;
+	  }
+	  if (lon > Math.PI) {
+	    lon = Math.PI;
+	  }
+	  arg = (2 * theta + Math.sin(2 * theta)) / Math.PI;
+	  if (Math.abs(arg) > 1) {
+	    arg = 1;
+	  }
+	  var lat = Math.asin(arg);
+
+	  p.x = lon;
+	  p.y = lat;
+	  return p;
+	}
+
+	var names$23 = ["Mollweide", "moll"];
+	var moll = {
+	  init: init$22,
+	  forward: forward$21,
+	  inverse: inverse$21,
+	  names: names$23
+	};
+
+	function init$23() {
+
+	  /* Place parameters in static storage for common use
+	      -------------------------------------------------*/
+	  // Standard Parallels cannot be equal and on opposite sides of the equator
+	  if (Math.abs(this.lat1 + this.lat2) < EPSLN) {
+	    return;
+	  }
+	  this.lat2 = this.lat2 || this.lat1;
+	  this.temp = this.b / this.a;
+	  this.es = 1 - Math.pow(this.temp, 2);
+	  this.e = Math.sqrt(this.es);
+	  this.e0 = e0fn(this.es);
+	  this.e1 = e1fn(this.es);
+	  this.e2 = e2fn(this.es);
+	  this.e3 = e3fn(this.es);
+
+	  this.sinphi = Math.sin(this.lat1);
+	  this.cosphi = Math.cos(this.lat1);
+
+	  this.ms1 = msfnz(this.e, this.sinphi, this.cosphi);
+	  this.ml1 = mlfn(this.e0, this.e1, this.e2, this.e3, this.lat1);
+
+	  if (Math.abs(this.lat1 - this.lat2) < EPSLN) {
+	    this.ns = this.sinphi;
+	  }
+	  else {
+	    this.sinphi = Math.sin(this.lat2);
+	    this.cosphi = Math.cos(this.lat2);
+	    this.ms2 = msfnz(this.e, this.sinphi, this.cosphi);
+	    this.ml2 = mlfn(this.e0, this.e1, this.e2, this.e3, this.lat2);
+	    this.ns = (this.ms1 - this.ms2) / (this.ml2 - this.ml1);
+	  }
+	  this.g = this.ml1 + this.ms1 / this.ns;
+	  this.ml0 = mlfn(this.e0, this.e1, this.e2, this.e3, this.lat0);
+	  this.rh = this.a * (this.g - this.ml0);
+	}
+
+	/* Equidistant Conic forward equations--mapping lat,long to x,y
+	  -----------------------------------------------------------*/
+	function forward$22(p) {
+	  var lon = p.x;
+	  var lat = p.y;
+	  var rh1;
+
+	  /* Forward equations
+	      -----------------*/
+	  if (this.sphere) {
+	    rh1 = this.a * (this.g - lat);
+	  }
+	  else {
+	    var ml = mlfn(this.e0, this.e1, this.e2, this.e3, lat);
+	    rh1 = this.a * (this.g - ml);
+	  }
+	  var theta = this.ns * adjust_lon(lon - this.long0);
+	  var x = this.x0 + rh1 * Math.sin(theta);
+	  var y = this.y0 + this.rh - rh1 * Math.cos(theta);
+	  p.x = x;
+	  p.y = y;
+	  return p;
+	}
+
+	/* Inverse equations
+	  -----------------*/
+	function inverse$22(p) {
+	  p.x -= this.x0;
+	  p.y = this.rh - p.y + this.y0;
+	  var con, rh1, lat, lon;
+	  if (this.ns >= 0) {
+	    rh1 = Math.sqrt(p.x * p.x + p.y * p.y);
+	    con = 1;
+	  }
+	  else {
+	    rh1 = -Math.sqrt(p.x * p.x + p.y * p.y);
+	    con = -1;
+	  }
+	  var theta = 0;
+	  if (rh1 !== 0) {
+	    theta = Math.atan2(con * p.x, con * p.y);
+	  }
+
+	  if (this.sphere) {
+	    lon = adjust_lon(this.long0 + theta / this.ns);
+	    lat = adjust_lat(this.g - rh1 / this.a);
+	    p.x = lon;
+	    p.y = lat;
+	    return p;
+	  }
+	  else {
+	    var ml = this.g - rh1 / this.a;
+	    lat = imlfn(ml, this.e0, this.e1, this.e2, this.e3);
+	    lon = adjust_lon(this.long0 + theta / this.ns);
+	    p.x = lon;
+	    p.y = lat;
+	    return p;
+	  }
+
+	}
+
+	var names$24 = ["Equidistant_Conic", "eqdc"];
+	var eqdc = {
+	  init: init$23,
+	  forward: forward$22,
+	  inverse: inverse$22,
+	  names: names$24
+	};
+
+	/* Initialize the Van Der Grinten projection
+	  ----------------------------------------*/
+	function init$24() {
+	  //this.R = 6370997; //Radius of earth
+	  this.R = this.a;
+	}
+
+	function forward$23(p) {
+
+	  var lon = p.x;
+	  var lat = p.y;
+
+	  /* Forward equations
+	    -----------------*/
+	  var dlon = adjust_lon(lon - this.long0);
+	  var x, y;
+
+	  if (Math.abs(lat) <= EPSLN) {
+	    x = this.x0 + this.R * dlon;
+	    y = this.y0;
+	  }
+	  var theta = asinz(2 * Math.abs(lat / Math.PI));
+	  if ((Math.abs(dlon) <= EPSLN) || (Math.abs(Math.abs(lat) - HALF_PI) <= EPSLN)) {
+	    x = this.x0;
+	    if (lat >= 0) {
+	      y = this.y0 + Math.PI * this.R * Math.tan(0.5 * theta);
+	    }
+	    else {
+	      y = this.y0 + Math.PI * this.R * -Math.tan(0.5 * theta);
+	    }
+	    //  return(OK);
+	  }
+	  var al = 0.5 * Math.abs((Math.PI / dlon) - (dlon / Math.PI));
+	  var asq = al * al;
+	  var sinth = Math.sin(theta);
+	  var costh = Math.cos(theta);
+
+	  var g = costh / (sinth + costh - 1);
+	  var gsq = g * g;
+	  var m = g * (2 / sinth - 1);
+	  var msq = m * m;
+	  var con = Math.PI * this.R * (al * (g - msq) + Math.sqrt(asq * (g - msq) * (g - msq) - (msq + asq) * (gsq - msq))) / (msq + asq);
+	  if (dlon < 0) {
+	    con = -con;
+	  }
+	  x = this.x0 + con;
+	  //con = Math.abs(con / (Math.PI * this.R));
+	  var q = asq + g;
+	  con = Math.PI * this.R * (m * q - al * Math.sqrt((msq + asq) * (asq + 1) - q * q)) / (msq + asq);
+	  if (lat >= 0) {
+	    //y = this.y0 + Math.PI * this.R * Math.sqrt(1 - con * con - 2 * al * con);
+	    y = this.y0 + con;
+	  }
+	  else {
+	    //y = this.y0 - Math.PI * this.R * Math.sqrt(1 - con * con - 2 * al * con);
+	    y = this.y0 - con;
+	  }
+	  p.x = x;
+	  p.y = y;
+	  return p;
+	}
+
+	/* Van Der Grinten inverse equations--mapping x,y to lat/long
+	  ---------------------------------------------------------*/
+	function inverse$23(p) {
+	  var lon, lat;
+	  var xx, yy, xys, c1, c2, c3;
+	  var a1;
+	  var m1;
+	  var con;
+	  var th1;
+	  var d;
+
+	  /* inverse equations
+	    -----------------*/
+	  p.x -= this.x0;
+	  p.y -= this.y0;
+	  con = Math.PI * this.R;
+	  xx = p.x / con;
+	  yy = p.y / con;
+	  xys = xx * xx + yy * yy;
+	  c1 = -Math.abs(yy) * (1 + xys);
+	  c2 = c1 - 2 * yy * yy + xx * xx;
+	  c3 = -2 * c1 + 1 + 2 * yy * yy + xys * xys;
+	  d = yy * yy / c3 + (2 * c2 * c2 * c2 / c3 / c3 / c3 - 9 * c1 * c2 / c3 / c3) / 27;
+	  a1 = (c1 - c2 * c2 / 3 / c3) / c3;
+	  m1 = 2 * Math.sqrt(-a1 / 3);
+	  con = ((3 * d) / a1) / m1;
+	  if (Math.abs(con) > 1) {
+	    if (con >= 0) {
+	      con = 1;
+	    }
+	    else {
+	      con = -1;
+	    }
+	  }
+	  th1 = Math.acos(con) / 3;
+	  if (p.y >= 0) {
+	    lat = (-m1 * Math.cos(th1 + Math.PI / 3) - c2 / 3 / c3) * Math.PI;
+	  }
+	  else {
+	    lat = -(-m1 * Math.cos(th1 + Math.PI / 3) - c2 / 3 / c3) * Math.PI;
+	  }
+
+	  if (Math.abs(xx) < EPSLN) {
+	    lon = this.long0;
+	  }
+	  else {
+	    lon = adjust_lon(this.long0 + Math.PI * (xys - 1 + Math.sqrt(1 + 2 * (xx * xx - yy * yy) + xys * xys)) / 2 / xx);
+	  }
+
+	  p.x = lon;
+	  p.y = lat;
+	  return p;
+	}
+
+	var names$25 = ["Van_der_Grinten_I", "VanDerGrinten", "vandg"];
+	var vandg = {
+	  init: init$24,
+	  forward: forward$23,
+	  inverse: inverse$23,
+	  names: names$25
+	};
+
+	function init$25() {
+	  this.sin_p12 = Math.sin(this.lat0);
+	  this.cos_p12 = Math.cos(this.lat0);
+	}
+
+	function forward$24(p) {
+	  var lon = p.x;
+	  var lat = p.y;
+	  var sinphi = Math.sin(p.y);
+	  var cosphi = Math.cos(p.y);
+	  var dlon = adjust_lon(lon - this.long0);
+	  var e0, e1, e2, e3, Mlp, Ml, tanphi, Nl1, Nl, psi, Az, G, H, GH, Hs, c, kp, cos_c, s, s2, s3, s4, s5;
+	  if (this.sphere) {
+	    if (Math.abs(this.sin_p12 - 1) <= EPSLN) {
+	      //North Pole case
+	      p.x = this.x0 + this.a * (HALF_PI - lat) * Math.sin(dlon);
+	      p.y = this.y0 - this.a * (HALF_PI - lat) * Math.cos(dlon);
+	      return p;
+	    }
+	    else if (Math.abs(this.sin_p12 + 1) <= EPSLN) {
+	      //South Pole case
+	      p.x = this.x0 + this.a * (HALF_PI + lat) * Math.sin(dlon);
+	      p.y = this.y0 + this.a * (HALF_PI + lat) * Math.cos(dlon);
+	      return p;
+	    }
+	    else {
+	      //default case
+	      cos_c = this.sin_p12 * sinphi + this.cos_p12 * cosphi * Math.cos(dlon);
+	      c = Math.acos(cos_c);
+	      kp = c / Math.sin(c);
+	      p.x = this.x0 + this.a * kp * cosphi * Math.sin(dlon);
+	      p.y = this.y0 + this.a * kp * (this.cos_p12 * sinphi - this.sin_p12 * cosphi * Math.cos(dlon));
+	      return p;
+	    }
+	  }
+	  else {
+	    e0 = e0fn(this.es);
+	    e1 = e1fn(this.es);
+	    e2 = e2fn(this.es);
+	    e3 = e3fn(this.es);
+	    if (Math.abs(this.sin_p12 - 1) <= EPSLN) {
+	      //North Pole case
+	      Mlp = this.a * mlfn(e0, e1, e2, e3, HALF_PI);
+	      Ml = this.a * mlfn(e0, e1, e2, e3, lat);
+	      p.x = this.x0 + (Mlp - Ml) * Math.sin(dlon);
+	      p.y = this.y0 - (Mlp - Ml) * Math.cos(dlon);
+	      return p;
+	    }
+	    else if (Math.abs(this.sin_p12 + 1) <= EPSLN) {
+	      //South Pole case
+	      Mlp = this.a * mlfn(e0, e1, e2, e3, HALF_PI);
+	      Ml = this.a * mlfn(e0, e1, e2, e3, lat);
+	      p.x = this.x0 + (Mlp + Ml) * Math.sin(dlon);
+	      p.y = this.y0 + (Mlp + Ml) * Math.cos(dlon);
+	      return p;
+	    }
+	    else {
+	      //Default case
+	      tanphi = sinphi / cosphi;
+	      Nl1 = gN(this.a, this.e, this.sin_p12);
+	      Nl = gN(this.a, this.e, sinphi);
+	      psi = Math.atan((1 - this.es) * tanphi + this.es * Nl1 * this.sin_p12 / (Nl * cosphi));
+	      Az = Math.atan2(Math.sin(dlon), this.cos_p12 * Math.tan(psi) - this.sin_p12 * Math.cos(dlon));
+	      if (Az === 0) {
+	        s = Math.asin(this.cos_p12 * Math.sin(psi) - this.sin_p12 * Math.cos(psi));
+	      }
+	      else if (Math.abs(Math.abs(Az) - Math.PI) <= EPSLN) {
+	        s = -Math.asin(this.cos_p12 * Math.sin(psi) - this.sin_p12 * Math.cos(psi));
+	      }
+	      else {
+	        s = Math.asin(Math.sin(dlon) * Math.cos(psi) / Math.sin(Az));
+	      }
+	      G = this.e * this.sin_p12 / Math.sqrt(1 - this.es);
+	      H = this.e * this.cos_p12 * Math.cos(Az) / Math.sqrt(1 - this.es);
+	      GH = G * H;
+	      Hs = H * H;
+	      s2 = s * s;
+	      s3 = s2 * s;
+	      s4 = s3 * s;
+	      s5 = s4 * s;
+	      c = Nl1 * s * (1 - s2 * Hs * (1 - Hs) / 6 + s3 / 8 * GH * (1 - 2 * Hs) + s4 / 120 * (Hs * (4 - 7 * Hs) - 3 * G * G * (1 - 7 * Hs)) - s5 / 48 * GH);
+	      p.x = this.x0 + c * Math.sin(Az);
+	      p.y = this.y0 + c * Math.cos(Az);
+	      return p;
+	    }
+	  }
+
+
+	}
+
+	function inverse$24(p) {
+	  p.x -= this.x0;
+	  p.y -= this.y0;
+	  var rh, z, sinz, cosz, lon, lat, con, e0, e1, e2, e3, Mlp, M, N1, psi, Az, cosAz, tmp, A, B, D, Ee, F;
+	  if (this.sphere) {
+	    rh = Math.sqrt(p.x * p.x + p.y * p.y);
+	    if (rh > (2 * HALF_PI * this.a)) {
+	      return;
+	    }
+	    z = rh / this.a;
+
+	    sinz = Math.sin(z);
+	    cosz = Math.cos(z);
+
+	    lon = this.long0;
+	    if (Math.abs(rh) <= EPSLN) {
+	      lat = this.lat0;
+	    }
+	    else {
+	      lat = asinz(cosz * this.sin_p12 + (p.y * sinz * this.cos_p12) / rh);
+	      con = Math.abs(this.lat0) - HALF_PI;
+	      if (Math.abs(con) <= EPSLN) {
+	        if (this.lat0 >= 0) {
+	          lon = adjust_lon(this.long0 + Math.atan2(p.x, - p.y));
+	        }
+	        else {
+	          lon = adjust_lon(this.long0 - Math.atan2(-p.x, p.y));
+	        }
+	      }
+	      else {
+	        /*con = cosz - this.sin_p12 * Math.sin(lat);
+	        if ((Math.abs(con) < EPSLN) && (Math.abs(p.x) < EPSLN)) {
+	          //no-op, just keep the lon value as is
+	        } else {
+	          var temp = Math.atan2((p.x * sinz * this.cos_p12), (con * rh));
+	          lon = adjust_lon(this.long0 + Math.atan2((p.x * sinz * this.cos_p12), (con * rh)));
+	        }*/
+	        lon = adjust_lon(this.long0 + Math.atan2(p.x * sinz, rh * this.cos_p12 * cosz - p.y * this.sin_p12 * sinz));
+	      }
+	    }
+
+	    p.x = lon;
+	    p.y = lat;
+	    return p;
+	  }
+	  else {
+	    e0 = e0fn(this.es);
+	    e1 = e1fn(this.es);
+	    e2 = e2fn(this.es);
+	    e3 = e3fn(this.es);
+	    if (Math.abs(this.sin_p12 - 1) <= EPSLN) {
+	      //North pole case
+	      Mlp = this.a * mlfn(e0, e1, e2, e3, HALF_PI);
+	      rh = Math.sqrt(p.x * p.x + p.y * p.y);
+	      M = Mlp - rh;
+	      lat = imlfn(M / this.a, e0, e1, e2, e3);
+	      lon = adjust_lon(this.long0 + Math.atan2(p.x, - 1 * p.y));
+	      p.x = lon;
+	      p.y = lat;
+	      return p;
+	    }
+	    else if (Math.abs(this.sin_p12 + 1) <= EPSLN) {
+	      //South pole case
+	      Mlp = this.a * mlfn(e0, e1, e2, e3, HALF_PI);
+	      rh = Math.sqrt(p.x * p.x + p.y * p.y);
+	      M = rh - Mlp;
+
+	      lat = imlfn(M / this.a, e0, e1, e2, e3);
+	      lon = adjust_lon(this.long0 + Math.atan2(p.x, p.y));
+	      p.x = lon;
+	      p.y = lat;
+	      return p;
+	    }
+	    else {
+	      //default case
+	      rh = Math.sqrt(p.x * p.x + p.y * p.y);
+	      Az = Math.atan2(p.x, p.y);
+	      N1 = gN(this.a, this.e, this.sin_p12);
+	      cosAz = Math.cos(Az);
+	      tmp = this.e * this.cos_p12 * cosAz;
+	      A = -tmp * tmp / (1 - this.es);
+	      B = 3 * this.es * (1 - A) * this.sin_p12 * this.cos_p12 * cosAz / (1 - this.es);
+	      D = rh / N1;
+	      Ee = D - A * (1 + A) * Math.pow(D, 3) / 6 - B * (1 + 3 * A) * Math.pow(D, 4) / 24;
+	      F = 1 - A * Ee * Ee / 2 - D * Ee * Ee * Ee / 6;
+	      psi = Math.asin(this.sin_p12 * Math.cos(Ee) + this.cos_p12 * Math.sin(Ee) * cosAz);
+	      lon = adjust_lon(this.long0 + Math.asin(Math.sin(Az) * Math.sin(Ee) / Math.cos(psi)));
+	      lat = Math.atan((1 - this.es * F * this.sin_p12 / Math.sin(psi)) * Math.tan(psi) / (1 - this.es));
+	      p.x = lon;
+	      p.y = lat;
+	      return p;
+	    }
+	  }
+
+	}
+
+	var names$26 = ["Azimuthal_Equidistant", "aeqd"];
+	var aeqd = {
+	  init: init$25,
+	  forward: forward$24,
+	  inverse: inverse$24,
+	  names: names$26
+	};
+
+	function init$26() {
+	  //double temp;      /* temporary variable    */
+
+	  /* Place parameters in static storage for common use
+	      -------------------------------------------------*/
+	  this.sin_p14 = Math.sin(this.lat0);
+	  this.cos_p14 = Math.cos(this.lat0);
+	}
+
+	/* Orthographic forward equations--mapping lat,long to x,y
+	    ---------------------------------------------------*/
+	function forward$25(p) {
+	  var sinphi, cosphi; /* sin and cos value        */
+	  var dlon; /* delta longitude value      */
+	  var coslon; /* cos of longitude        */
+	  var ksp; /* scale factor          */
+	  var g, x, y;
+	  var lon = p.x;
+	  var lat = p.y;
+	  /* Forward equations
+	      -----------------*/
+	  dlon = adjust_lon(lon - this.long0);
+
+	  sinphi = Math.sin(lat);
+	  cosphi = Math.cos(lat);
+
+	  coslon = Math.cos(dlon);
+	  g = this.sin_p14 * sinphi + this.cos_p14 * cosphi * coslon;
+	  ksp = 1;
+	  if ((g > 0) || (Math.abs(g) <= EPSLN)) {
+	    x = this.a * ksp * cosphi * Math.sin(dlon);
+	    y = this.y0 + this.a * ksp * (this.cos_p14 * sinphi - this.sin_p14 * cosphi * coslon);
+	  }
+	  p.x = x;
+	  p.y = y;
+	  return p;
+	}
+
+	function inverse$25(p) {
+	  var rh; /* height above ellipsoid      */
+	  var z; /* angle          */
+	  var sinz, cosz; /* sin of z and cos of z      */
+	  var con;
+	  var lon, lat;
+	  /* Inverse equations
+	      -----------------*/
+	  p.x -= this.x0;
+	  p.y -= this.y0;
+	  rh = Math.sqrt(p.x * p.x + p.y * p.y);
+	  z = asinz(rh / this.a);
+
+	  sinz = Math.sin(z);
+	  cosz = Math.cos(z);
+
+	  lon = this.long0;
+	  if (Math.abs(rh) <= EPSLN) {
+	    lat = this.lat0;
+	    p.x = lon;
+	    p.y = lat;
+	    return p;
+	  }
+	  lat = asinz(cosz * this.sin_p14 + (p.y * sinz * this.cos_p14) / rh);
+	  con = Math.abs(this.lat0) - HALF_PI;
+	  if (Math.abs(con) <= EPSLN) {
+	    if (this.lat0 >= 0) {
+	      lon = adjust_lon(this.long0 + Math.atan2(p.x, - p.y));
+	    }
+	    else {
+	      lon = adjust_lon(this.long0 - Math.atan2(-p.x, p.y));
+	    }
+	    p.x = lon;
+	    p.y = lat;
+	    return p;
+	  }
+	  lon = adjust_lon(this.long0 + Math.atan2((p.x * sinz), rh * this.cos_p14 * cosz - p.y * this.sin_p14 * sinz));
+	  p.x = lon;
+	  p.y = lat;
+	  return p;
+	}
+
+	var names$27 = ["ortho"];
+	var ortho = {
+	  init: init$26,
+	  forward: forward$25,
+	  inverse: inverse$25,
+	  names: names$27
+	};
+
+	var includedProjections = function(proj4){
+	  proj4.Proj.projections.add(tmerc);
+	  proj4.Proj.projections.add(etmerc);
+	  proj4.Proj.projections.add(utm);
+	  proj4.Proj.projections.add(sterea);
+	  proj4.Proj.projections.add(stere);
+	  proj4.Proj.projections.add(somerc);
+	  proj4.Proj.projections.add(omerc);
+	  proj4.Proj.projections.add(lcc);
+	  proj4.Proj.projections.add(krovak);
+	  proj4.Proj.projections.add(cass);
+	  proj4.Proj.projections.add(laea);
+	  proj4.Proj.projections.add(aea);
+	  proj4.Proj.projections.add(gnom);
+	  proj4.Proj.projections.add(cea);
+	  proj4.Proj.projections.add(eqc);
+	  proj4.Proj.projections.add(poly);
+	  proj4.Proj.projections.add(nzmg);
+	  proj4.Proj.projections.add(mill);
+	  proj4.Proj.projections.add(sinu);
+	  proj4.Proj.projections.add(moll);
+	  proj4.Proj.projections.add(eqdc);
+	  proj4.Proj.projections.add(vandg);
+	  proj4.Proj.projections.add(aeqd);
+	  proj4.Proj.projections.add(ortho);
+	};
+
+	proj4$1.defaultDatum = 'WGS84'; //default datum
+	proj4$1.Proj = Projection$1;
+	proj4$1.WGS84 = new proj4$1.Proj('WGS84');
+	proj4$1.Point = Point;
+	proj4$1.toPoint = toPoint;
+	proj4$1.defs = defs;
+	proj4$1.transform = transform;
+	proj4$1.mgrs = mgrs;
+	proj4$1.version = version;
+	includedProjections(proj4$1);
+
+	return proj4$1;
+
+})));

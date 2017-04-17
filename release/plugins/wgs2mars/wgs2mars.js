@@ -1,1 +1,121 @@
-(function(e,t){typeof define=="function"&&define.amd?define([],t):typeof module=="object"&&module.exports?module.exports=t():e.transformFromWGSToGCJ=t()})(this,function(){function r(e,t,n,r){this.west=Math.min(e,n),this.north=Math.max(t,r),this.east=Math.max(e,n),this.south=Math.min(t,r)}function i(e,t,n){return e.west<=t&&e.east>=t&&e.north>=n&&e.south<=n}function u(e,t){for(var n=0;n<s.length;n++)if(i(s[n],e,t)){for(var r=0;r<o.length;r++)if(i(o[r],e,t))return!1;return!0}return!1}function a(t,n){var r=-100+2*t+3*n+.2*n*n+.1*t*n+.2*Math.sqrt(Math.abs(t));return r+=(20*Math.sin(6*t*e)+20*Math.sin(2*t*e))*2/3,r+=(20*Math.sin(n*e)+40*Math.sin(n/3*e))*2/3,r+=(160*Math.sin(n/12*e)+320*Math.sin(n*e/30))*2/3,r}function f(t,n){var r=300+t+2*n+.1*t*t+.1*t*n+.1*Math.sqrt(Math.abs(t));return r+=(20*Math.sin(6*t*e)+20*Math.sin(2*t*e))*2/3,r+=(20*Math.sin(t*e)+40*Math.sin(t/3*e))*2/3,r+=(150*Math.sin(t/12*e)+300*Math.sin(t/30*e))*2/3,r}function l(r,i){var s={};if(!u(r,i))return s={lat:i,lng:r},s;var o=a(r-105,i-35),l=f(r-105,i-35),c=i/180*e,h=Math.sin(c);h=1-n*h*h;var p=Math.sqrt(h);return o=o*180/(t*(1-n)/(h*p)*e),l=l*180/(t/p*Math.cos(c)*e),s={lat:i+o,lng:r+l},s}var e=3.141592653589793,t=6378245,n=.006693421622965943,s=[new r(79.4462,49.2204,96.33,42.8899),new r(109.6872,54.1415,135.0002,39.3742),new r(73.1246,42.8899,124.143255,29.5297),new r(82.9684,29.5297,97.0352,26.7186),new r(97.0253,29.5297,124.367395,20.414096),new r(107.975793,20.414096,111.744104,17.871542)],o=[new r(119.921265,25.398623,122.497559,21.785006),new r(101.8652,22.284,106.665,20.0988),new r(106.4525,21.5422,108.051,20.4878),new r(109.0323,55.8175,119.127,50.3257),new r(127.4568,55.8175,137.0227,49.5574),new r(131.2662,44.8922,137.0227,42.5692)];return l});
+/*
+*   Usage: var gcjloc = transformFromWGSToGCJ(lng,lat);
+*   Source: https://github.com/hiwanz/wgs2mars.js.git
+*/
+(function (root, factory) {
+    
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define([], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory();
+    } else {
+        // Browser globals (root is window)
+        root.transformFromWGSToGCJ  = factory();
+    }
+
+}(this, function () {
+
+    // const PI
+    var PI = 3.14159265358979324;
+    // Krasovsky 1940
+    //
+    // a = 6378245.0, 1/f = 298.3
+    // b = a * (1 - f)
+    // ee = (a^2 - b^2) / a^2;
+    var a = 6378245.0;
+    var ee = 0.00669342162296594323;
+
+    function Rectangle(lng1, lat1, lng2, lat2) {
+        this.west = Math.min(lng1, lng2);
+        this.north = Math.max(lat1, lat2);
+        this.east = Math.max(lng1, lng2);
+        this.south = Math.min(lat1, lat2);
+    }
+
+    function isInRect(rect, lon, lat) {
+        return rect.west <= lon && rect.east >= lon && rect.north >= lat && rect.south <= lat;
+    }
+
+    //China region - raw data
+    var region = [
+        new Rectangle(79.446200, 49.220400, 96.330000,42.889900),
+        new Rectangle(109.687200, 54.141500, 135.000200, 39.374200),
+        new Rectangle(73.124600, 42.889900, 124.143255, 29.529700),
+        new Rectangle(82.968400, 29.529700, 97.035200, 26.718600),
+        new Rectangle(97.025300, 29.529700, 124.367395, 20.414096),
+        new Rectangle(107.975793, 20.414096, 111.744104, 17.871542)
+    ];
+
+    //China excluded region - raw data
+    var exclude = [
+        new Rectangle(119.921265, 25.398623, 122.497559, 21.785006),
+        new Rectangle(101.865200, 22.284000, 106.665000, 20.098800),
+        new Rectangle(106.452500, 21.542200, 108.051000, 20.487800),
+        new Rectangle(109.032300, 55.817500, 119.127000, 50.325700),
+        new Rectangle(127.456800, 55.817500, 137.022700, 49.557400),
+        new Rectangle(131.266200, 44.892200, 137.022700, 42.569200)
+    ];
+
+    function isInChina(lon, lat) {
+        for (var i = 0; i < region.length; i++) {
+            if (isInRect(region[i], lon, lat))
+            {
+                for (var j = 0; j < exclude.length; j++)
+                {
+                    if (isInRect(exclude[j], lon, lat))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function transformLat(x, y){
+        var ret = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * Math.sqrt(Math.abs(x));
+        ret += (20.0 * Math.sin(6.0 * x * PI) + 20.0 * Math.sin(2.0 * x * PI)) * 2.0 / 3.0;
+        ret += (20.0 * Math.sin(y * PI) + 40.0 * Math.sin(y / 3.0 * PI)) * 2.0 / 3.0;
+        ret += (160.0 * Math.sin(y / 12.0 * PI) + 320 * Math.sin(y * PI / 30.0)) * 2.0 / 3.0;
+        return ret;
+    }
+
+    function transformLon(x, y){
+        var ret = 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * Math.sqrt(Math.abs(x));
+        ret += (20.0 * Math.sin(6.0 * x * PI) + 20.0 * Math.sin(2.0 * x * PI)) * 2.0 / 3.0;
+        ret += (20.0 * Math.sin(x * PI) + 40.0 * Math.sin(x / 3.0 * PI)) * 2.0 / 3.0;
+        ret += (150.0 * Math.sin(x / 12.0 * PI) + 300.0 * Math.sin(x / 30.0 * PI)) * 2.0 / 3.0;
+        return ret;
+    }
+
+    // World Geodetic System ==> Mars Geodetic System
+    function transform(wgLon,wgLat){
+        var mgLoc = {};
+        if (!isInChina(wgLon, wgLat)){
+            mgLoc = {
+                lat: wgLat,
+                lng: wgLon
+            };
+            return mgLoc;
+        }
+        var dLat = transformLat(wgLon - 105.0, wgLat - 35.0);
+        var dLon = transformLon(wgLon - 105.0, wgLat - 35.0);
+        var radLat = wgLat / 180.0 * PI;
+        var magic = Math.sin(radLat);
+        magic = 1 - ee * magic * magic;
+        var sqrtMagic = Math.sqrt(magic);
+        dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * PI);
+        dLon = (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * PI);
+        mgLoc = {
+            lat: wgLat + dLat,
+            lng: wgLon + dLon
+        };
+            return mgLoc;
+    }
+    return transform;
+}));

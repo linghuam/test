@@ -1,1 +1,756 @@
-(function(e){var t;if(typeof define=="function"&&define.amd)define(["leaflet"],e);else if(typeof module=="object"&&typeof module.exports=="object")t=require("leaflet"),module.exports=e(t);else{if(typeof window.L=="undefined")throw"Leaflet must be loaded first";e(window.L)}})(function(e){e.Playback=e.Playback||{},e.Playback.MoveableMarker=e.Marker.extend({initialize:function(t,n,r){var i=n.marker||{};jQuery.isFunction(i)&&(i=i(r)),e.Marker.prototype.initialize.call(this,t,i),this.popupContent="",this.feature=r,i.getPopup&&(this.popupContent=i.getPopup(r)),n.popups&&this.bindPopup(this.getPopupContent()+t.toString()),n.labels&&(this.bindLabel?this.bindLabel(this.getPopupContent(),{noHide:!0}):console.log("Label binding requires leaflet-label (https://github.com/Leaflet/Leaflet.label)"))},getPopupContent:function(){return this.popupContent!==""?"<b>"+this.popupContent+"</b><br/>":""},move:function(t,n){e.DomUtil.TRANSITION&&(this._icon&&(this._icon.style[e.DomUtil.TRANSITION]="all "+n+"ms linear",this._popup&&this._popup._wrapper&&(this._popup._wrapper.style[e.DomUtil.TRANSITION]="all "+n+"ms linear")),this._shadow&&(this._shadow.style[e.DomUtil.TRANSITION]="all "+n+"ms linear")),this.setLatLng(t),this._popup&&this._popup.setContent(this.getPopupContent()+this._latlng.toString())},_old__setPos:e.Marker.prototype._setPos,_updateImg:function(t,n,r){n=e.point(r).divideBy(2)._subtract(e.point(n));var i="";i+=" rotate("+this.options.iconAngle+"deg)",t.style[e.DomUtil.TRANSFORM]+=i,t.style.transformOrigin="50% 50%"},setIconAngle:function(e){this.options.iconAngle=e,this._map&&this.update()},_setPos:function(t){this._icon&&(this._icon.style[e.DomUtil.TRANSFORM]=""),this._shadow&&(this._shadow.style[e.DomUtil.TRANSFORM]=""),this._old__setPos.apply(this,[t]);if(this.options.iconAngle){var n=this.options.icon.options.iconAnchor,r=this.options.icon.options.iconSize,i;this._icon&&(i=this._icon,this._updateImg(i,n,r)),this._shadow&&(r=this.options.icon.options.shadowSize,i=this._shadow,this._updateImg(i,n,r))}}}),e.Playback.Track=e.Class.extend({initialize:function(t,n,r){this._map=t,this.options=r||{},this._dataObj=n,this._ticks=[],this._times=[],this._marker=null;var i=n.timePosList;for(var s=0,o=i.length;s<o;s++){var u=i[s].time;this._times.push(u),this._ticks[u]=i[s],s===0&&(this._startTime=u),s===o-1&&(this._endTime=u)}this._trackLineFeatureGroup||(this._trackLineFeatureGroup=e.featureGroup([]).addTo(this._map)),this._trackPointFeatureGroup||(this._trackPointFeatureGroup=e.featureGroup([]).addTo(this._map))},getFirstTick:function(){return this._ticks[this._startTime]},getLastTick:function(){return this._ticks[this._endTime]},getStartTime:function(){return this._startTime},getEndTime:function(){return this._endTime},getTimes:function(){return this._times},getTimeInterval:function(e){var t=this._times.indexOf(e);if(t!==-1&&t!==this._times.length-1)var n=this._times[t+1],r=n-e;return r},tick:function(e){return this._ticks[e]},getLatLng:function(t){var n=this.tick(t);if(n)return e.latLng(n.lat,n.lng)},setMarker:function(t,n){var r=null;return t?r=this.getLatLng(t):r=this.getLatLng(this._startTime),r&&(this._marker=new e.Playback.MoveableMarker(r,n,this._dataObj)),this._marker},getMarker:function(){return this._marker},createTrackPoint:function(t){var n=this.getLatLng(t);if(n)var r=e.circleMarker(n,this.options.OriginCircleOptions);var i=this.tick(t);return r&&i&&r.bindTooltip(this.getTooltipText(i),this.getTooltipOptions()),this._marker&&(this._marker.unbindTooltip(),this._marker.bindTooltip(this.getTooltipText(i),this.getTooltipOptions())),r},getTooltipText:function(e){var t=$.i18n.prop("common_ship_ph"),n=$.i18n.prop("common_ship_lng"),r=$.i18n.prop("common_ship_lat"),i=$.i18n.prop("common_time_info1"),s=$.i18n.prop("common_ship_dir"),o=$.i18n.prop("common_ship_heading"),u=$.i18n.prop("common_ship_speed"),a=[];return a.push("<table>"),a.push("<tr><td>MMSI:</td><td>"+e.info_ph+"</td></tr>"),a.push("<tr><td>"+n+"</td><td>"+e.info_lng+"</td></tr>"),a.push("<tr><td>"+r+"</td><td>"+e.info_lat+"</td></tr>"),a.push("<tr><td>"+i+"</td><td>"+e.info_time+"</td></tr>"),a.push("<tr><td>"+s+"</td><td>"+e.info_dir+"</td></tr>"),a.push("<tr><td>"+o+"</td><td>"+e.info_heading+"</td></tr>"),a.push("<tr><td>"+u+"</td><td>"+e.info_speed+"</td></tr>"),a.push("</table>"),a=a.join(""),a},getTooltipOptions:function(){return{offset:[0,0],direction:"top",permanent:!1}},moveMarker:function(t,n,r){if(this._marker){var i=this._marker.getLatLng(),s=this.tick(r);if(n!==0){this._marker.move(t,n),this._marker.setIconAngle(s.dir);var o=[[i.lat,i.lng],[t.lat,t.lng]],u=e.polyline(o,this.options.trackLineOptions),a=this.createTrackPoint(r),f=this;(function(e,t,n){f._timeoutTicker=setTimeout(function(){f._trackLineFeatureGroup.addLayer(e),f._trackPointFeatureGroup.addLayer(t)},n)})(u,a,n)}else this.clearTrackInfo(),this.drawHistoryTrackLine(r),this.drawHistoryTrackPoints(r)}},drawHistoryTrackLine:function(t){var n=[];for(var r=0,i=this._times.length;r<i;r++)if(this._times[r]<=t){var s=this.getLatLng(this._times[r]);s&&n.push(s)}var o=e.polyline(n,this.options.trackLineOptions);this._trackLineFeatureGroup.addLayer(o)},drawHistoryTrackPoints:function(e){for(var t=0,n=this._times.length;t<n;t++)if(this._times[t]<=e){var r=this.createTrackPoint2(this._times[t]);r&&this._trackPointFeatureGroup.addLayer(r)}},createTrackPoint2:function(t){var n=this.getLatLng(t);if(n)var r=e.circleMarker(n,this.options.OriginCircleOptions);var i=this.tick(t);return i&&r.bindTooltip(this.getTooltipText(i),this.getTooltipOptions()),this._marker&&(this._marker.setLatLng(n),this._marker.setIconAngle(i.dir),this._marker.unbindTooltip(),this._marker.bindTooltip(this.getTooltipText(i),this.getTooltipOptions())),r},clearTrackInfo:function(){try{this._timeoutTicker&&(clearTimeout(this._timeoutTicker),this._timeoutTicker=null),this._trackLineFeatureGroup&&this._trackLineFeatureGroup.clearLayers(),this._trackPointFeatureGroup&&this._trackPointFeatureGroup.clearLayers()}catch(e){console.log("tshf:clearlayer error")}}}),e.Playback.TrackController=e.Class.extend({initialize:function(e,t,n){this.options=n||{},this._map=e,this._tracks=[],this.setTracks(t)},clearTracks:function(){while(this._tracks.length>0){var e=this._tracks.pop(),t=e.getMarker();t&&this._map.removeLayer(t),e.clearTrackInfo()}},clearLineAndPoint:function(){for(var e=0,t=this._tracks.length;e<t;e++){var n=this._tracks[e];n.clearTrackInfo()}},setTracks:function(e){this.clearTracks(),this.addTracks(e)},addTracks:function(e){if(!e)return;if(e instanceof Array)for(var t=0,n=e.length;t<n;t++)this.addTrack(e[t]);else this.addTrack(e)},addTrack:function(e,t){if(!e)return;var n=e.setMarker(t,this.options);n&&(n.addTo(this._map),this._map.panTo(n.getLatLng()),this._tracks.push(e))},tock:function(e,t){for(var n=0,r=this._tracks.length;n<r;n++){var i=this._tracks[n].getLatLng(e);(t===0||i)&&this._tracks[n].moveMarker(i,t,e)}},getStartTime:function(){var e=0;if(this._tracks.length>0){e=this._tracks[0].getStartTime();for(var t=1,n=this._tracks.length;t<n;t++){var r=this._tracks[t].getStartTime();r<e&&(e=r)}}return e},getEndTime:function(){var e=0;if(this._tracks.length>0){e=this._tracks[0].getEndTime();for(var t=1,n=this._tracks.length;t<n;t++){var r=this._tracks[t].getEndTime();r>e&&(e=r)}}return e},getAllTimes:function(){var e=[];if(this._tracks.length>0)for(var t=0,n=this._tracks.length;t<n;t++){var r=this._tracks[t].getTimes();e=e.concat(r)}e=this.uniqueArr(e);for(var t=0,i=e.length;t<i-1;t++)for(var s=0;s<i-1-t;s++)if(e[s]>e[s+1]){var o=e[s];e[s]=e[s+1],e[s+1]=o}return e},uniqueArr:function(e){var t=[];for(var n=0,r=e.length;n<r;n++)t.indexOf(e[n])===-1&&t.push(e[n]);return t},getTracks:function(){return this._tracks}}),e.Playback.Clock=e.Class.extend({initialize:function(t,n,r){this._trackController=t,this._callbacksArry=[],n&&this.addCallback(n),e.setOptions(this,r),this._speed=this.options.speed,this.max_speed=this.options.Max_Speed,this._alltime=this._trackController.getAllTimes(),this._cursor=t.getStartTime(),this._alltime.length&&(this._tickLen=3e5/this._alltime.length)},_tick:function(e){this._cursor=this.getNextTime();if(!this._cursor||this._cursor>this.getEndTime()){clearTimeout(this._intervalID),this._intervalID=null;return}this._trackController.tock(this._cursor,e),this._callbacks(this._cursor)},_callbacks:function(e){var t=this._callbacksArry;for(var n=0,r=t.length;n<r;n++)t[n](e)},addCallback:function(e){this._callbacksArry.push(e)},getTransitionTime:function(){var e=this._cursor,t=this.getNextTime(),n=this._tickLen/this._speed;return e&&t&&t>e&&(n=(t-e)/this._speed),n},start:function(){if(this._intervalID)return;this._intervalID=!0;var e=this;(function t(){if(!e._intervalID)return;var n=e.getTransitionTime();clearTimeout(e._intervalID),e._intervalID=setTimeout(function(){e._tick(n),t()},n)})()},stop:function(){if(!this._intervalID)return;clearTimeout(this._intervalID),this._intervalID=null},getSpeed:function(){return this._speed},isPlaying:function(){return this._intervalID?!0:!1},setSpeed:function(e){this._speed=e,this._intervalID&&(this.stop(),this.start())},quickSpeed:function(){this._speed=this._speed>=this.max_speed?this._speed:this._speed*2,this._intervalID&&(this.stop(),this.start())},slowSpeed:function(){this._speed=this._speed<=1?this._speed:this._speed/2,this._intervalID&&(this.stop(),this.start())},rePlaying:function(){this._trackController.clearLineAndPoint(),this.isPlaying()&&this.stop(),this.setCursor(this.getStartTime()),this.start()},setCursor:function(e){var t=this.getValidCursor(e);if(!t)return;this._cursor=t,this._trackController.tock(this._cursor,0),this._callbacks(this._cursor)},getValidCursor:function(e){var t;if(e<=this.getEndTime()&&e>=this.getStartTime()){t=e;for(var n=0,r=this._alltime.length;n<r;n++)if(this._alltime[n]>=t){t=this._alltime[n];break}}return t},getTime:function(){return this._cursor},getAllTime:function(){return this._alltime},getStartTime:function(){return this._trackController.getStartTime()},getEndTime:function(){return this._trackController.getEndTime()},getLastTime:function(){var e,t=this._alltime.indexOf(this._cursor);return t!==-1&&t!==0&&(e=this._alltime[t-1]),e},getNextTime:function(){var e,t=this._alltime.indexOf(this._cursor);return t!==-1&&t!==this._alltime.length-1&&(e=this._alltime[t+1]),e},getTickLen:function(){return this._tickLen}})});
+// UMD initialization to work with CommonJS, AMD and basic browser script include
+//linghuam 修改后版本 V1.0  20161228
+(function (factory) {
+    var L;
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['leaflet'], factory);
+    } else if (typeof module === 'object' && typeof module.exports === "object") {
+        // Node/CommonJS
+        L = require('leaflet');
+        module.exports = factory(L);
+    } else {
+        // Browser globals
+        if (typeof window.L === 'undefined')
+            throw 'Leaflet must be loaded first';
+        factory(window.L);
+    }
+}(function (L) {
+
+L.Playback = L.Playback || {};
+
+L.Playback.MoveableMarker = L.Marker.extend({    
+
+    initialize: function (startLatLng, options, feature) {    
+        var marker_options = options.marker || {};
+        
+        //根据track dataobj生成marker_options
+        if (jQuery.isFunction(marker_options)){        
+            marker_options = marker_options(feature);
+        }
+        
+        L.Marker.prototype.initialize.call(this, startLatLng, marker_options);
+        
+        this.popupContent = '';
+        this.feature = feature;
+        
+        if (marker_options.getPopup){
+            this.popupContent = marker_options.getPopup(feature);            
+        }
+        
+        if(options.popups)
+        {
+            this.bindPopup(this.getPopupContent() + startLatLng.toString());
+        }
+            
+        if(options.labels)
+        {
+            if(this.bindLabel)
+            {
+                this.bindLabel(this.getPopupContent(),{ noHide: true});
+            }
+            else
+            {
+                console.log("Label binding requires leaflet-label (https://github.com/Leaflet/Leaflet.label)");
+            }
+        }
+    },
+    
+    getPopupContent: function() {
+        if (this.popupContent !== ''){
+            return '<b>' + this.popupContent + '</b><br/>';
+        }
+        
+        return '';
+    },
+
+    move: function (latLng, transitionTime) {
+        // Only if CSS3 transitions are supported
+        if (L.DomUtil.TRANSITION) {
+            if (this._icon) { 
+                this._icon.style[L.DomUtil.TRANSITION] = 'all ' + transitionTime + 'ms linear'; 
+                if (this._popup && this._popup._wrapper)
+                    this._popup._wrapper.style[L.DomUtil.TRANSITION] = 'all ' + transitionTime + 'ms linear'; 
+            }
+            if (this._shadow) { 
+                this._shadow.style[L.DomUtil.TRANSITION] = 'all ' + transitionTime + 'ms linear'; 
+            }
+        }
+        this.setLatLng(latLng);
+        if (this._popup) {
+            this._popup.setContent(this.getPopupContent() + this._latlng.toString());
+        }    
+    },
+    
+    // modify leaflet markers to add our roration code
+    /*
+     * Based on comments by @runanet and @coomsie 
+     * https://github.com/CloudMade/Leaflet/issues/386
+     *
+     * Wrapping function is needed to preserve L.Marker.update function
+     */
+    _old__setPos:L.Marker.prototype._setPos,
+
+     /*原始代码
+    _updateImg: function (i, a, s) {
+        a = L.point(s).divideBy(2)._subtract(L.point(a));
+        var transform = '';
+        transform += ' translate(' + -a.x + 'px, ' + -a.y + 'px)';
+        transform += ' rotate(' + this.options.iconAngle + 'deg)';
+        transform += ' translate(' + a.x + 'px, ' + a.y + 'px)';
+        i.style[L.DomUtil.TRANSFORM] += transform;
+    },*/
+
+     //linghuam edit
+    _updateImg: function(i, a, s) {       
+        a = L.point(s).divideBy(2)._subtract(L.point(a));
+        var transform = '';       
+        transform += ' rotate(' + this.options.iconAngle + 'deg)';
+        i.style[L.DomUtil.TRANSFORM] += transform;
+        i.style.transformOrigin = "50% 50%"; //linghuam 设置旋转的参照点为中心点，解决船舶偏移问题
+    },
+     
+    setIconAngle: function (iconAngle) {
+        this.options.iconAngle = iconAngle;
+        if (this._map)
+            this.update();
+    },
+
+    _setPos: function (pos) {
+        if (this._icon) {
+            this._icon.style[L.DomUtil.TRANSFORM] = "";
+        }
+        if (this._shadow) {
+            this._shadow.style[L.DomUtil.TRANSFORM] = "";
+        }
+
+        this._old__setPos.apply(this, [pos]);
+        if (this.options.iconAngle) {
+            var a = this.options.icon.options.iconAnchor;
+            var s = this.options.icon.options.iconSize;
+            var i;
+            if (this._icon) {
+                i = this._icon;
+                this._updateImg(i, a, s);
+            }
+
+            if (this._shadow) {
+                // Rotate around the icons anchor.
+                s = this.options.icon.options.shadowSize;
+                i = this._shadow;
+                this._updateImg(i, a, s);
+            }
+
+        }
+    }
+
+});
+
+L.Playback.Track = L.Class.extend({
+
+    initialize : function (map,dataObj, options) {
+        this._map = map;
+        this.options = options || {};                             
+        this._dataObj = dataObj;            
+        this._ticks = [];
+        this._times = [];
+        this._marker = null;
+        
+        var sampleTimes = dataObj.timePosList;
+
+        for(var i=0,len=sampleTimes.length;i<len;i++){
+            var ti = sampleTimes[i].time; 
+            this._times.push(ti);           
+            this._ticks[ti] = sampleTimes[i];
+            if(i === 0){
+                this._startTime = ti;
+            }
+            if(i === len-1){
+                this._endTime = ti;
+            }
+        }  
+         
+        if(!this._trackLineFeatureGroup){
+            this._trackLineFeatureGroup = L.featureGroup([]).addTo(this._map);
+        }  
+
+        if(!this._trackPointFeatureGroup){
+            this._trackPointFeatureGroup = L.featureGroup([]).addTo(this._map);
+        } 
+    },
+
+    getFirstTick: function () {
+        return this._ticks[this._startTime];
+    },
+
+    getLastTick: function () {
+        return this._ticks[this._endTime];
+    },
+
+    getStartTime: function () {
+        return this._startTime;
+    },
+
+    getEndTime: function () {
+        return this._endTime;
+    },
+
+    getTimes:function(){
+        return this._times;
+    },
+
+    getTimeInterval:function(timestamp){
+        var index = this._times.indexOf(timestamp);
+        if(index !== -1 && index !== this._times.length-1){
+           var next = this._times[index+1];
+           var inteval = next-timestamp;
+        }
+        return inteval;
+    },
+
+    tick: function (timestamp) {
+        return this._ticks[timestamp];
+    },
+
+    getLatLng:function(timestamp){
+        var tick = this.tick(timestamp);
+        if(tick) return L.latLng(tick.lat,tick.lng);
+    },
+            
+    setMarker : function(timestamp, options){
+        var latlng = null;
+        
+        // if time stamp is not set, then get first tick
+        if (timestamp) {
+            latlng = this.getLatLng(timestamp);
+        }
+        else {
+            latlng = this.getLatLng(this._startTime);
+        }        
+    
+        if (latlng) {               
+            this._marker = new L.Playback.MoveableMarker(latlng, options, this._dataObj);                 
+        }
+        
+        return this._marker;
+    },
+
+    getMarker: function() {
+        return this._marker;
+    },
+
+    createTrackPoint:function(timestamp){
+        var latlng = this.getLatLng(timestamp);
+        if(latlng) var cricleMarker = L.circleMarker(latlng,this.options.OriginCircleOptions);
+        var infoObj = this.tick(timestamp); 
+        if(cricleMarker && infoObj) cricleMarker.bindTooltip(this.getTooltipText(infoObj),this.getTooltipOptions()); 
+        //将最后一个点的信息绑定到船舶上
+        if(this._marker) {
+            this._marker.unbindTooltip();
+            this._marker.bindTooltip(this.getTooltipText(infoObj),this.getTooltipOptions()); 
+        }
+        return  cricleMarker;      
+    },
+
+    getTooltipText:function(targetobj){
+        var ph = $.i18n.prop('common_ship_ph');
+        var lon = $.i18n.prop('common_ship_lng');
+        var lat = $.i18n.prop('common_ship_lat');
+        var time = $.i18n.prop('common_time_info1');
+        var hx = $.i18n.prop('common_ship_dir');
+        var hsx = $.i18n.prop('common_ship_heading');
+        var sp = $.i18n.prop('common_ship_speed');
+
+        var content = [];
+        content.push('<table>');
+        content.push('<tr><td>'+ 'MMSI:' +'</td><td>'+ targetobj.info_ph +'</td></tr>');
+        content.push('<tr><td>'+ lon +'</td><td>'+ targetobj.info_lng +'</td></tr>');
+        content.push('<tr><td>'+ lat +'</td><td>'+ targetobj.info_lat +'</td></tr>');
+        content.push('<tr><td>'+ time +'</td><td>'+ targetobj.info_time +'</td></tr>');
+        content.push('<tr><td>'+ hx +'</td><td>'+ targetobj.info_dir +'</td></tr>');
+        content.push('<tr><td>'+ hsx +'</td><td>'+ targetobj.info_heading +'</td></tr>');
+        content.push('<tr><td>'+ sp +'</td><td>'+ targetobj.info_speed +'</td></tr>');
+        content.push('</table>');
+        content = content.join("");
+        return content;        
+    },
+
+    getTooltipOptions:function(){
+        return {
+            offset:[0,0],
+            direction:'top',
+            permanent:false
+        };
+    },
+    
+    /*
+    * latLng 要移到的坐标点
+    * transitionTime 移到最新点经历的时间
+    * timestamp 当前的时间点
+    */
+    moveMarker : function(latLng, transitionTime,timestamp) {
+        if (this._marker) {
+            
+            var latlngold = this._marker.getLatLng();
+            var tick = this.tick(timestamp);
+
+            // this._marker.move(latLng, transitionTime);
+
+            // this._marker.setIconAngle(tick.dir);
+            
+            if(transitionTime !== 0 ){
+                 //移动目标
+                  this._marker.move(latLng, transitionTime);
+                  this._marker.setIconAngle(tick.dir);
+
+                  //绘制上一次到当前时间的历史轨迹线
+                  var latlngs = [[latlngold.lat,latlngold.lng],[latLng.lat,latLng.lng]];
+                  var polyline = L.polyline(latlngs,this.options.trackLineOptions);  
+                  // this._trackLineFeatureGroup.addLayer(polyline);
+
+                  //绘制当前时间的轨迹点
+                  var point = this.createTrackPoint(timestamp); 
+                  // this._trackPointFeatureGroup.addLayer(point); 
+                  
+                  //添加轨迹线的时间应该在船舶移动后添加
+                  var self = this;
+                  (function(polyline,point,transitionTime){
+                        self._timeoutTicker = setTimeout(function(){
+                            self._trackLineFeatureGroup.addLayer(polyline);
+                            self._trackPointFeatureGroup.addLayer(point); 
+                        }, transitionTime);
+
+                  })(polyline,point,transitionTime);
+
+            } else{
+                  this.clearTrackInfo();
+                  //绘制从开始到当前时间的历史轨迹线
+                  this.drawHistoryTrackLine(timestamp);                      
+                  //绘制从开始到当前时间的历史轨迹点
+                  this.drawHistoryTrackPoints(timestamp); 
+            }
+            
+        }
+    },
+
+    drawHistoryTrackLine:function(timestamp){        
+        var latlngs = [];
+        for(var i=0,len=this._times.length;i<len;i++){
+            if(this._times[i] <= timestamp){
+                var latlng = this.getLatLng(this._times[i]);
+                if(latlng){
+                    latlngs.push(latlng);
+                }
+            }
+        }
+        var polylineHis = L.polyline(latlngs,this.options.trackLineOptions);
+        this._trackLineFeatureGroup.addLayer(polylineHis); 
+    },
+
+    drawHistoryTrackPoints:function(timestamp){
+        for(var i=0,len=this._times.length;i<len;i++){
+            if(this._times[i] <= timestamp){
+                var pt = this.createTrackPoint2(this._times[i]);
+                if(pt){
+                    this._trackPointFeatureGroup.addLayer(pt);
+                }
+            }
+        }
+    },
+
+    createTrackPoint2:function(timestamp){
+        var latlng = this.getLatLng(timestamp);
+        if(latlng) var cricleMarker = L.circleMarker(latlng,this.options.OriginCircleOptions);
+        var infoObj = this.tick(timestamp); 
+        if(infoObj) cricleMarker.bindTooltip(this.getTooltipText(infoObj),this.getTooltipOptions()); 
+        //将最后一个点的信息绑定到船舶上
+        if(this._marker) {
+            this._marker.setLatLng(latlng);
+            this._marker.setIconAngle(infoObj.dir);
+            this._marker.unbindTooltip();
+            this._marker.bindTooltip(this.getTooltipText(infoObj),this.getTooltipOptions()); 
+        }
+        return  cricleMarker;      
+    },       
+
+    //清除历史轨迹
+    clearTrackInfo:function(){
+        try{
+            if(this._timeoutTicker){
+                clearTimeout(this._timeoutTicker);
+                this._timeoutTicker = null;
+            }
+            if(this._trackLineFeatureGroup) {
+                this._trackLineFeatureGroup.clearLayers();
+                // this._trackLineFeatureGroup = null;
+            }
+            if(this._trackPointFeatureGroup) {
+                this._trackPointFeatureGroup.clearLayers();
+                // this._trackPointFeatureGroup = null;
+            }            
+        }catch(e){
+            console.log("tshf:clearlayer error");
+        }
+    }
+
+});
+
+L.Playback.TrackController = L.Class.extend({
+
+    initialize : function (map, tracks, options) {
+        this.options = options || {};
+    
+        this._map = map;
+
+        this._tracks = [];
+
+        // initialize tick points
+        this.setTracks(tracks);
+    },
+    
+    clearTracks: function(){
+        while (this._tracks.length > 0) {
+            var track = this._tracks.pop();
+            var marker = track.getMarker();
+            
+            if (marker){
+                this._map.removeLayer(marker);
+            }
+
+            track.clearTrackInfo();
+        }            
+    },
+   
+    clearLineAndPoint:function(){
+        for(var i=0,len=this._tracks.length;i<len;i++){
+            var track = this._tracks[i];
+            track.clearTrackInfo();
+        }
+    },
+
+    setTracks : function (tracks) {
+        // reset current tracks
+        this.clearTracks();
+        
+        this.addTracks(tracks);
+    },
+    
+    addTracks : function (tracks) {
+        // return if nothing is set
+        if (!tracks) {
+            return;
+        }
+        
+        if (tracks instanceof Array) {            
+            for (var i = 0, len = tracks.length; i < len; i++) {
+                this.addTrack(tracks[i]);
+            }
+        } else {
+            this.addTrack(tracks);
+        }            
+    },
+    
+    // add single track
+    addTrack : function (track, timestamp) {
+        // return if nothing is set
+        if (!track) {
+            return;
+        }
+
+        var marker = track.setMarker(timestamp, this.options);
+
+        if (marker) {
+            marker.addTo(this._map);
+            //定位到track所在位置 
+            this._map.panTo(marker.getLatLng());
+            
+            this._tracks.push(track);
+        }            
+    },
+
+    tock : function (timestamp, transitionTime) {
+        for (var i = 0, len = this._tracks.length; i < len; i++) {
+            var latLng = this._tracks[i].getLatLng(timestamp);       
+            if(transitionTime === 0 || latLng){
+                this._tracks[i].moveMarker(latLng, transitionTime,timestamp); 
+            }                          
+        }
+    },
+
+    getStartTime : function () {
+        var earliestTime = 0;
+
+        if (this._tracks.length > 0) {
+            earliestTime = this._tracks[0].getStartTime();
+            for (var i = 1, len = this._tracks.length; i < len; i++) {
+                var t = this._tracks[i].getStartTime();
+                if (t < earliestTime) {
+                    earliestTime = t;
+                }
+            }
+        }
+        
+        return earliestTime;
+    },
+
+    getEndTime : function () {
+        var latestTime = 0;
+    
+        if (this._tracks.length > 0){
+            latestTime = this._tracks[0].getEndTime();
+            for (var i = 1, len = this._tracks.length; i < len; i++) {
+                var t = this._tracks[i].getEndTime();
+                if (t > latestTime) {
+                    latestTime = t;
+                }
+            }
+        }
+    
+        return latestTime;
+    },
+
+    getAllTimes:function(){
+
+        var alltimes = [];
+        //concat
+        if (this._tracks.length > 0){        
+            for (var i = 0, len = this._tracks.length; i < len; i++) {
+                var timesi = this._tracks[i].getTimes();
+                alltimes = alltimes.concat(timesi);
+            }
+        }
+        //unique 
+        alltimes = this.uniqueArr(alltimes);
+        //sort
+        for(var i=0,leni=alltimes.length;i<leni-1;i++){
+            for(var j=0;j<leni-1-i;j++){
+                if(alltimes[j] > alltimes[j+1]){
+                    var temp = alltimes[j];
+                    alltimes[j] = alltimes[j+1];
+                    alltimes[j+1] = temp;
+                }
+            }
+        } 
+
+        return alltimes;    
+    },
+
+    uniqueArr: function (arr) {             
+        var temp = [];
+        for (var i = 0,len=arr.length; i < len; i++) {
+            if (temp.indexOf(arr[i]) === -1) {
+                temp.push(arr[i]);
+            }
+        }
+        return temp;
+    },
+
+    getTracks : function () {
+        return this._tracks;
+    }
+
+});
+
+L.Playback.Clock = L.Class.extend({
+
+    initialize: function (trackController, callback, options) {
+        this._trackController = trackController;
+        this._callbacksArry = [];
+        if (callback) this.addCallback(callback);
+        L.setOptions(this, options);
+        this._speed = this.options.speed;    
+        this.max_speed = this.options.Max_Speed;
+        this._alltime = this._trackController.getAllTimes();        
+        this._cursor = trackController.getStartTime();
+        if(this._alltime.length){  //规定n分钟内播放完，除以时间点个数得到每一次变化的时间
+            this._tickLen = 5*60*1000/this._alltime.length; 
+        }        
+        // this._transitionTime = this.getTransitionTime();  //this._tickLen / this._speed;        
+    },
+
+    _tick: function (transtitionTime) {  
+        //旧版
+        // if (self._cursor > self.getEndTime()) {
+        //     clearInterval(self._intervalID);
+        //     self._intervalID = null; //Linghuam add 播放停止后，再开始无法播放问题
+        //     return;
+        // }        
+        // self._trackController.tock(self._cursor, self._transitionTime);
+        // self._callbacks(self._cursor);
+        // self._cursor = self.getNextTime();
+
+        this._cursor = this.getNextTime();      
+        if (!this._cursor || this._cursor > this.getEndTime()) {
+            clearTimeout(this._intervalID);
+            this._intervalID = null; //Linghuam add 播放停止后，再开始无法播放问题
+            return;
+        }        
+        this._trackController.tock(this._cursor, transtitionTime);
+        this._callbacks(this._cursor);        
+    },
+
+    _callbacks: function(cursor) {
+        var arry = this._callbacksArry;
+        for (var i=0, len=arry.length; i<len; i++) {
+          arry[i](cursor);
+        }
+    },
+
+    addCallback: function(fn) {
+        this._callbacksArry.push(fn);
+    },
+
+    //根据相邻两点之间的真实时间间隔设置动画时间
+    getTransitionTime:function(){
+        var t1 = this._cursor;
+        var t2 = this.getNextTime();
+        var transitionTime = this._tickLen / this._speed; //设置一个默认值
+        if(t1 && t2 && t2>t1){
+            transitionTime = (t2-t1)/this._speed;
+        }
+        return transitionTime;
+    },
+
+    start: function () {
+        //旧版
+        // if (this._intervalID) return;
+        // this._intervalID = window.setInterval(
+        //   this._tick, 
+        //   this._transitionTime, 
+        //   this);
+
+        if (this._intervalID) return;
+        this._intervalID = true;
+        var self = this;
+        (function loop(){
+           if(!self._intervalID){ //播放暂停切换时停止播放
+              return;
+           }
+           var transtitionTime = self.getTransitionTime();
+           clearTimeout(self._intervalID);
+           self._intervalID = setTimeout(function() {
+              self._tick(transtitionTime);
+              loop();
+          }, transtitionTime);
+        })();
+    },
+
+    stop: function () {
+        if (!this._intervalID) return;
+        clearTimeout(this._intervalID);
+        this._intervalID = null;
+    },
+
+    getSpeed: function() {
+        return this._speed;
+    },
+
+    isPlaying: function() {
+        return this._intervalID ? true : false;
+    },
+
+    setSpeed: function (speed) {
+        this._speed = speed;
+        if (this._intervalID) {
+          this.stop();
+          this.start();
+        }
+    },
+
+    //加速
+    quickSpeed:function(){
+        this._speed = this._speed >= this.max_speed ? this._speed : this._speed*2;
+        if(this._intervalID){
+            this.stop();
+            this.start();
+        }
+    },
+
+    //减速
+    slowSpeed:function(){ 
+        this._speed = this._speed<= 1 ? this._speed : this._speed/2;
+        if(this._intervalID){
+            this.stop();
+            this.start();
+        }
+    },     
+
+    //重新播放
+    rePlaying:function(){
+        this._trackController.clearLineAndPoint(); 
+        if(this.isPlaying()){
+            this.stop();    
+        }
+        this.setCursor(this.getStartTime());
+        this.start();
+    },   
+
+    setCursor: function (ms) {
+        var time = this.getValidCursor(ms);
+        if (!time) return;
+        this._cursor = time;
+        this._trackController.tock(this._cursor, 0);
+        this._callbacks(this._cursor);
+    },
+
+    getValidCursor:function(time){
+        var curtime;
+        if(time <= this.getEndTime() && time >= this.getStartTime()){
+            curtime = time;
+            for(var i=0,len=this._alltime.length;i<len;i++){
+                if(this._alltime[i] >= curtime){
+                    curtime = this._alltime[i];
+                    break;
+                }
+            }
+        }
+        return curtime;
+    },    
+
+    getTime: function() {
+        return this._cursor;
+    },
+
+    getAllTime:function(){
+        return this._alltime;
+    },
+
+    getStartTime: function() {
+        return this._trackController.getStartTime();
+    },
+
+    getEndTime: function() {
+        return this._trackController.getEndTime();
+    },
+
+    getLastTime:function(){
+        var lasttime;
+        var index = this._alltime.indexOf(this._cursor);
+        if(index !==-1 && index !== 0){
+            lasttime = this._alltime[index-1];
+        }
+        return lasttime;
+        // if(index === -1) return this._alltime[0];
+        // else if(index === 0) return this._alltime[this._alltime.length-1];
+        // else return this._alltime[index-1];
+    },
+
+    getNextTime:function(){
+        var nexttime;
+        var index = this._alltime.indexOf(this._cursor);
+        if(index !== -1 && index !== this._alltime.length-1){
+            nexttime = this._alltime[index+1];
+        }
+        return nexttime;
+        // if(index === -1) return this._alltime[this._alltime.length-1];
+        // else if(index === this._alltime.length-1) this.stop();
+        // else return this._alltime[index+1];
+    },
+
+    getTickLen: function() {
+        return this._tickLen;
+    }
+
+});
+
+}));

@@ -1,1 +1,36 @@
-.ictPanel-popPanel-container .drawPopPanel *{margin:0;padding:0;}.ictPanel-popPanel-container .drawPopPanel{position:relative;margin-top:10px;padding-left:18px;}.ictPanel-popPanel-container .drawPopPanel table.latlngsTable{display:inline-block;vertical-align:middle;}.ictPanel-popPanel-container .drawPopPanel table.latlngsTable input{border:none;outline:none;text-align:center;width:24px;}.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td{border-collapse:collapse;border:1px solid silver;padding:2px;text-align:center;max-width:24px;}.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.lat,.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.lng{padding:0;border-right:none;}.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.dfm{border-left:none;}.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.space{border-top:none;border-bottom:none;}.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.latNS,.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.lngWE{width:20px;cursor:pointer;background-color:#fff;}.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.latNS.active,.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.lngWE.active{background-color:#2e4061;color:#fff;}.ictPanel-popPanel-container .drawPopPanel .btnDiv{text-align:center;margin-top:30px;}.ictPanel-popPanel-container .drawPopPanel .btnDiv .btn{width:85px;height:30px;color:#fff;background-color:#2276c2;}.ictPanel-popPanel-container .drawPopPanel .btnDiv .btn:first-child{margin-right:20px;}.ictPanel-popPanel-container .drawPopPanel .btnDiv .btn:hover{background-color:#095596;}.ictPanel-popPanel-container .drawPopPanel ul{list-style:none;}.ictPanel-popPanel-container .drawPopPanel ul>li{margin-bottom:14px;}.ictPanel-popPanel-container .drawPopPanel ul>li>label:first-child{margin-right:8px;}.ictPanel-popPanel-container .circleContainer{}.ictPanel-popPanel-container .circleContainer .circleRadius{width:220px;}.ictPanel-popPanel-container .rectContainer{padding-left:0;}.ictPanel-popPanel-container .polygonContainer{}.ictPanel-popPanel-container .polygonContainer ul{height:160px;overflow-x:hidden;overflow-y:auto;}
+/*公共*/
+.ictPanel-popPanel-container .drawPopPanel *{margin:0;padding:0;}
+.ictPanel-popPanel-container .drawPopPanel{position:relative;margin-top:10px;padding-left: 18px;}
+.ictPanel-popPanel-container .drawPopPanel table.latlngsTable{display:inline-block;vertical-align: middle;}
+.ictPanel-popPanel-container .drawPopPanel table.latlngsTable input{border:none; outline:none;text-align:center;width:24px;}
+.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td{border-collapse: collapse; border:1px solid silver; padding:2px;text-align:center;max-width:24px; }
+.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.lat,
+.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.lng{padding:0;border-right:none;}
+.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.dfm{border-left:none;}
+.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.space{border-top:none;border-bottom:none;}
+.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.latNS,
+.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.lngWE{width:20px;cursor:pointer;background-color:#fff;}
+.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.latNS.active,
+.ictPanel-popPanel-container .drawPopPanel table.latlngsTable td.lngWE.active{background-color:#2e4061;color:#fff;}
+
+/*按钮*/
+.ictPanel-popPanel-container .drawPopPanel .btnDiv {text-align:center;margin-top:30px;}
+.ictPanel-popPanel-container .drawPopPanel .btnDiv .btn{width:85px;height:30px;color:#fff;background-color:#2276c2;}
+.ictPanel-popPanel-container .drawPopPanel .btnDiv .btn:first-child{margin-right:20px;}
+.ictPanel-popPanel-container .drawPopPanel .btnDiv .btn:hover{background-color:#095596; }
+
+/*ul*/
+.ictPanel-popPanel-container .drawPopPanel ul{list-style: none;}
+.ictPanel-popPanel-container .drawPopPanel ul>li{margin-bottom:14px;}
+.ictPanel-popPanel-container .drawPopPanel ul>li>label:first-child{margin-right:8px;}
+
+/*圆*/
+.ictPanel-popPanel-container .circleContainer{}
+.ictPanel-popPanel-container .circleContainer .circleRadius{width:220px;}
+
+/*矩形*/
+.ictPanel-popPanel-container .rectContainer{padding-left:0;}
+
+/*多边形*/
+.ictPanel-popPanel-container .polygonContainer{}
+.ictPanel-popPanel-container .polygonContainer ul{height:160px;overflow-x:hidden;overflow-y:auto;}

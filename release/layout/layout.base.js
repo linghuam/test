@@ -1,1 +1,37 @@
-define("layout/base",["leaflet","core/baseobject","core/namespace"],function(e){e.ICT.Layout=e.ICT.BaseObject.extend({visible:!0,_container:null,initialize:function(){e.ICT.BaseObject.prototype.initialize.call(this)},setVisible:function(e){this.visible=e,e?this._container.css("display","block"):this._container.css("display","none")},getContainer:function(){return this._container}})});
+/*
+* 布局基础模块
+*/
+define("layout/base",[
+	"leaflet",
+	"core/baseobject",
+    "core/namespace"
+    
+],function(L){
+  
+	/*
+	*布局类
+	*/
+	L.ICT.Layout = L.ICT.BaseObject.extend({
+
+		visible:true,
+
+		_container:null,
+
+		initialize:function(){
+			L.ICT.BaseObject.prototype.initialize.call(this);
+		},
+
+		setVisible:function(visible){
+	       this.visible = visible;
+	       if(visible)
+	       	 this._container.css("display","block");
+	       	else 
+	       	  this._container.css("display","none");
+		},
+
+		getContainer:function(){
+            return this._container;
+		}
+	});
+
+});

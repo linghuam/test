@@ -1,1 +1,249 @@
-define("func/cdgladdship",["leaflet","func/base","control/panel","plugins/mcscroll","data/ajax","layout/menu"],function(e){e.ICT.CdglAddShip=e.ICT.BaseObject.extend({initialize:function(){this.menu=e.ict.app.menu,this.util=e.ict.app.util,this.dateUtil=e.ict.app.util.dateTime,this.ajax=new e.ICT.Ajax,this.config=Project_ParamConfig.cdglConfig,this._popPanelNotShipFleetMsg=null,this._popPanelShipFleetSelect=null,this.shipid="",this.shipname="",this.mmsi="",this.fleetlist=[]},getLoginUserId:function(){if(e.ict.app.sessionStorage.getItem("userInfo")!=null){var t=e.ict.app.sessionStorage.getItem("userInfo");return t.userId}return""},convertStrToAry:function(e){var t=e.split("$"),n=[];for(var r=0;r<t.length;r++){var i=t[r],s=i.split("|"),o={};o.id=s[0],o.name=s[1],n.push(o)}return n},addShipToFleet:function(e,t,n,r,i){this.addShipSuccessCallback=i,this.shipid=t,this.shipname=n,this.mmsi=r;var s=this.config.getShipFleetUrl,o={};o.user_id=this.getLoginUserId(),this.ajax.post(s,o,!0,this,function(t){t.ret!=null&&t.ret!=""?(this.fleetlist=this.convertStrToAry(t.ret),this.fleetlist!=null&&this.fleetlist.length>0?this.dialogShowFleetList(e):this.dialogShowNoFleet(e)):this.dialogShowNoFleet(e)},function(e){var t=$.i18n.prop("func_cdgl_error_msg_getFleetInfo");this._showErrorMsg(t)})},dialogShowFleetList:function(t){var n=$.i18n.prop("func_cdgladdship_titlename_addship"),r={title:n,width:410,height:200,top:200,left:450,contentHTML:this._getContentHtmlDialogShowFleetList()},i=this._popPanelShipFleetSelect=new e.ICT.PopPanel(r);i.show(),$("#dialogShipFleetSelect").empty();for(var s=0;s<this.fleetlist.length;s++)$("#dialogShipFleetSelect").append("<option value='"+this.fleetlist[s].id+"'>"+this.fleetlist[s].name+"</option>");setTimeout(this._bindBtnClickForAddShip(t),1e3),this._popPanelShipFleetSelect.on("popPanelRemove",function(){this._popPanelShipFleetSelect=null},this)},_bindBtnClickForAddShip:function(e){var t=$("#dialogShipAddEditBtnOk");t.bind("click",function(){e._dialogShipFleetSelectBtnClickOk()});var n=$("#dialogShipAddEditBtnCancel");n.bind("click",function(){e._dialogShipFleetSelectBtnClickCancel()})},_getContentHtmlDialogShowFleetList:function(){var e=$.i18n.prop("func_cdgl_editship_fleetname"),t=$.i18n.prop("common_btn_ok"),n=$.i18n.prop("common_btn_cancel"),r=[];return r.push('<TABLE border=0 style="width:390px;height:110px;">'),r.push("	<TR>"),r.push('		<TD style="width:95px;height:20px;text-align:right;vertical-align:middle;colspan="2"">'),r.push("		</TD>"),r.push("	</TR>"),r.push("	<TR>"),r.push('		<TD style="width:95px;height:30px;text-align:right;vertical-align:middle;">'),r.push('			<label class="cdgl_labelfont">'+e+"</label>"),r.push("		</TD>"),r.push('		<TD style="width:295px;height:30px;text-align:left;vertical-align:middle;">'),r.push('			<select id="dialogShipFleetSelect" class="cdgl_labelfont" style="width:265px;height:25px;line-height:25px;border-color:#eef0f2;"></select>'),r.push("		</TD>"),r.push("	</TR>"),r.push("	<TR>"),r.push('		<TD style="width:95px;height:20px;text-align:right;vertical-align:middle;colspan="2"">'),r.push("		</TD>"),r.push("	</TR>"),r.push("	<TR>"),r.push('		<TD width=390px height="58px";align=center valign=center padding-left:60px; colspan="2">'),r.push('		    <table style="height:100%;width:100%">'),r.push('						<tr style="height:100%;width:100%">'),r.push('									<td style="height:100%;width:100%;padding-left:135px;">'),r.push('										<div id="dialogShipAddEditBtnOk" class="cdgl_dialog_btn_ok_cancel">'+t+"</div>"),r.push("									</td>"),r.push("						</tr>"),r.push("			</table>"),r.push("		</TD>"),r.push("	</TR>"),r.push("</TABLE>"),r.join("")},_dialogShipFleetSelectBtnClickCancel:function(){this._popPanelShipFleetSelect&&this._popPanelShipFleetSelect.remove(),this._popPanelShipFleetSelect=null},_dialogShipFleetSelectBtnClickOk:function(){var e=$("#dialogShipFleetSelect option:selected").val();if(e==""){var t=$.i18n.prop("func_cdgl_editship_tip_selectfleet");this._showErrorMsg(t);return}var n={};n.shipfleetid=e,n.shipid=this.shipid,n.shipname=this.shipname,n.mmsi=this.mmsi;var r=this.config.saveShipForAddUrl;this.ajax.post(r,n,!0,this,function(e){if(e.state!=1){var t=$.i18n.prop("func_cdgl_msg_tip_save_failed");this._showErrorMsg(t)}else{var n=$.i18n.prop("func_cdgl_msg_tip_save_sucess");this._dialogShipFleetSelectBtnClickCancel(),typeof this.addShipSuccessCallback=="function"?this.addShipSuccessCallback.call(this):null}},function(e){var t=$.i18n.prop("func_cdgl_msg_tip_save_failed");this._showErrorMsg(t)}),this._dialogShipFleetSelectBtnClickCancel()},dialogShowNoFleet:function(t){var n={title:"",width:410,height:150,top:200,left:450,contentHTML:this._getContentHtmlDialogNoFleet()},r=this._popPanelNotShipFleetMsg=new e.ICT.PopPanel(n);r.show(),setTimeout(this._bindBtnClickForNoFleet(t),1e3),this._popPanelNotShipFleetMsg.on("popPanelRemove",function(){this._popPanelNotShipFleetMsg=null},this)},_bindBtnClickForNoFleet:function(e){var t=$("#dialogNoFleetShowFleetManagerA");t.bind("click",function(){e._dialogNoFleetAClick()})},_getContentHtmlDialogNoFleet:function(){var e=$.i18n.prop("func_cdgladdship_nofleettip1"),t=$.i18n.prop("func_cdgladdship_nofleettip2"),n=$.i18n.prop("func_cdgladdship_nofleettip3"),r=[];return r.push('<TABLE border=0 style="width:390px;height:70px;">'),r.push("	<TR>"),r.push('		<TD style="width:64px;height:58px;text-align:left;vertical-align:middle;"></TD>'),r.push('		<TD style="width:58px;height:58px;text-align:left;vertical-align:middle;">'),r.push('			<div class="cdgladdship_addfleet_a">'),r.push("		</TD>"),r.push('		<TD style="width:25px;height:58px;text-align:left;vertical-align:middle;"></TD>'),r.push('		<TD style="width:234px;height:30px;text-align:left;vertical-align:middle;">'),r.push("			"+e+"</br>"+t+'&nbsp<a href="javascript:void(0);" id="dialogNoFleetShowFleetManagerA">'+n+"</a>"),r.push("		</TD>"),r.push('		<TD style="width:9px;height:58px;text-align:left;vertical-align:middle;"></TD>'),r.push("	</TR>"),r.push("</TABLE>"),r.join("")},_dialogNoFleetAClick:function(){this._popPanelNotShipFleetMsg&&this._popPanelNotShipFleetMsg.remove(),this._popPanelNotShipFleetMsg=null,this.menu.mainmenu.menuHandler("ict_menu_main_cdgl",!0)},_showMsg:function(t){e.ict.app.util.dialog.warn($.i18n.prop("dialog_alert_title"),t)},_showErrorMsg:function(t){e.ict.app.util.dialog.error($.i18n.prop("dialog_alert_title"),t)}})});
+/**
+ * Created by Administrator on 2017/03/15.
+ * 调用方法：在layout.menu.js 中的 ict_menu_main_hyqx 菜单中暂时是先写的这个调用
+ var  cdglshipadd=new L.ICT.CdglAddShip();
+ cdglshipadd.addShipToFleet(cdglshipadd,30,"3401",413476350);
+ */
+define("func/cdgladdship",[
+    "leaflet",
+    "func/base",
+    "control/panel",
+    "plugins/mcscroll",
+    // "plugins/my97DatePicker",
+    "data/ajax",
+    "layout/menu"
+
+],function(L){
+
+    L.ICT.CdglAddShip = L.ICT.BaseObject.extend({
+
+            initialize:function(){
+                this.menu = L.ict.app.menu;
+                this.util = L.ict.app.util;
+                this.dateUtil = L.ict.app.util.dateTime;
+                this.ajax = new L.ICT.Ajax();
+                this.config = Project_ParamConfig.cdglConfig;
+
+                this._popPanelNotShipFleetMsg = null;//没有船队消息框
+                this._popPanelShipFleetSelect = null;//选择船队对话框
+
+                this.shipid="";
+                this.shipname="";
+                this.mmsi="";
+                this.fleetlist=[];
+            },
+
+            getLoginUserId:function () {
+                if (L.ict.app.sessionStorage.getItem("userInfo")!=null){
+                    var user=L.ict.app.sessionStorage.getItem("userInfo");
+                    return user.userId;
+                }else{
+                    return "";
+                }
+            },
+            convertStrToAry:function (info) {
+                var strary=info.split("$");
+                var ary=[];
+                for (var i=0;i<strary.length;i++){
+                    var oneinfo=strary[i];
+                    var oneary=oneinfo.split("|");
+                    var oneobj={};
+                    oneobj.id=oneary[0];
+                    oneobj.name=oneary[1];
+                    ary.push(oneobj);
+                }
+                return ary;
+            },
+            addShipToFleet:function (thisInstance,shipid,shipname,mmsi,callback) {
+                //linghuam 增加添加船队成功回调函数
+                this.addShipSuccessCallback = callback;
+                this.shipid=shipid;
+                this.shipname=shipname;
+                this.mmsi=mmsi;
+                var url = this.config.getShipFleetUrl;
+                var data={};
+                data.user_id=this.getLoginUserId();
+                this.ajax.post(url,data,true,this,function(res){
+                    if (res.ret!=null && res.ret!=""){
+                        this.fleetlist=this.convertStrToAry(res.ret);
+                        if (this.fleetlist!=null && this.fleetlist.length>0){
+                            this.dialogShowFleetList(thisInstance);
+                        }else{
+                            this.dialogShowNoFleet(thisInstance);
+                        }
+                    }else{
+                        this.dialogShowNoFleet(thisInstance);
+                    }
+                },function(res){
+                    var func_cdgl_error_msg_getFleetInfo=$.i18n.prop('func_cdgl_error_msg_getFleetInfo');
+                    this._showErrorMsg(func_cdgl_error_msg_getFleetInfo);
+                });
+            },
+
+            dialogShowFleetList:function (thisInstance) {
+                var func_cdgladdship_titlename_addship=$.i18n.prop('func_cdgladdship_titlename_addship');
+                var options = {
+                    title:func_cdgladdship_titlename_addship,
+                    width:410,
+                    height:200,
+                    top:200,
+                    left:450,
+                    contentHTML:this._getContentHtmlDialogShowFleetList()
+                };
+                var pop = this._popPanelShipFleetSelect = new L.ICT.PopPanel(options);
+                pop.show();
+
+                $("#dialogShipFleetSelect").empty();
+                for (var i=0;i<this.fleetlist.length;i++){
+                    $("#dialogShipFleetSelect").append("<option value='"+this.fleetlist[i].id+"'>"+this.fleetlist[i].name+"</option>");
+                }
+
+                setTimeout(this._bindBtnClickForAddShip(thisInstance),1000);
+
+                this._popPanelShipFleetSelect.on("popPanelRemove",function(){
+                    this._popPanelShipFleetSelect = null;
+                },this);
+            },
+            _bindBtnClickForAddShip:function (thisInstance) {
+                var benok = $("#dialogShipAddEditBtnOk");
+                benok.bind("click", function(){thisInstance._dialogShipFleetSelectBtnClickOk();});
+
+                var bencancel = $("#dialogShipAddEditBtnCancel");
+                bencancel.bind("click", function(){thisInstance._dialogShipFleetSelectBtnClickCancel();});
+            },
+            _getContentHtmlDialogShowFleetList:function () {
+                var func_cdgl_editship_fleetname=$.i18n.prop('func_cdgl_editship_fleetname');
+                var common_btn_ok=$.i18n.prop('common_btn_ok');
+                var common_btn_cancel=$.i18n.prop('common_btn_cancel');
+                var html = [];
+                html.push('<TABLE border=0 style="width:390px;height:110px;">');
+                html.push('	<TR>');
+                html.push('		<TD style="width:95px;height:20px;text-align:right;vertical-align:middle;colspan="2"">');
+                html.push('		</TD>');
+                html.push('	</TR>');
+                html.push('	<TR>');
+                html.push('		<TD style="width:95px;height:30px;text-align:right;vertical-align:middle;">');
+                html.push('			<label class="cdgl_labelfont">'+func_cdgl_editship_fleetname+'</label>');
+                html.push('		</TD>');
+                html.push('		<TD style="width:295px;height:30px;text-align:left;vertical-align:middle;">');
+                html.push('			<select id="dialogShipFleetSelect" class="cdgl_labelfont" style="width:265px;height:25px;line-height:25px;border-color:#eef0f2;"></select>');
+                html.push('		</TD>');
+                html.push('	</TR>');
+                html.push('	<TR>');
+                html.push('		<TD style="width:95px;height:20px;text-align:right;vertical-align:middle;colspan="2"">');
+                html.push('		</TD>');
+                html.push('	</TR>');
+                html.push('	<TR>');
+                html.push('		<TD width=390px height="58px";align=center valign=center padding-left:60px; colspan="2">');
+                html.push('		    <table style="height:100%;width:100%">');
+                html.push('						<tr style="height:100%;width:100%">');
+                html.push('									<td style="height:100%;width:100%;padding-left:135px;">');
+                html.push('										<div id="dialogShipAddEditBtnOk" class="cdgl_dialog_btn_ok_cancel">'+common_btn_ok+'</div>');
+                html.push('									</td>');
+                //html.push('									<td style="height:100%;width:50%;padding-left:20px;">');
+                //html.push('										<div id="dialogShipAddEditBtnCancel" class="cdgl_dialog_btn_ok_cancel">'+common_btn_cancel+'</div>');
+                //html.push('									</td>');
+                html.push('						</tr>');
+                html.push('			</table>');
+                html.push('		</TD>');
+                html.push('	</TR>');
+                html.push('</TABLE>');
+                return html.join('');
+            },
+            _dialogShipFleetSelectBtnClickCancel:function () {
+                if(this._popPanelShipFleetSelect) this._popPanelShipFleetSelect.remove();
+                this._popPanelShipFleetSelect=null;
+            },
+            _dialogShipFleetSelectBtnClickOk:function () {
+                var selectid=$('#dialogShipFleetSelect option:selected').val();
+                if (selectid==""){
+                    var func_cdgl_editship_tip_selectfleet=$.i18n.prop('func_cdgl_editship_tip_selectfleet');
+                    this._showErrorMsg(func_cdgl_editship_tip_selectfleet);
+                    return;
+                }
+                var data = {};
+                data.shipfleetid=selectid;
+                data.shipid=this.shipid;
+                data.shipname=this.shipname;
+                data.mmsi=this.mmsi;
+                var url = this.config.saveShipForAddUrl;
+                this.ajax.post(url,data,true,this,function(res){
+                    if(res.state!=1){
+                        var func_cdgl_msg_tip_save_failed=$.i18n.prop('func_cdgl_msg_tip_save_failed');
+                        this._showErrorMsg(func_cdgl_msg_tip_save_failed);
+                    }else{
+                        var func_cdgl_msg_tip_save_sucess=$.i18n.prop('func_cdgl_msg_tip_save_sucess');
+                        //this._showMsg(func_cdgl_msg_tip_save_sucess);
+                        this._dialogShipFleetSelectBtnClickCancel();
+                        //linghuam 添加船队成功回调
+                        typeof this.addShipSuccessCallback === 'function' ? this.addShipSuccessCallback.call(this) : null;
+                    }
+                },function(res){
+                    var func_cdgl_msg_tip_save_failed=$.i18n.prop('func_cdgl_msg_tip_save_failed');
+                    this._showErrorMsg(func_cdgl_msg_tip_save_failed);
+                });
+
+                this._dialogShipFleetSelectBtnClickCancel();
+            },
+
+            dialogShowNoFleet:function (thisInstance) {
+                var options = {
+                    title:"",
+                    width:410,
+                    height:150,
+                    top:200,
+                    left:450,
+                    contentHTML:this._getContentHtmlDialogNoFleet()
+                };
+                var pop = this._popPanelNotShipFleetMsg = new L.ICT.PopPanel(options);
+                pop.show();
+
+                setTimeout(this._bindBtnClickForNoFleet(thisInstance),1000);
+
+                this._popPanelNotShipFleetMsg.on("popPanelRemove",function(){
+                    this._popPanelNotShipFleetMsg = null;
+                },this);
+            },
+            _bindBtnClickForNoFleet:function (thisInstance) {
+                var ashipfleetadd = $("#dialogNoFleetShowFleetManagerA");
+                ashipfleetadd.bind("click", function(){thisInstance._dialogNoFleetAClick();});
+            },
+            _getContentHtmlDialogNoFleet:function () {
+                var func_cdgladdship_nofleettip1=$.i18n.prop('func_cdgladdship_nofleettip1');
+                var func_cdgladdship_nofleettip2=$.i18n.prop('func_cdgladdship_nofleettip2');
+                var func_cdgladdship_nofleettip3=$.i18n.prop('func_cdgladdship_nofleettip3');
+                var html = [];
+                html.push('<TABLE border=0 style="width:390px;height:70px;">');
+                html.push('	<TR>');
+                html.push('		<TD style="width:64px;height:58px;text-align:left;vertical-align:middle;"></TD>');
+                html.push('		<TD style="width:58px;height:58px;text-align:left;vertical-align:middle;">');
+                html.push('			<div class="cdgladdship_addfleet_a">');
+                html.push('		</TD>');
+                html.push('		<TD style="width:25px;height:58px;text-align:left;vertical-align:middle;"></TD>');
+                html.push('		<TD style="width:234px;height:30px;text-align:left;vertical-align:middle;">');
+                html.push('			'+func_cdgladdship_nofleettip1+'</br>'+func_cdgladdship_nofleettip2+'&nbsp<a href="javascript:void(0);" id="dialogNoFleetShowFleetManagerA">'+func_cdgladdship_nofleettip3+'</a>');
+                html.push('		</TD>');
+                html.push('		<TD style="width:9px;height:58px;text-align:left;vertical-align:middle;"></TD>');
+                html.push('	</TR>');
+                html.push('</TABLE>');
+                return html.join('');
+            },
+            _dialogNoFleetAClick:function () {
+                if(this._popPanelNotShipFleetMsg) this._popPanelNotShipFleetMsg.remove();
+                this._popPanelNotShipFleetMsg=null;
+
+                this.menu.mainmenu.menuHandler("ict_menu_main_cdgl",true);
+            },
+            _showMsg:function (msginfo) {
+                // alert(msginfo);
+                L.ict.app.util.dialog.warn($.i18n.prop('dialog_alert_title'),msginfo);
+
+            },
+            _showErrorMsg:function (errormsg) {
+                // alert(errormsg);
+                L.ict.app.util.dialog.error($.i18n.prop('dialog_alert_title'),errormsg);                                                
+            }
+
+    });
+
+});

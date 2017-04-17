@@ -1,1 +1,93 @@
-define("core/pool",["leaflet","core/baseobject","core/namespace"],function(e){e.ICT.Pool=e.ICT.BaseObject.extend({pool:[],initialize:function(){},add:function(e,t){t==undefined&&(t=e.id);if(t==null)return null;if(this.has(t))return null;this.pool.push({obj:e,key:t})},remove:function(e){for(var t=0;t<this.pool.length;t++)if(this.pool[t].key==e){this.pool.splice(t,1);break}},get:function(e){for(var t=0;t<this.pool.length;t++)if(this.pool[t].key==e)return this.pool[t].obj;return null},has:function(e){for(i=0;i<this.pool.length;i++)if(this.pool[i].key==e)return!0;return!1}})});
+﻿define("core/pool",[
+    "leaflet",
+    "core/baseobject",
+    "core/namespace"
+],function(L){
+
+    /**
+    *对象缓存池
+    *@module core
+    *@class ICT.Pool
+    *@constructor initialize
+    *@extends ICT.BaseObject
+    */
+     L.ICT.Pool = L.ICT.BaseObject.extend({
+        
+        /**
+        *缓存数组
+        *@property pool
+        *@type {Array}
+        */
+        pool: [],
+
+        initialize: function () { 
+
+        },
+
+        /**
+        *添加到缓存池
+        *@method add
+        *@param obj {Object} 缓存对象
+        *@param id {String}  缓存ID
+        */
+        add: function (obj, id) {
+            if (id==undefined) {
+                id = obj.id;
+            }
+            if (id == null) {
+                return null;
+            }
+            if (this.has(id)) {
+                return null;
+            };
+            this.pool.push({ "obj": obj, "key": id });
+        },
+
+        /**
+        *从缓存池中删除
+        *@method remove
+        *@param key {String}  缓存ID
+        */
+        remove: function (key) {
+            for (var i = 0; i < this.pool.length; i++) {
+                if (this.pool[i].key == key) {
+                    this.pool.splice(i, 1);
+                    break;
+                }
+            }
+        },
+
+        /**
+        *获取缓存对象
+        *@method get
+        *@param key {String}  缓存ID
+        *@return {Object} 缓存对象
+        */
+        get: function (key) {
+            for (var i = 0; i < this.pool.length; i++) {
+                if (this.pool[i].key == key) {
+                    return this.pool[i].obj;
+                }
+            }
+            return null;
+        },
+
+        /**
+        *判断是否缓存池是否存在指定缓存ID
+        *@method has
+        *@param key {String}  缓存ID
+        *@return {bool}
+        */
+        has: function (key) {
+            for (i = 0; i < this.pool.length; i++) {
+                if (this.pool[i].key == key) return true;
+            }
+            return false;
+        }
+    });
+
+
+});
+
+
+

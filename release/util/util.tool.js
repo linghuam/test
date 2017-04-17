@@ -1,1 +1,212 @@
-define("util/tool",["leaflet","plugins/proj4js","core/namespace"],function(e,t){e.ICT.Util.Tool=e.Class.extend({initialize:function(){},drag:function(t,n){var r=!1,i,s,o=$("#"+n),u=$("#"+t),a="drag_"+e.stamp(u);o.data("drag","drag"),o.data("panel",a),u.addClass(a),this.initDrag||(this.initDrag=!0,$(document).mousedown(function(t){u=null,o=null,o=$(t.target),o=o.data("drag")?o:o.parent();if(!o.data("drag")||o.data("drag")!="drag"||!o.data("panel"))return;r=!0,u=o.closest("."+o.data("panel"));if(u.length==0)return;u=u[0],i=t.clientX,s=t.clientY;var n=e.DomUtil.getPosition(u);return n&&(i-=n.x,s-=n.y),!1}),$(document).mousemove(function(t){if(r&&u){var t=t||window.event,n=t.clientX-i,o=t.clientY-s,a=e.point(n,o);return e.DomUtil.setPosition(u,a),!1}}),$(document).mouseup(function(e){r=!1,i=null,s=null,o=null,u=null,a=null}))},latlngTodfm:function(e,t,n,r){var i=[],s;newval=parseFloat(e);var o=Math.abs(newval),u=parseInt(o),a=parseInt(o*60)-u*60,f=o*60*60-a*60-u*60*60;if(typeof r=="undefined"||r<=0)r=0;return f=f.toFixed(r),typeof n=="undefined"&&(n=!0),n&&(t==="lng"?(u<10&&(u="00"+u),u>=10&&u<100&&(u="0"+u)):u<10&&(u="0"+u)),t==="lat"&&(newval<0?s="S":s="N"),t==="lng"&&(newval<0?s="W":s="E"),i.push(u,a,f,s),i},latlngTodfmStr:function(e,t,n){var r=this.latlngTodfm(e,t,n),i=r[3]+" "+r[0]+"°"+r[1]+"′"+r[2]+"″";return i},formatStr:function(e,t){if(e.indexOf(".")>=0){var n=e.length,r=n-e.indexOf("."),i=r-1;if(i<=t)return e;var s=e.indexOf(".")+t+1;return e.substr(0,s)}return e},formatLng:function(e){return e<10?"00"+e:e<100?"0"+e:e},formatLat:function(e){return e<10?"0"+e:e},convertMileToNmile:function(e){var t=parseFloat(e),n=t*54e-5;return n.toFixed(3)},convertNmileToMile:function(e){var t=parseFloat(e),n=t/54e-5;return n.toFixed(3)},epsg4326To3857:function(e,n){return t("EPSG:4326","EPSG:3857",[e,n])},epsg4326To3395:function(e,n){return t.defs("EPSG:3395","+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"),t("EPSG:4326","EPSG:3395",[e,n])},invoke:function(e,t,n,r){t||(t=0);if(arguments.length<=2)setTimeout(e,t);else{setTimeout(i,t);function i(){var t=setInterval(e,n);r&&setTimeout(function(){clearInterval(t)},r)}}}})});
+/*
+*常用工具模块
+*/
+define("util/tool",[
+  "leaflet",
+  "plugins/proj4js",
+  "core/namespace"
+  
+],function(L,Proj4){
+
+
+    L.ICT.Util.Tool = L.Class.extend({
+       
+       initialize:function(){
+       },
+       
+       /**
+        *有约束区域拖拽
+        *@method _drag
+        *@param _body {String} 待移动元素id 父元素
+        *@param _pannel {String} 约束元素id 子元素
+        */
+        drag:function(_body,_pannel){
+            var dragging = false;
+            var iX, iY;
+            var pannel = $('#' + _pannel);
+            var body = $('#' + _body);
+            var uKey = "drag_" + L.stamp(body);
+
+            //pannel.css("cursor", "move");
+            pannel.data("drag", "drag");
+            pannel.data("panel", uKey);
+            body.addClass(uKey);
+
+            if (!this.initDrag) {
+                this.initDrag = true;
+
+                $(document).mousedown(function (e) {
+                    body = null;
+                    pannel = null;
+
+                    pannel = $(e.target);
+                    pannel = pannel.data("drag") ? pannel : pannel.parent();
+                    if (pannel.data("drag") && pannel.data("drag") == "drag" && pannel.data("panel")) { } else { return; }
+                    dragging = true;
+
+                    body = pannel.closest('.' + pannel.data("panel"));
+                    if (body.length == 0) return;
+
+                    body = body[0];
+
+                    iX = e.clientX;
+                    iY = e.clientY;
+
+                    var point = L.DomUtil.getPosition(body);
+                    if (point) {
+                        iX = iX - point.x;
+                        iY = iY - point.y;
+                    }
+                    //body.setCapture && body.setCapture();
+                    return false;
+                });
+
+                $(document).mousemove(function (e) {
+                    if (dragging && body) {
+                        var e = e || window.event;
+                        var oX = e.clientX - iX;
+                        var oY = e.clientY - iY;
+
+                        var point = L.point(oX, oY);
+                        L.DomUtil.setPosition(body, point);
+                        return false;
+                    }
+                });
+
+                $(document).mouseup(function (e) {
+                    //var se = document.getElementById(_body);
+                    dragging = false;
+                    iX = null;
+                    iY = null;
+                    pannel = null;
+                    body = null;
+                    uKey = null;
+                    //  se.releaseCapture;
+                    //e.cancelBubble = true;
+                });
+            }           
+        },
+        
+       /*经纬度转化为度分秒
+        *@val Number 经纬度数值  经度范围：-180——180 纬度范围：-90——90
+        *@latlngtype String 数值类型 lat-纬度 lng-经度
+        *@iskeepCapacity 是否保证经纬度的位数 默认为是
+        *@spointCount Number option 秒保留的小数点位数 没指定默认为整数
+        *示例1： L.ict.util.latlngTodfm(37.534,'lat') ——> [37, 32, 32, "N"]
+        *示例2： L.ict.util.latlngTodfm(117.128,'lng',2) ——> [117, 7, "40.80", "E"]
+        */ 
+        latlngTodfm:function(val,latlngtype,iskeepCapacity,spointCount){
+            var resobj = [],dir;
+            newval = parseFloat(val);
+            var positiveNum = Math.abs(newval);
+            var du = parseInt(positiveNum);
+            var fen = parseInt(positiveNum*60) - du*60;
+            var miao = positiveNum*60*60 - fen*60 - du*60*60 ;
+            if(typeof spointCount==='undefined' || spointCount<=0) {spointCount = 0;}
+            miao = miao.toFixed(spointCount);
+            if(typeof iskeepCapacity==='undefined') {iskeepCapacity=true;}
+            if(iskeepCapacity){
+                if(latlngtype === 'lng'){
+                    if(du<10) du = '00'+du;
+                    if(du>=10 && du<100) du = '0'+du;
+                } else{
+                    if(du<10) du = '0'+du;
+                }
+                // if(fen<10) fen = '0'+fen; 
+                // if(miao<10 && spointCount===0) miao = '0'+miao;
+
+            }
+            if(latlngtype === 'lat'){
+                if(newval <0) dir = 'S';
+                else dir='N';
+            }
+            if(latlngtype === 'lng'){
+                if(newval<0) dir = 'W';
+                else dir = 'E';
+            }
+            resobj.push(du,fen,miao,dir);
+            return resobj;        
+        },
+
+        latlngTodfmStr: function(val,latlngtype,spointCount){
+            var res = this.latlngTodfm(val,latlngtype,spointCount);    
+            var str = res[3] + " " + res[0] + "°" + res[1] + "′" + res[2] + "″";
+            return str;            
+        },      
+        
+        /*四舍五入，保留位数为roundDigit*/
+        formatStr:function(numberRound,roundDigit){ 
+            if (numberRound.indexOf(".")>=0){
+                var alllen=numberRound.length;
+                var lencz=alllen-numberRound.indexOf(".");
+                var xswall=lencz-1;
+                if (xswall<=roundDigit){
+                    return numberRound;
+                }else{
+                    var indexend=numberRound.indexOf(".")+roundDigit+1;
+                    return numberRound.substr(0,indexend);   
+                }
+            }else{
+                return numberRound;
+            }           
+        },
+        
+        /*经度整数部分始终显示三位数*/
+        formatLng:function(lng){
+            return lng < 10 ? '00'+lng : (lng<100 ? '0'+lng : lng);
+        },
+        
+        /*纬度整数部分始终显示两位数*/
+        formatLat:function(lat){
+           return lat < 10 ? '0'+lat : lat;
+        },
+
+        /*米转化为海里*/
+        convertMileToNmile:function(mileVal){
+             var oval = parseFloat(mileVal);
+             var newval = oval*0.00054;
+             return newval.toFixed(3);
+        },
+
+        /*海里转化为米*/
+        convertNmileToMile:function(nmileVal){
+             var oval = parseFloat(nmileVal);
+             var newval = oval/0.00054;
+             return newval.toFixed(3);
+        },    
+
+        epsg4326To3857:function(x,y){
+            return Proj4('EPSG:4326','EPSG:3857',[x,y]);
+        },
+
+        epsg4326To3395:function(x,y){
+            Proj4.defs('EPSG:3395', "+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs");
+            return Proj4('EPSG:4326','EPSG:3395',[x,y]);
+        },    
+		
+        /*
+        * 安排函数f()在未来的调用模式
+        * 在等待了若干毫秒之后调用f()
+        * 如果设置了interval并没有设置end参数，则对f()调用将不会停止
+        * 如果没有设置interval和end，只在若干毫秒后调用f一次
+        * 只有指定了f,才会从start=0的时刻开始
+        * 注意，调用invoke不会阻塞，它会立即返回
+        */
+        invoke:function(f,start,interval,end){
+            if(!start) start = 0; //默认设置为0 毫秒
+            if(arguments.length <=2)
+                setTimeout(f,start); //若干毫秒后的单次调用模式
+            else{
+                setTimeout(repeat,start); //在若干毫秒后调用repeat()
+                function repeat(){
+                     var h = setInterval(f,interval); //循环调用f()
+                     //在end毫秒后停止调用
+                     if(end) setTimeout(function(){clearInterval(h);},end);
+                }
+            }
+        }		
+
+         
+    });
+
+});
