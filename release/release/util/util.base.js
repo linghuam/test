@@ -1,0 +1,1 @@
+define("util/base",["leaflet","core/namespace","util/dialog","util/tool","util/dateTime"],function(e){return e.ICT.Util.Base=e.Class.extend({dialog:null,tool:null,dateTime:null,initialize:function(){this.dialog=new e.ICT.Util.Dialog,this.tool=new e.ICT.Util.Tool,this.dateTime=new e.ICT.Util.DateTime}}),e.ICT.Util.Base});

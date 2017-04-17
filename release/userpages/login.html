@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title class="userlogin_title"></title>
+    <link rel="stylesheet" type="text/css" href="../library/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../themes/css/func.user.css"/>
+    <script type="text/javascript" src="../library/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../project/project.config.js"></script>
+    <script type="text/javascript" src="../plugins/jquery.i18n.properties/jquery.i18n.properties.min.js"></script>    
+<!--     <script type="text/javascript" src="../library/requirejs/require.js"></script>
+    <script type="text/javascript" src="login.main.js"></script> -->
+
+</head>
+<body>
+    <div class="container">
+        <div style="padding: 20px 0;">
+            <img src="../themes/images/userLogin/login_logo.jpg" style="vertical-align: bottom" alt=""/>
+            <span class="title_font userlogin_title_welcom"></span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="content_div" style="padding-top:40px;">
+            <div class="input-group  input-group-lg input_div">
+                <span class="input-group-addon" style="background-color: #fff;">
+                    <img src="../themes/images/userLogin/username.png" alt=""/>
+                </span>
+                <input type="text" class="form-control username userlogin_username_placeholder" style="border-left:0;font-size:14px;" placeholder="">
+            </div>
+
+            <span class="login_error username_error"></span>
+            <div class="input-group  input-group-lg input_div">
+                <span class="input-group-addon" style="background-color: #fff;">
+                    <img src="../themes/images/userLogin/password.png" alt=""/>
+                </span>
+                <input type="password" class="form-control psw userlogin_psw_placeholder" style="border-left:0;font-size:14px;" placeholder="">
+            </div>
+            <span class="login_error psw_error"></span> <!-- 存放错误提醒-->
+            <div class="text-right input_div">
+                <p class="text-right"><a href="forgetpsw.html" class="a_password userlogin_forgetpsw"></a></p>
+            </div>
+            <div class="input_div">
+                <button class="form-control  login_btn_div userlogin_login_button"></button>
+            </div>
+            <div class="text-right input_div">
+              <p><a href="enroll.html" class="userlogin_enroll_a"></a></p>
+            </div>
+        </div>
+    </div>
+    <!-- 登录逻辑 -->
+    <script type="text/javascript">
+        var lang = window.localStorage.getItem("language") || 'zh';
+        var $loginError = $(".login_error");
+        var $usernameError = $(".username_error");
+        var $pswError = $(".psw_error");
+        var $username = $(".username");
+        var $psw = $(".psw");
+        var $loginBtn = $(".login_btn_div");
+
+        //中英文对照
+        lang === 'zh' ?  '' : lang;
+        $.i18n.properties({
+            name:'strings', // 资源文件名称
+            path:'../languages/', // 资源文件路径
+            mode:'both', //vars map both
+            language:lang, //ISO-639 指定的语言编码（如：“en”表示英文、“zh”表示中文）
+            cache:false, 
+            checkAvailableLanguages: true,
+            async: false,
+            callback:function(){
+                $(".userlogin_title").html($.i18n.prop('userlogin_title'));
+                $(".userlogin_title_welcom").html($.i18n.prop('userlogin_title_welcom'));
+                $(".userlogin_username_placeholder").attr("placeholder",$.i18n.prop('userlogin_username_placeholder'));
+                $(".userlogin_psw_placeholder").attr("placeholder",$.i18n.prop('userlogin_psw_placeholder'));
+                $(".userlogin_forgetpsw").html($.i18n.prop('userlogin_forgetpsw'));
+                $(".userlogin_login_button").html($.i18n.prop('userlogin_login_button'));
+                $(".userlogin_enroll_a").html($.i18n.prop('userlogin_enroll_a'));                
+
+            }
+       }); 
+    
+        $username.focus();
+        
+        //回车键
+        $("body").on('keydown',function(e){
+            var e = e || window.event;
+            if (e.keyCode === 13) {
+               $loginBtn.click();
+            }
+
+        });
+        
+        //登录按钮
+        $(".login_btn_div").on("click",function(){
+            var username = $.trim($username.val());
+            var psw = $.trim($psw.val());
+
+            $loginError.text('');
+
+            if(username === ''){
+               $usernameError.text($.i18n.prop('userlogin_username_error'));
+               $username.focus();
+               return;
+            }
+            if(psw === ''){
+                $pswError.text($.i18n.prop('userlogin_psw_error'));
+                $psw.focus();
+                return ;
+            }
+
+            var url = Project_ParamConfig.userConfig.loginUrl;
+            var data = {
+                userName:username,
+                passWord:psw
+            };             
+            $.ajax({
+                url:url,
+                data:data,
+                method:'POST',
+                dataType:'JSON',
+                success:function(res){
+                    if(res.state === 10020 || res.state === 10021){
+                        $pswError.text($.i18n.prop('userloing_result_error_1'));  
+                    }else if(res.state === 10022){
+                        $pswError.text($.i18n.prop('userloing_result_error_2')); 
+                    } else if(res.state === 1){
+                        var userInfo = {};
+                        userInfo.userName = res.msg.userName;
+                        userInfo.userId = res.msg.id;
+                        userInfo.ifActive=res.msg.ifActive;
+                        userInfo.emailAddress=res.msg.emailAddress;
+                        userInfo = JSON.stringify(userInfo);
+                        window.sessionStorage.setItem("userInfo",userInfo); 
+                        window.location.href = "../index.html";                        
+                    } else{
+                       $pswError.text($.i18n.prop('userloing_result_error_3'));  
+                    }
+                },
+                error:function(error){
+                    $pswError.text($.i18n.prop('userloing_result_error_3'));  
+                }
+
+            })
+
+        });
+    </script>
+</body>
+</html>
