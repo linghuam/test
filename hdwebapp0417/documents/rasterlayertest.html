@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>raseter_canvas1</title>
+	<meta charset="utf-8">
+	 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+	 <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+	 <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js"></script>
+	 <style type="text/css">
+	 	#mapid {width:600px;height:600px; }
+	 </style>
+</head>
+<body>
+ <div id="mapid"></div>
+ <a href="http://localhost:8080/HeadAerospace_Java_WebServer/WebApp/src/main/webapp/documents/rasterlayertest.html">点我</a>
+
+ <script type="text/javascript">
+ //4675
+var CanvasLayer = L.TileLayer.extend({
+    createTile: function(coords,done){
+        // create a <canvas> element for drawing
+        var tile = L.DomUtil.create('canvas', 'leaflet-tile');       
+        // setup tile width and height according to the options
+        L.DomEvent.on(tile, 'load', L.bind(this._tileOnLoad, this, done, tile));
+		L.DomEvent.on(tile, 'error', L.bind(this._tileOnError, this, done, tile));
+		if (this.options.crossOrigin) {
+			tile.crossOrigin = '';
+		}		
+        var size = this.getTileSize();
+        tile.width = size.x;
+        tile.height = size.y;
+        // get a canvas context and draw something on it using coords.x, coords.y and coords.z
+        var ctx = tile.getContext('2d');
+        // return the tile so it can be rendered on screen
+        var url = this.getTileUrl(coords);
+        var img = new Image();   // Create new img element
+        img.onload = function(){
+        	ctx.drawImage(img, 0, 0);  
+
+	   //      setTimeout(function(){
+	   //          var pat=ctx.createPattern(img,"no-repeat");
+				// ctx.rect(0,0,tile.width,tile.height);
+				// ctx.fillStyle=pat;
+				// ctx.fill();
+	   //      }, 0);
+
+	   // 	        var pat=ctx.createPattern(img,"no-repeat");
+				// ctx.rect(0,0,tile.width,tile.height);
+				// ctx.fillStyle=pat;
+				// ctx.fill();
+        };
+        img.src = url; // Set source path       
+        return tile;
+    }
+});
+
+var mymap = L.map('mapid',{center:[49,116],zoom:6});
+
+// L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+//     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+// }).addTo(mymap);
+
+var clayer = new CanvasLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',{opacity:1});
+mymap.addLayer(clayer);
+	
+ </script>
+</body>
+</html>
