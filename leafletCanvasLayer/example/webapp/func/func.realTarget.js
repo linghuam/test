@@ -13,7 +13,7 @@ define("func/realTarget", [
     "func/hjcx",
     "control/panel"
 
-], function(L,leafletPip) {
+], function(L, leafletPip) {
 
     L.ICT.RealTarget = L.Class.extend({
 
@@ -70,17 +70,22 @@ define("func/realTarget", [
         socketMsgHandler: function(data) {
 
             if (data.state !== 1) {
-                return; }
+                return;
+            }
             if (data.msg.shipList.length <= 0) {
-                return; }
+                return;
+            }
             // if(this.ictmap.getCurZoom() < this.config.showLevel) {return ;}
             if (this.ictmap.OperateState.tshf) {
-                return; }
+                return;
+            }
             // if(this.ictmap.OperateState.port){return;}
             if (this.ictmap.OperateState.wjfx) {
-                return; }
+                return;
+            }
             if (this.ictmap.OperateState.wjfx_hdyc) {
-                return; }
+                return;
+            }
 
 
             var shipList = data.msg.shipList;
@@ -193,7 +198,8 @@ define("func/realTarget", [
                 this.ajaxLocateShip.abort();
                 this.ajaxLocateShip.post(url, data, true, this, function(res, error) {
                     if (error) {
-                        return; }
+                        return;
+                    }
                     if (res.state !== 1) {
                         L.ict.app.util.dialog.error("提示", "获取指定船舶信息失败！");
                     } else {
@@ -284,9 +290,9 @@ define("func/realTarget", [
                 var radius = extendlyr.getRadius();
                 var distance = latlng.distanceTo(center);
                 return distance <= radius;
-            }  else if (extendlyr instanceof L.Polygon) {
-                var geojsonlayer =  L.geoJSON(extendlyr.toGeoJSON());
-                var polygons = leafletPip.pointInLayer(latlng,geojsonlayer,true);
+            } else if (extendlyr instanceof L.Polygon) {
+                var geojsonlayer = L.geoJSON(extendlyr.toGeoJSON());
+                var polygons = leafletPip.pointInLayer(latlng, geojsonlayer, true);
                 return !!polygons.length;
             } else {
                 return false;
@@ -415,17 +421,18 @@ define("func/realTarget", [
             data.mode = Project_ParamConfig.CurrentMode;
             data = L.extend(data, this.getCurRectExtend());
             this._beforeMode = data.mode;
+            this.stopInterval();            
             this.ajax.post(url, data, true, this, this._getRectTargetCallback);
-            this.stopInterval();
-            this._interval = window.setInterval(function() {
-                this.ajax.post(url, data, true, this, this._getRectTargetCallback);
-            }.bind(this), this.config.updatetime * 1000);
+            // this._interval = window.setInterval(function() {
+            //     this.ajax.post(url, data, true, this, this._getRectTargetCallback);
+            // }.bind(this), this.config.updatetime * 1000);
         },
 
         //请求回调
         _getRectTargetCallback: function(data, error) {
             if (error) {
-                return; }
+                return;
+            }
             if (data.state !== 1 || !data.msg.shipList || !data.msg.shipList.length) {
                 console.error("未获取指定区域目标！");
                 return;
@@ -588,16 +595,27 @@ define("func/realTarget", [
             var latlng = L.latLng(targetobj.lat, targetobj.lon),
                 tipText = targetobj.shipname,
                 targetIcon = this.getTargetIcon(targetobj.shiptype);
+            // var markOptions = {
+            //     icon: targetIcon,
+            //     opacity: 1,
+            //     rotationAngle: targetobj.dir, //方向，正北是0，顺时针，共360，
+            //     rotationOrigin: 'center center', //船舶旋转的参考点
+            //     title: tipText, //添加鼠标移上后的提示信息
+            //     data: targetobj
+            // };
             var markOptions = {
-                icon: targetIcon,
-                opacity: 1,
-                rotationAngle: targetobj.dir, //方向，正北是0，顺时针，共360，
-                rotationOrigin: 'center center', //船舶旋转的参考点
-                title: tipText, //添加鼠标移上后的提示信息
-                data: targetobj
+                stroke: false,
+                color: '#ef0300',
+                fillColor: '#ef0300',
+                fillOpacity: 1,
+                radius: 10,
+                data: targetobj,
+                pane: 'markerPane',
+                className: 'leaflet-marker-rightclick-icon'
             };
-            markOptions.icon.options.className = "leaflet-marker-rightclick-icon";
-            var Lmarker = L.marker(latlng, markOptions);
+            // markOptions.icon.options.className = "leaflet-marker-rightclick-icon";
+            // var Lmarker = L.marker(latlng, markOptions);
+            var Lmarker = L.shipVector(latlng, markOptions);
 
             //标牌显示
             if (this.ictmap.labelType) {
@@ -835,7 +853,8 @@ define("func/realTarget", [
             this.ajaxShipInfo.abort();
             this.ajaxShipInfo.post(url, data, true, this, function(res, error) {
                 if (error) {
-                    return; }
+                    return;
+                }
                 if (res.state !== 1) {
                     L.ict.app.util.dialog.error("提示", "获取指定船舶信息失败！");
                     this.removeShipInfoPopPanel();

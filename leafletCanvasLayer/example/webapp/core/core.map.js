@@ -254,9 +254,9 @@ define("core/map",[
                     //相交
                     if(this._moveendBoundsExtend.intersects(this._moverstartBoundsExtend)){
                         // this.realtarget.sendMsg();
-                        this.realtarget.getRealTarget();                        
+                        // this.realtarget.getRealTarget();                        
                     } else{ //相离
-                        this.realtarget.getRealTarget();
+                        // this.realtarget.getRealTarget();
                     }
 
                 }
@@ -272,7 +272,7 @@ define("core/map",[
                   //缩放前后都是实时船舶图
                   //范围放大
                    if(this._endzoom > this._startzoom){
-                        this.realtarget.getRealTarget();
+                        // this.realtarget.getRealTarget();
                         // this.realtarget.sendMsg();
                    }
                    //范围缩小
