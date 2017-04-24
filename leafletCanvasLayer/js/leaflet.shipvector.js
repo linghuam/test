@@ -39,4 +39,7 @@ L.ShipVector = L.CircleMarker.extend({
     }
 });
 
+L.shipVector = function(latlng,options){
+	return new L.ShipVector(latlng,options);
+};
 
