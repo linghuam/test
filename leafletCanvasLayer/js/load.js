@@ -17,7 +17,7 @@ L.tileLayer.GoogleLayer().addTo(map);
  */
 $.getJSON('data/data.json', function(res) {
     var data = res.msg.data;
-    var options = { stroke: false, color: '#ef0300', fillColor: '#ef0300', fillOpacity: 1, radius: 4, pane: 'markerPane', className: 'leaflet-shipmarker' };
+    var options = {width:10,height:22, stroke: false, color: '#ef0300', fillColor: '#ef0300', fillOpacity: 1, radius: 4, pane: 'markerPane', className: 'leaflet-shipmarker' };
     var layers = [];
     console.time("render");
     for (var i = 0, len = data.length; i < len; i++) {
@@ -31,9 +31,6 @@ $.getJSON('data/data.json', function(res) {
         }, this);
         circlemarker.bindTooltip('shipship');
         layers.push(circlemarker);
-
-        // var latlngbounds = L.latLngBounds(L.latLng(obj.lat,obj.lon),L.latLng(obj.lat+1,obj.lon+1));
-        // layers.push(L.rectangle(latlngbounds));
     }
     L.featureGroup(layers).addTo(map);
     console.timeEnd("render");

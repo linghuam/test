@@ -128,6 +128,7 @@ define("func/realTarget", [
                     ishide = false;
                 }
                 if (ishide) {
+                    
                     layer.setOpacity(0);
                     // this.removeTargetEvt(layer);
                     if (layer.options.hasSelectState) {
@@ -344,7 +345,8 @@ define("func/realTarget", [
         showRealTargetLayer: function() {
             this.realtargetFeatureGroup.eachLayer(function(layer) {
                 if (this.checkFilter(layer.options.data)) { //只显示符合过滤条件的目标
-                    layer.setOpacity(1);
+                    if(layer.setOpacity){ layer.setOpacity(1);}
+                    if(layer.setStyle){layer.setStyle({fillOpacity:1});}
                     // this.addTargetEvt(layer);
                 }
             }, this);
@@ -355,7 +357,8 @@ define("func/realTarget", [
         //隐藏实时目标
         hideRealTargetLayer: function() {
             this.realtargetFeatureGroup.eachLayer(function(layer) {
-                layer.setOpacity(0);
+                    if(layer.setOpacity){ layer.setOpacity(0);}
+                    if(layer.setStyle){layer.setStyle({fillOpacity:0});}
                 // this.removeTargetEvt(layer);              
             }, this);
             this.hideLocateLayer(); //隐藏定位图层
@@ -423,9 +426,9 @@ define("func/realTarget", [
             this._beforeMode = data.mode;
             this.stopInterval();            
             this.ajax.post(url, data, true, this, this._getRectTargetCallback);
-            // this._interval = window.setInterval(function() {
-            //     this.ajax.post(url, data, true, this, this._getRectTargetCallback);
-            // }.bind(this), this.config.updatetime * 1000);
+            this._interval = window.setInterval(function() {
+                this.ajax.post(url, data, true, this, this._getRectTargetCallback);
+            }.bind(this), this.config.updatetime * 1000);
         },
 
         //请求回调
@@ -568,7 +571,9 @@ define("func/realTarget", [
             if (!iscontain && layers.length < this.config.limit && (this._beforeMode === Project_ParamConfig.CurrentMode)) {
                 var marker = this.createMarker(obj, true);
                 if (!this.isShowNewTarget(obj)) { //如果不符合过滤条件或达不到显示级别
-                    marker.setOpacity(0);
+                    // marker.setOpacity(0);
+                    if(marker.setOpacity){ marker.setOpacity(0);}
+                    if(marker.setStyle){marker.setStyle({fillOpacity:0});}
                     // this.removeTargetEvt(marker);
                 }
                 this.realtargetFeatureGroup.addLayer(marker);
@@ -594,7 +599,7 @@ define("func/realTarget", [
             var isAddEvent = isAddEvent ? isAddEvent : false;
             var latlng = L.latLng(targetobj.lat, targetobj.lon),
                 tipText = targetobj.shipname,
-                targetIcon = this.getTargetIcon(targetobj.shiptype);
+                targetIcon = this.getTargetColor(targetobj.shiptype);
             // var markOptions = {
             //     icon: targetIcon,
             //     opacity: 1,
@@ -604,9 +609,11 @@ define("func/realTarget", [
             //     data: targetobj
             // };
             var markOptions = {
+                width:10,
+                height:22,
                 stroke: false,
                 color: '#ef0300',
-                fillColor: '#ef0300',
+                fillColor:targetIcon,
                 fillOpacity: 1,
                 radius: 10,
                 data: targetobj,
@@ -635,6 +642,51 @@ define("func/realTarget", [
 
             return Lmarker;
         },
+
+
+        //根据船舶类型获取船舶图标
+        getTargetColor: function(type) {
+            var type = type.toString(),
+                icon = null;
+            switch (type) {
+                case "货船":
+                    icon = '#EF0F26';
+                    break;
+                case "搜救船":
+                    icon = '#E99015';
+                    break;
+                case "油轮":
+                    icon = '#CFC92F';
+                    break;
+                case "拖船":
+                    icon = '#2BF10D';
+                    break;
+                case "渔船":
+                    icon ='#1DE1C9';
+                    break;
+                case "客船":
+                    icon = '#1672E8';
+                    break;
+                case "军事船":
+                    icon = '#7F006E';
+                    break;
+                case "其他":
+                    icon = '#3F7F47';
+                    break;
+                default:
+                    icon = '#3F7F47';
+                    // case "货船": icon=L.ICT.ShipIcon.ship1 ;break;
+                    // case "搜救船": icon=L.ICT.ShipIcon.ship2 ;break;
+                    // case "油轮": icon=L.ICT.ShipIcon.ship3 ;break;
+                    // case "拖轮": icon=L.ICT.ShipIcon.ship7;break;
+                    // case "渔船": icon=L.ICT.ShipIcon.ship4 ;break;
+                    // case "拖船": icon=L.ICT.ShipIcon.ship7;break;
+                    // case "客船": icon=L.ICT.ShipIcon.ship5 ;break;
+                    // case "其他": icon=L.ICT.ShipIcon.ship6 ;break;
+                    // default: icon=L.ICT.ShipIcon.ship7;
+            }
+            return icon;
+        },        
 
         getTootipOptions: function() {
             return {
