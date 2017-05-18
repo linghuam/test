@@ -77,7 +77,7 @@ function PapaParse(url) {
                     }
                 }
                 // handler datq ----------------end-----------------------------
-                // 
+                
                 this.arr = [];
             } else {
                 if (this.arr) {
