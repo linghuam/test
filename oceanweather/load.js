@@ -269,7 +269,7 @@ function PapaParseHeatmap(url) {
         complete: function(results) {
             var datas = results.data;
             var testData = {
-                max: 8,
+                max: 18,
                 data: datas
             };
             var cfg = {
