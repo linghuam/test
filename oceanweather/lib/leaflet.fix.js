@@ -57,7 +57,7 @@ L.TextLineSvg = L.SVG.extend({
         layer._textele.setAttribute('dx',len/2);
         layer._textele.setAttribute('dy','2');
         layer._textpath.setAttribute('href','#'+hrefid);
-        layer._textpath.setAttribute('style','font-size:12px;font-family:Microsoft YaiHei;fill:#0415FA');
+        layer._textpath.setAttribute('style','font-size:12px;font-family:Microsoft YaiHei;stroke:#f00;');
         layer._textpath.innerHTML = text;
         // var center = layer.getBounds().getCenter();
         // var pt = map.latLngToLayerPoint(center);

@@ -18,7 +18,7 @@ OceanWeather.mb500 = function() {
     PapaParseLine('data/500mb.csv');
 }
 OceanWeather.wind = function() {
-    PapaParse('data/wind.csv');
+    PapaParseWind('data/wind.csv');
 }
 OceanWeather.waveheight = function() {
     PapaParseArea('data/waveheight.csv');
@@ -30,11 +30,15 @@ OceanWeather.flow = function() {
     PapaParseArea('data/flow.csv');
 }
 OceanWeather.temperature = function() {
-    PapaParseArea('data/temperature.csv');
+    PapaParseLine('data/temperature.csv');
 }
 OceanWeather.visibility = function() {
-    PapaParseArea('data/visibility.csv');
+    PapaParseLine('data/visibility.csv');
 }
+OceanWeather.heatmap = function() {
+    PapaParseHeatmap('data/wind.csv');
+}
+
 
 var featueGroup = L.featureGroup([]).addTo(map);
 var renderer = new L.TextLineSvg();
@@ -159,7 +163,7 @@ function PapaParseLine(url) {
 }
 
 function PapaParsePressureBand(url) {
-   var options = {
+    var options = {
         renderer: renderer,
         color: '#000',
         weight: 6,
@@ -169,68 +173,130 @@ function PapaParsePressureBand(url) {
     Papa.parse(url, {
         download: true,
         complete: function(results) {
-            var datas = results.data;
-            var res = datas.groupBy(o=>o[3]);
-            for(var i=0,len=res.length;i<len;i++){
-                var objitem = res[i];
-               options.text = objitem.key;
-                if(objitem.value.length <2){
-                    continue;
+                var datas = results.data;
+                var res = datas.groupBy(o => o[3]);
+                for (var i = 0, len = res.length; i < len; i++) {
+                    var objitem = res[i];
+                    options.text = objitem.key;
+                    if (objitem.value.length < 2) {
+                        continue;
+                    }
+                    var latlngs = [];
+                    for (var j = 0, lenj = objitem.value.length; j < lenj; j++) {
+                        var row = objitem.value[j];
+                        var lat = +row[0];
+                        var lng = +row[1];
+                        var v = +row[2];
+                        v === 0 ? options.fillColor = '#f00' : options.fillColor = '#00f';
+                        var latlng = L.latLng(lat, lng);
+                        latlngs.push(latlng);
+                    }
+                    featueGroup.addLayer(L.polyline(latlngs, options));
                 }
-                var latlngs = [];
-                for(var j=0,lenj=objitem.value.length;j<lenj;j++){
-                    var row = objitem.value[j];
-                    var lat = +row[0];
-                    var lng = +row[1];
-                    var v = +row[2];
-                    v === 0 ?options.fillColor = '#f00' :options.fillColor = '#00f';
-                    var latlng = L.latLng(lat,lng);
-                    latlngs.push(latlng);
-                }
-                featueGroup.addLayer(L.polyline(latlngs, options));
             }
-        }
-        // step: function(results, parser) {
+            // step: function(results, parser) {
             // if (results.data[0][0] === '' && this.arr.length) {
             //     // console.log(JSON.stringify(this.arr));
 
-            //     // handler data -------------start------------------------
-            //     var latlngs = [];
-            //     for (var i = 0, len = this.arr.length; i < len; i++) {
-            //         var row = this.arr[i];
-            //         var lat = +row[0];
-            //         var lng = +row[1];
-            //         var value = options.text = +row[2];
-            //         var latlng = L.latLng(lat, lng);
+        //     // handler data -------------start------------------------
+        //     var latlngs = [];
+        //     for (var i = 0, len = this.arr.length; i < len; i++) {
+        //         var row = this.arr[i];
+        //         var lat = +row[0];
+        //         var lng = +row[1];
+        //         var value = options.text = +row[2];
+        //         var latlng = L.latLng(lat, lng);
 
-            //         if (i === 0) {
-            //             latlngs.push(latlng);
-            //         } else {
-            //             var lastlng = (latlngs[latlngs.length - 1]).lng;
-            //             var extend = Math.abs(lng - lastlng);
-            //             if (extend >= 180) { //解决经度范围超过180连线异常
-            //                 featueGroup.addLayer(L.polyline(latlngs, this.options));
-            //                 latlngs = [];
-            //                 latlngs.push(latlng);
-            //             } else {
-            //                 latlngs.push(latlng);
-            //                 if (i === len - 1) {
-            //                     featueGroup.addLayer(L.polyline(latlngs, this.options));
-            //                     latlngs = [];
-            //                 }
-            //             }
-            //         }
-            //     }
-            //     // handler datq ----------------end-----------------------------
+        //         if (i === 0) {
+        //             latlngs.push(latlng);
+        //         } else {
+        //             var lastlng = (latlngs[latlngs.length - 1]).lng;
+        //             var extend = Math.abs(lng - lastlng);
+        //             if (extend >= 180) { //解决经度范围超过180连线异常
+        //                 featueGroup.addLayer(L.polyline(latlngs, this.options));
+        //                 latlngs = [];
+        //                 latlngs.push(latlng);
+        //             } else {
+        //                 latlngs.push(latlng);
+        //                 if (i === len - 1) {
+        //                     featueGroup.addLayer(L.polyline(latlngs, this.options));
+        //                     latlngs = [];
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     // handler datq ----------------end-----------------------------
 
-            //     this.arr = [];
-            // } else {
-            //     if (this.arr) {
-            //         this.arr.push(results.data[0]);
-            //     } else {
-            //         this.arr = [];
-            //     }
-            // }
+        //     this.arr = [];
+        // } else {
+        //     if (this.arr) {
+        //         this.arr.push(results.data[0]);
+        //     } else {
+        //         this.arr = [];
+        //     }
         // }
+        // }
+    });
+}
+
+function PapaParseWind(url) {
+    var options = {
+        pointRadius: 5,
+        strokeLength: 20
+    };
+    Papa.parse(url, {
+        download: true,
+        complete: function(results) {
+            var datas = results.data;
+            for (var i = 0, len = datas.length; i < len; i++) {
+                var row = datas[i];
+                var lat = +row[0];
+                var lng = +row[1];
+                var sp = options.speed = +row[2];
+                var dir = options.deg = +row[3];
+                var icon = L.WindBarb.icon(options);
+                var latlng = L.latLng(lat, lng);
+                var marker = L.marker(latlng, { icon: icon });
+                featueGroup.addLayer(marker);
+            }
+        }
+    });
+}
+
+function PapaParseHeatmap(url) {
+    Papa.parse(url, {
+        download: true,
+        complete: function(results) {
+            var datas = results.data;
+            var testData = {
+                max: 8,
+                data: datas
+            };
+            var cfg = {
+                // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+                // if scaleRadius is false it will be the constant radius used in pixels
+                "radius": 2,
+                "maxOpacity": .8,
+                // scales the radius based on map zoom
+                "scaleRadius": true,
+                // if set to false the heatmap uses the global maximum for colorization
+                // if activated: uses the data maximum within the current map boundaries 
+                //   (there will always be a red spot with useLocalExtremas true)
+                "useLocalExtrema": true,
+                // which field name in your data represents the latitude - default "lat"
+                latField: '0',
+                // which field name in your data represents the longitude - default "lng"
+                lngField: '1',
+                // which field name in your data represents the data value - default "value"
+                valueField: '2'
+            };
+
+
+            var heatmapLayer = new HeatmapOverlay(cfg);
+
+            map.addLayer(heatmapLayer);
+
+            heatmapLayer.setData(testData);
+        }
     });
 }
