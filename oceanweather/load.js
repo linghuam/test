@@ -21,7 +21,7 @@ OceanWeather.wind = function() {
     PapaParseWind('data/wind.csv');
 }
 OceanWeather.waveheight = function() {
-    PapaParseArea('data/waveheight.csv');
+    PapaParseLine('data/waveheight.csv');
 }
 OceanWeather.surge = function() {
     PapaParseArea('data/surge.csv');
@@ -41,10 +41,12 @@ OceanWeather.heatmap = function() {
 
 
 var featueGroup = L.featureGroup([]).addTo(map);
-var renderer = new L.TextLineSvg();
+// var renderer = new L.TextLineSvg();
+var renderer =new L.TextCanvas();
 
 function PapaParseArea(url) {
-    featueGroup.clearLayers();
+   if(map.hasLayer(featueGroup))  map.removeLayer(featueGroup);
+   featueGroup = L.featureGroup([]).addTo(map);
     var options = {
         renderer: renderer,
         color: '#000',
@@ -104,7 +106,8 @@ function PapaParseArea(url) {
 }
 
 function PapaParseLine(url) {
-    featueGroup.clearLayers();
+  if(map.hasLayer(featueGroup))  map.removeLayer(featueGroup);
+  featueGroup = L.featureGroup([]).addTo(map);
     var options = {
         renderer: renderer,
         color: '#000',
