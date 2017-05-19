@@ -15,15 +15,18 @@ L.TextCanvas = L.Canvas.extend({
             text = layer.options.text,
             parts = layer._parts,
             map = this._map;
-        var center = map.hasLayer(layer) && layer.getCenter();
-        if (center) {
+            if(!parts.length){
+                return;
+            }
+        var center = layer.getCenter();
+        // if (center) {
             var pt = map.latLngToLayerPoint(center);
             ctx.textAlign = 'start';
             ctx.textBaseline = 'middle';
             ctx.font = 'Microsoft YaHei';
             ctx.fillStyle = "#000";
             ctx.fillText(text, pt.x, pt.y);
-        }
+        // }
     }
 });
 
