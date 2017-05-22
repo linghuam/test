@@ -6,7 +6,7 @@ L.TextCanvas = L.Canvas.extend({
     _updatePoly: function(layer, closed) {
         L.Canvas.prototype._updatePoly.call(this, layer, closed);
         if (layer.options.text) {
-           this._text(layer, closed);
+            this._text(layer, closed);
         }
     },
 
@@ -15,18 +15,24 @@ L.TextCanvas = L.Canvas.extend({
             text = layer.options.text,
             parts = layer._parts,
             map = this._map;
-            if(!parts.length){
-                return;
-            }
-        var center = layer.getCenter();
-        // if (center) {
+        if (!parts.length) {
+            return;
+        }
+        try {
+            var center = layer.getCenter();
             var pt = map.latLngToLayerPoint(center);
             ctx.textAlign = 'start';
             ctx.textBaseline = 'middle';
             ctx.font = 'Microsoft YaHei';
             ctx.fillStyle = "#000";
             ctx.fillText(text, pt.x, pt.y);
-        // }
+        } catch (ex) {
+            var width = this._container.width;
+            var height = this._container.height;
+            ctx.clearRect(0, 0, width * 2, height * 2);
+            // console.log(ex);
+            // console.log(this._layers);
+        }
     }
 });
 

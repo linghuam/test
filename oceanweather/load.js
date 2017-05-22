@@ -8,6 +8,16 @@ map.on("mousemove", function(e) {
 }, this);
 L.tileLayer.GoogleLayer().addTo(map);
 
+//test
+// var latlngs = [
+//     [45.51, -122.68],
+//     [37.77, -122.43],
+//     [34.04, -118.2]
+// ];
+// var renderer = L.canvas();
+// var ply = L.polyline(latlngs, { renderer: renderer });
+// map.addLayer(ply); //map.removeLayer(ply);
+
 
 var OceanWeather = {};
 OceanWeather.pressure = function() {
