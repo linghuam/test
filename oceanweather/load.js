@@ -47,7 +47,7 @@ OceanWeather.visibility = function() {
     PapaParseArea('data/visibility.csv');
 }
 OceanWeather.heatmap = function() {
-    PapaParseHeatmap('data/wind.csv');
+    PapaParseHeatmap('data/heatmap.csv');
 }
 
 
@@ -278,87 +278,87 @@ function PapaParseWind(url) {
 }
 
 function PapaParseHeatmap(url) {
-    var url = 'http://localhost:8080/rest/realtime/areaships.do';
-    var data = {
-        limit: 100000,
-        timeout: 1000000,
-        mode: 1,
-        ldlon: -180,
-        ldlat: -90,
-        rulon: 180,
-        rulat:90
-    };
-    $.post(url, data, function(res) {
-        var d = res.msg.shipList;
-        for (var i = 0, len = d.length; i < len; i++) {
-            d[i].la = d[i].la / 600000;
-            d[i].lo = d[i].lo / 600000;
-            d[i].v = 1;
-        }
-        var testData = {
-            max: 18,
-            data: d
-        };
-        var cfg = {
-            // radius should be small ONLY if scaleRadius is true (or small radius is intended)
-            // if scaleRadius is false it will be the constant radius used in pixels
-            "radius": 2,
-            "maxOpacity": .8,
-            // scales the radius based on map zoom
-            "scaleRadius": true,
-            // if set to false the heatmap uses the global maximum for colorization
-            // if activated: uses the data maximum within the current map boundaries 
-            //   (there will always be a red spot with useLocalExtremas true)
-            "useLocalExtrema": true,
-            // which field name in your data represents the latitude - default "lat"
-            latField: 'la',
-            // which field name in your data represents the longitude - default "lng"
-            lngField: 'lo',
-            // which field name in your data represents the data value - default "value"
-            valueField: 'v'
-        };
-
-
-        var heatmapLayer = new HeatmapOverlay(cfg);
-
-        map.addLayer(heatmapLayer);
-
-        heatmapLayer.setData(testData);
-    },'json');
-
-    // Papa.parse(url, {
-    //     download: true,
-    //     complete: function(results) {
-    //         var datas = results.data;
-    //         var testData = {
-    //             max: 18,
-    //             data: datas
-    //         };
-    //         var cfg = {
-    //             // radius should be small ONLY if scaleRadius is true (or small radius is intended)
-    //             // if scaleRadius is false it will be the constant radius used in pixels
-    //             "radius": 2,
-    //             "maxOpacity": .8,
-    //             // scales the radius based on map zoom
-    //             "scaleRadius": true,
-    //             // if set to false the heatmap uses the global maximum for colorization
-    //             // if activated: uses the data maximum within the current map boundaries 
-    //             //   (there will always be a red spot with useLocalExtremas true)
-    //             "useLocalExtrema": true,
-    //             // which field name in your data represents the latitude - default "lat"
-    //             latField: '0',
-    //             // which field name in your data represents the longitude - default "lng"
-    //             lngField: '1',
-    //             // which field name in your data represents the data value - default "value"
-    //             valueField: '2'
-    //         };
-
-
-    //         var heatmapLayer = new HeatmapOverlay(cfg);
-
-    //         map.addLayer(heatmapLayer);
-
-    //         heatmapLayer.setData(testData);
+    // var url = 'http://localhost:8080/rest/realtime/areaships.do';
+    // var data = {
+    //     limit: 100000,
+    //     timeout: 1000000,
+    //     mode: 1,
+    //     ldlon: -180,
+    //     ldlat: -90,
+    //     rulon: 180,
+    //     rulat:90
+    // };
+    // $.post(url, data, function(res) {
+    //     var d = res.msg.shipList;
+    //     for (var i = 0, len = d.length; i < len; i++) {
+    //         d[i].la = d[i].la / 600000;
+    //         d[i].lo = d[i].lo / 600000;
+    //         d[i].v = 1;
     //     }
-    // });
+    //     var testData = {
+    //         max: 18,
+    //         data: d
+    //     };
+    //     var cfg = {
+    //         // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+    //         // if scaleRadius is false it will be the constant radius used in pixels
+    //         "radius": 2,
+    //         "maxOpacity": .8,
+    //         // scales the radius based on map zoom
+    //         "scaleRadius": true,
+    //         // if set to false the heatmap uses the global maximum for colorization
+    //         // if activated: uses the data maximum within the current map boundaries 
+    //         //   (there will always be a red spot with useLocalExtremas true)
+    //         "useLocalExtrema": true,
+    //         // which field name in your data represents the latitude - default "lat"
+    //         latField: 'la',
+    //         // which field name in your data represents the longitude - default "lng"
+    //         lngField: 'lo',
+    //         // which field name in your data represents the data value - default "value"
+    //         valueField: 'v'
+    //     };
+
+
+    //     var heatmapLayer = new HeatmapOverlay(cfg);
+
+    //     map.addLayer(heatmapLayer);
+
+    //     heatmapLayer.setData(testData);
+    // },'json');
+
+    Papa.parse(url, {
+        download: true,
+        complete: function(results) {
+            var datas = results.data;
+            var testData = {
+                max: 18,
+                data: datas
+            };
+            var cfg = {
+                // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+                // if scaleRadius is false it will be the constant radius used in pixels
+                "radius": 2,
+                "maxOpacity": .8,
+                // scales the radius based on map zoom
+                "scaleRadius": true,
+                // if set to false the heatmap uses the global maximum for colorization
+                // if activated: uses the data maximum within the current map boundaries 
+                //   (there will always be a red spot with useLocalExtremas true)
+                "useLocalExtrema": true,
+                // which field name in your data represents the latitude - default "lat"
+                latField: '0',
+                // which field name in your data represents the longitude - default "lng"
+                lngField: '1',
+                // which field name in your data represents the data value - default "value"
+                valueField: '2'
+            };
+
+
+            var heatmapLayer = new HeatmapOverlay(cfg);
+
+            map.addLayer(heatmapLayer);
+
+            heatmapLayer.setData(testData);
+        }
+    });
 }
