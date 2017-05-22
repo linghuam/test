@@ -17,7 +17,7 @@ L.tileLayer.GoogleLayer().addTo(map);
 // var renderer = L.canvas();
 // var ply = L.polyline(latlngs, { renderer: renderer });
 // map.addLayer(ply); //map.removeLayer(ply);
-
+new L.CustomLayer().addTo(map);
 
 var OceanWeather = {};
 OceanWeather.pressure = function() {
