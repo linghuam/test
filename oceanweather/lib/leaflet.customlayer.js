@@ -1,42 +1,66 @@
-L.CustomLayer = L.Layer.extend({
-    onAdd: function(map) {
-        var pane = map.getPane(this.options.pane);
-        this._container = L.DomUtil.create('canvas');
-        this._ctx = this._container.getContext('2d');
+L.CustomLayer = L.Renderer.extend({
+   
+    initialize:function(options,data){
+        L.Renderer.prototype.initialize.call(this,options);
+        this.options.padding = 0.1;
+        this._data = data || [];
+    },
 
+    onAdd: function(map) {        
+        
+        this._container = L.DomUtil.create('canvas','leaflet-zoom-animated');
+
+        var pane = map.getPane(this.options.pane);
         pane.appendChild(this._container);
 
-        // Calculate initial position of container with `L.Map.latLngToLayerPoint()`, `getPixelOrigin()` and/or `getPixelBounds()`
-        // var point = map.getPixelOrigin();
-        var size = map.getSize();
-        // L.DomUtil.setPosition(this._container, point);
-        this._container.setAttribute('id','ca');
-        this._container.style.width = size.x + 'px';
-        this._container.style.height = size.y + 'px';
-        this._container.style.position = 'absolute';
-        // Add and position children elements if needed
+        this._ctx = this._container.getContext('2d');
 
-        map.on('zoomend viewreset', this._update, this);
         this._update();
     },
 
     onRemove: function(map) {
         L.DomUtil.remove(this._container);
-        map.off('zoomend viewreset', this._update, this);
     },
 
     _update: function() {
-        var mapPane = this._map.getPanes().overlayPane;
-        var point = {
-            x:-mapPane.offsetWidth,
-            y:-mapPane.offsetHeight
-        };
-        this._container.style.transform = 'translate(' +
-            -Math.round(point.x) + 'px,' +
-            -Math.round(point.y) + 'px)';
-        var ctx = this._ctx;
-        var latlng = L.latLng(30, 116);
-        var pt = this._map.latLngToContainerPoint(latlng);
+        if (this._map._animatingZoom && this._bounds) { return; }
+
+        L.Renderer.prototype._update.call(this);
+
+        var b = this._bounds,
+            container = this._container,
+            size = b.getSize(),
+            m = L.Browser.retina ? 2 : 1;
+
+        L.DomUtil.setPosition(container, b.min);
+
+        // set canvas size (also clearing it); use double size on retina
+        container.width = m * size.x;
+        container.height = m * size.y;
+        container.style.width = size.x + 'px';
+        container.style.height = size.y + 'px';
+
+        if (L.Browser.retina) {
+            this._ctx.scale(2, 2);
+        }
+
+        // translate so we use the same path coordinates after canvas element moves
+        this._ctx.translate(-b.min.x, -b.min.y);
+
+        // Tell paths to redraw themselves
+        this.fire('update');
+
+        this._draw();
+    },
+
+    _draw:function(){
+        if(!this._data.length) {return;}
+        var ctx = this._ctx,
+            map = this._map
+            data = this._data;
+
+        var latlng = L.latLng(39.876019, 116.427612);
+        var pt = this._map.latLngToLayerPoint(latlng);
         ctx.fillStyle = "#ff0000";
         ctx.fillRect(pt.x, pt.y, 10, 10);
     }

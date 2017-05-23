@@ -21,13 +21,6 @@ L.tileLayer.GoogleLayer().addTo(map);
 
 
 //test
-var tilepane = map.getPane('overlayPane')
-var tilepanecorner = document.createElement('div');
-tilepanecorner.style.width = '24px';
-tilepanecorner.style.height = '24px';
-tilepanecorner.style.borderTop = '2px green solid';
-tilepanecorner.style.borderLeft = '2px green solid';
-tilepane.appendChild(tilepanecorner);
 new L.CustomLayer().addTo(map);
 
 var OceanWeather = {};
