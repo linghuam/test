@@ -1,7 +1,7 @@
 var map = L.map('map', {
     center: [30, 116],
     zoom: 4,
-    zoomControl:false
+    zoomControl: false
 });
 map.on("mousemove", function(e) {
     var latlng = e.latlng;
@@ -21,10 +21,15 @@ L.tileLayer.GoogleLayer().addTo(map);
 
 
 //test
-var data = [{lat:45.51,lng:-122.68,value:1,dir:90},
-{lat:37.77,lng:-122.43,value:2,dir:120},
-{lat:34.04,lng:-118.2,value:3,dir:200}];
-new L.CustomLayer(null,data).addTo(map);
+// var data = [{ lat: 45.51, lng: -122.68, value: 1, dir: 90 },
+//     { lat: 37.77, lng: -122.43, value: 2, dir: 120 },
+//     { lat: 34.04, lng: -118.2, value: 3, dir: 200 },
+//     { lat: 39.04, lng: 116.2, value: 3, dir: 180 },
+//     { lat: 36.04, lng: 116.2, value: 3, dir: 270 },
+//     { lat: 34.04, lng: 116.2, value: 3, dir: 360 },
+//     { lat: 30.04, lng: 116.2, value: 3, dir: 0 }
+// ];
+// new L.CustomLayer(null, data).addTo(map);
 
 var OceanWeather = {};
 OceanWeather.pressure = function() {
@@ -44,7 +49,7 @@ OceanWeather.surge = function() {
     PapaParseArea('data/surge.csv');
 }
 OceanWeather.flow = function() {
-    PapaParseArea('data/flow.csv');
+    PapaParseFlow('data/flow.csv');
 }
 OceanWeather.temperature = function() {
     PapaParseLine('data/temperature.csv');
@@ -279,6 +284,24 @@ function PapaParseWind(url) {
                 var marker = L.marker(latlng, { icon: icon });
                 featueGroup.addLayer(marker);
             }
+        }
+    });
+}
+
+function PapaParseFlow(url) {
+
+    Papa.parse(url, {
+        download: true,
+        complete: function(results) {
+            var datas = results.data;
+            var config = {
+                lat: '0',
+                lng: '1',
+                dir: '3',
+                value: '2',
+                data: datas
+            };
+            new L.CustomLayer(null, config).addTo(map);
         }
     });
 }

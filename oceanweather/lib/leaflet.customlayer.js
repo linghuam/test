@@ -1,9 +1,10 @@
 L.CustomLayer = L.Renderer.extend({
 
-    initialize: function(options, data) {
+    initialize: function(options, config) {
         L.Renderer.prototype.initialize.call(this, options);
         this.options.padding = 0.1;
-        this._data = data || [];
+        this.cfg = config;
+        this._data = (config && config.data) || [];
     },
 
     onAdd: function(map) {
@@ -62,17 +63,17 @@ L.CustomLayer = L.Renderer.extend({
         var ctx = this._ctx,
             map = this._map
         data = this._data;
-        
+
         for (var i = 0, len = data.length; i < len; i++) {
             var obj = data[i];
-            var latlng = L.latLng(obj.lat, obj.lng);
+            var latlng = L.latLng(obj[this.cfg.lat], obj[this.cfg.lng]);
             var point = map.latLngToLayerPoint(latlng);
-            this.drawDirArrow(point,+obj.dir);
+            this.drawDirArrow(point,+obj[this.cfg.dir]);
         }
     },
     
     drawDirArrow:function(startpoint,dir,r){
-        r = r || 60;
+        r = r || 16;
         var arc = (Math.PI*dir)/180;
         var a = startpoint.x,
             b = startpoint.y,
@@ -80,9 +81,13 @@ L.CustomLayer = L.Renderer.extend({
             y0 = b-r;
         var x1 = a+(x0-a)*Math.cos(arc)-(y0-b)*Math.sin(arc);
         var y1 = b+(x0-a)*Math.sin(arc)+(y0-b)*Math.cos(arc);
-        this.drawArrow(this._ctx,a,b,x1,y1,30,30,10,'#f36');
+        this.drawArrow(this._ctx,a,b,x1,y1,30,10,8,'#2A95A6');
     },
-
+    
+    /*
+    * https://www.w3cplus.com/canvas/drawing-arrow.html
+    * https://www.zybang.com/question/fda330126d2232e5159d1ff1b69186b0.html
+     */
     drawArrow: function(ctx, fromX, fromY, toX, toY, theta, headlen, width, color) {
         theta = typeof(theta) != 'undefined' ? theta : 30;
         headlen = typeof(theta) != 'undefined' ? headlen : 10;
