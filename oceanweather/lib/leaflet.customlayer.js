@@ -1,14 +1,14 @@
 L.CustomLayer = L.Renderer.extend({
-   
-    initialize:function(options,data){
-        L.Renderer.prototype.initialize.call(this,options);
+
+    initialize: function(options, data) {
+        L.Renderer.prototype.initialize.call(this, options);
         this.options.padding = 0.1;
         this._data = data || [];
     },
 
-    onAdd: function(map) {        
-        
-        this._container = L.DomUtil.create('canvas','leaflet-zoom-animated');
+    onAdd: function(map) {
+
+        this._container = L.DomUtil.create('canvas', 'leaflet-zoom-animated');
 
         var pane = map.getPane(this.options.pane);
         pane.appendChild(this._container);
@@ -23,7 +23,9 @@ L.CustomLayer = L.Renderer.extend({
     },
 
     _update: function() {
-        if (this._map._animatingZoom && this._bounds) { return; }
+        if (this._map._animatingZoom && this._bounds) {
+            return;
+        }
 
         L.Renderer.prototype._update.call(this);
 
@@ -53,15 +55,64 @@ L.CustomLayer = L.Renderer.extend({
         this._draw();
     },
 
-    _draw:function(){
-        if(!this._data.length) {return;}
+    _draw: function() {
+        if (!this._data.length) {
+            return;
+        }
         var ctx = this._ctx,
             map = this._map
-            data = this._data;
+        data = this._data;
+        
+        for (var i = 0, len = data.length; i < len; i++) {
+            var obj = data[i];
+            var latlng = L.latLng(obj.lat, obj.lng);
+            var point = map.latLngToLayerPoint(latlng);
+            this.drawDirArrow(point,+obj.dir);
+        }
+    },
+    
+    drawDirArrow:function(startpoint,dir,r){
+        r = r || 60;
+        var arc = (Math.PI*dir)/180;
+        var a = startpoint.x,
+            b = startpoint.y,
+            x0 = a,
+            y0 = b-r;
+        var x1 = a+(x0-a)*Math.cos(arc)-(y0-b)*Math.sin(arc);
+        var y1 = b+(x0-a)*Math.sin(arc)+(y0-b)*Math.cos(arc);
+        this.drawArrow(this._ctx,a,b,x1,y1,30,30,10,'#f36');
+    },
 
-        var latlng = L.latLng(39.876019, 116.427612);
-        var pt = this._map.latLngToLayerPoint(latlng);
-        ctx.fillStyle = "#ff0000";
-        ctx.fillRect(pt.x, pt.y, 10, 10);
+    drawArrow: function(ctx, fromX, fromY, toX, toY, theta, headlen, width, color) {
+        theta = typeof(theta) != 'undefined' ? theta : 30;
+        headlen = typeof(theta) != 'undefined' ? headlen : 10;
+        width = typeof(width) != 'undefined' ? width : 1;
+        color = typeof(color) != 'color' ? color : '#000';
+        // 计算各角度和对应的P2,P3坐标 
+        var angle = Math.atan2(fromY - toY, fromX - toX) * 180 / Math.PI,
+            angle1 = (angle + theta) * Math.PI / 180,
+            angle2 = (angle - theta) * Math.PI / 180,
+            topX = headlen * Math.cos(angle1),
+            topY = headlen * Math.sin(angle1),
+            botX = headlen * Math.cos(angle2),
+            botY = headlen * Math.sin(angle2);
+        ctx.save();
+        ctx.beginPath();
+        var arrowX = fromX - topX,
+            arrowY = fromY - topY;
+        ctx.moveTo(arrowX, arrowY);
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        arrowX = toX + topX;
+        arrowY = toY + topY;
+        ctx.moveTo(arrowX, arrowY);
+        ctx.lineTo(toX, toY);
+        arrowX = toX + botX;
+        arrowY = toY + botY;
+        ctx.lineTo(arrowX, arrowY);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.stroke();
+        ctx.restore();
     }
 });
