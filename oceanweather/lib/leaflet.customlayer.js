@@ -10,6 +10,7 @@ L.CustomLayer = L.Layer.extend({
         // var point = map.getPixelOrigin();
         var size = map.getSize();
         // L.DomUtil.setPosition(this._container, point);
+        this._container.setAttribute('id','ca');
         this._container.style.width = size.x + 'px';
         this._container.style.height = size.y + 'px';
         this._container.style.position = 'absolute';
@@ -25,8 +26,11 @@ L.CustomLayer = L.Layer.extend({
     },
 
     _update: function() {
-        var mapPane = this._map.getPanes().mapPane;
-        var point = mapPane._leaflet_pos;
+        var mapPane = this._map.getPanes().overlayPane;
+        var point = {
+            x:-mapPane.offsetWidth,
+            y:-mapPane.offsetHeight
+        };
         this._container.style.transform = 'translate(' +
             -Math.round(point.x) + 'px,' +
             -Math.round(point.y) + 'px)';

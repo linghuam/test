@@ -1,6 +1,7 @@
 var map = L.map('map', {
     center: [30, 116],
-    zoom: 4
+    zoom: 4,
+    zoomControl:false
 });
 map.on("mousemove", function(e) {
     var latlng = e.latlng;
@@ -18,6 +19,15 @@ L.tileLayer.GoogleLayer().addTo(map);
 // var ply = L.polyline(latlngs, { renderer: renderer });
 // map.addLayer(ply); //map.removeLayer(ply);
 
+
+//test
+var tilepane = map.getPane('overlayPane')
+var tilepanecorner = document.createElement('div');
+tilepanecorner.style.width = '24px';
+tilepanecorner.style.height = '24px';
+tilepanecorner.style.borderTop = '2px green solid';
+tilepanecorner.style.borderLeft = '2px green solid';
+tilepane.appendChild(tilepanecorner);
 new L.CustomLayer().addTo(map);
 
 var OceanWeather = {};
