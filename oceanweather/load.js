@@ -40,7 +40,7 @@ OceanWeather.mb500 = function() {
     PapaParseLine('data/500mb.csv');
 }
 OceanWeather.wind = function() {
-    PapaParseWind('data/wind.csv');
+    PapaParseWind2('data/wind.csv');
 }
 OceanWeather.waveheight = function() {
     PapaParseLine('data/waveheight.csv');
@@ -288,8 +288,9 @@ function PapaParseWind(url) {
     });
 }
 
-function PapaParseFlow(url) {
-
+function PapaParseWind2(url) {
+    if (map.hasLayer(featueGroup)) map.removeLayer(featueGroup);
+    featueGroup = L.featureGroup([]).addTo(map);
     Papa.parse(url, {
         download: true,
         complete: function(results) {
@@ -301,7 +302,28 @@ function PapaParseFlow(url) {
                 value: '2',
                 data: datas
             };
-            new L.CustomLayer(null, config).addTo(map);
+            var windlayer = new L.WindLayer(null, config);
+            featueGroup.addLayer(windlayer);
+        }
+    });
+}
+
+function PapaParseFlow(url) {
+    if (map.hasLayer(featueGroup)) map.removeLayer(featueGroup);
+    featueGroup = L.featureGroup([]).addTo(map);
+    Papa.parse(url, {
+        download: true,
+        complete: function(results) {
+            var datas = results.data;
+            var config = {
+                lat: '0',
+                lng: '1',
+                dir: '3',
+                value: '2',
+                data: datas
+            };
+            var flowlayer = new L.CustomLayer(null, config);
+            featueGroup.addLayer(flowlayer);
         }
     });
 }
@@ -354,7 +376,11 @@ function PapaParseHeatmap(url) {
 
     //     heatmapLayer.setData(testData);
     // },'json');
+    // 
+    
 
+    if (map.hasLayer(featueGroup)) map.removeLayer(featueGroup);
+    featueGroup = L.featureGroup([]).addTo(map);
     Papa.parse(url, {
         download: true,
         complete: function(results) {
@@ -385,7 +411,7 @@ function PapaParseHeatmap(url) {
 
             var heatmapLayer = new HeatmapOverlay(cfg);
 
-            map.addLayer(heatmapLayer);
+            featueGroup.addLayer(heatmapLayer);
 
             heatmapLayer.setData(testData);
         }
