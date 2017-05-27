@@ -20,87 +20,32 @@ L.tileLayer.GoogleLayer().addTo(map);
 // var isolined = turf.isolines(points, 'z', 15, breaks);
 // L.geoJSON(isolined).addTo(map);
 
-
-
-// Parse local CSV file
-// Papa.parse('data.csv', {
-//     download: true,
-//     complete: function(results) {
-//         console.log("Finished:", results.data);
-//         var points = {
-//             type: "FeatureCollection",
-//             features: []
-//         };
-//         for (var i = 0, len = results.data.length; i < len; i++) {
-//             var row = results.data[i];
-//             var lat = +row[0];
-//             var lng = +row[1];
-//             var value = +row[2];
-//             var point = {
-//                 type: 'Feature',
-//                 bbox: [-180.0, -90.0, 180.0, 90.0],
-//                 geometry: {
-//                     type: 'Point',
-//                     coordinates: [lng, lat]
-//                 },
-//                 properties: {
-//                     z: value
-//                 }
-//             };
-//             points.features.push(point);
-//         }
-//         var breaks = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7];
-//         var isolined = turf.isolines(points, 'z', 15, breaks);
-//         L.geoJSON(isolined).addTo(map);
-//     }
-// });
-
-
-Papa.parse('data.csv', {
-    download: true,
-    complete: function(results) {
-        console.log("Finished:", results.data);
-    },
-    step: function(results, parser) {
-        if (results.data[0][0] === '' && this.arr.length) {
-            // console.log(JSON.stringify(this.arr));
-
-            // handler data -------------start------------------------
-            var latlngs = [];
-            for (var i = 0, len = this.arr.length; i < len; i++) {
-                var row = this.arr[i];
-                var lat = +row[0];
-                var lng = +row[1];
-                var value = +row[2];
-                var latlng = L.latLng(lat, lng);
-
-                if (i === 0) {
-                    latlngs.push(latlng);
-                } else {
-                    var lastlng = (latlngs[latlngs.length - 1]).lng;
-                    var extend = Math.abs(lng - lastlng);
-                    if (extend >= 180) {  //解决经度范围超过180连线异常
-                        L.polyline(latlngs).addTo(map);
-                        latlngs = [];
-                        latlngs.push(latlng);
-                    } else {
-                    	latlngs.push(latlng);
-                        if (i === len - 1) {
-                            L.polyline(latlngs).addTo(map);
-                            latlngs = [];
-                        }
-                    }
-                }
+d3.json('d3.json', function(data) {
+    var points = {
+        type: "FeatureCollection",
+        features: []
+    };
+    for (var i = 0, len = data.length; i < len; i++) {
+        var row = data[i];
+        var lat = +row['lat'];
+        var lng = +row['lng'];
+        var value = +row['value'];
+        var point = {
+            type: 'Feature',
+            bbox: [-180.0, -90.0, 180.0, 90.0],
+            geometry: {
+                type: 'Point',
+                coordinates: [lng, lat]
+            },
+            properties: {
+                z: value
             }
-            // handler datq ----------------end-----------------------------
-            // 
-            this.arr = [];
-        } else {
-            if (this.arr) {
-                this.arr.push(results.data[0]);
-            } else {
-                this.arr = [];
-            }
-        }
+        };
+        points.features.push(point);
     }
+    var breaks = d3.range(2, 800, 10);
+    // isobands弃用 https://gis.stackexchange.com/questions/198482/turf-isobands-doesnt-work/207075#207075?newreg=b8ac26f38a0c411e928cd37e3391d6f8
+    // var isobands = turf.isobands(points,breaks,'z',{}); 
+    var isolined = turf.isolines(points, 'z', 15, breaks);
+    L.geoJSON(isolined).addTo(map);
 });
