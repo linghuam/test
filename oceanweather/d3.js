@@ -7,7 +7,8 @@
 OceanWeather.d3 = function() {
     if (map.hasLayer(this.d3Overlay)) { map.removeLayer(this.d3Overlay); }
     this.d3Overlay = L.d3SvgOverlay(function(selection, projection) {
-        d3DrawChina(selection, projection);
+        // d3DrawChina(selection, projection);
+        d3DrawContour(selection, projection);
     });
     map.addLayer(this.d3Overlay);
 };
@@ -18,12 +19,39 @@ function d3DrawChina(selection, projection) {
 
         var transform = d3.geoTransform({
             point: function(x, y) {
-            	var pt = projection.latLngToLayerPoint(L.latLng(y,x));
+                var pt = projection.latLngToLayerPoint(L.latLng(y, x));
                 this.stream.point(pt.x, pt.y);
             }
         });
         selection.append("path")
             .datum(data)
             .attr("d", d3.geoPath().projection(transform));
+    });
+}
+
+function d3DrawContour(selection, projection) {
+    d3.json('data/d3.json', function(data) {
+        var transform = d3.geoTransform({
+            point: function(x, y) {
+                var pt = projection.latLngToLayerPoint(L.latLng(y, x));
+                this.stream.point(pt.x, pt.y);
+            }
+        });
+
+        var values = [];
+        for (var i = 0, len = data.length; i < len; i++) {
+            values.push(data[i].value);
+        }
+        var contours = d3.contours()
+            .size([180, 180])
+            .thresholds(d3.range(2, 800, 10))
+            (values);
+
+        selection.selectAll('path')
+            .data(contours)
+            .enter()
+            .append('path')
+            .attr('d', d3.geoPath())
+
     });
 }
