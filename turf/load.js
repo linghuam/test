@@ -46,6 +46,6 @@ d3.json('d3.json', function(data) {
     var breaks = d3.range(2, 800, 10);
     // isobands弃用 https://gis.stackexchange.com/questions/198482/turf-isobands-doesnt-work/207075#207075?newreg=b8ac26f38a0c411e928cd37e3391d6f8
     // var isobands = turf.isobands(points,breaks,'z',{}); 
-    var isolined = turf.isolines(points, 'z', 15, breaks);
+    var isolined = turf.isolines(points, 'z', 50, breaks);
     L.geoJSON(isolined).addTo(map);
 });
