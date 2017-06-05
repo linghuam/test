@@ -7,9 +7,9 @@
 OceanWeather.d3 = function() {
     if (map.hasLayer(this.d3Overlay)) { map.removeLayer(this.d3Overlay); }
     this.d3Overlay = L.d3SvgOverlay(function(selection, projection) {
-        // d3DrawChina(selection, projection);
+        d3DrawChina(selection, projection);
         // d3DrawContour(selection, projection);
-        d3Test(selection, projection)
+        // d3Test(selection, projection)
     });
     map.addLayer(this.d3Overlay);
 };

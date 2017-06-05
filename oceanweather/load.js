@@ -358,7 +358,7 @@ function PapaParseHeatmap(url) {
         }
         console.log(JSON.stringify(test));
         var testData = {
-            max: 18,
+            max: 99999,
             data: d
         };
         var cfg = {
