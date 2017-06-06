@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <script src="https://cdn.rawgit.com/jpillora/xdomain/0.7.4/dist/xdomain.min.js" slave="http://targetserver:8080/test/xdomain/proxy.html"></script>
+    <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+    //do some vanilla XHR
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://122.5.51.230:10002/rest/count/countAll.do');
+    xhr.onreadystatechange = function(e) {
+        if (xhr.readyState === 4)
+            console.log("got result: ", xhr.responseText);
+    };
+    xhr.send({mode:1});
+
+    // //or if we are using jQuery...
+    $.post('http://122.5.51.230:10002/rest/count/countAll.do',{mode:1},function(data){
+    	console.dir(data);
+    },'json');
+    </script>
+</body>
+
+</html>
