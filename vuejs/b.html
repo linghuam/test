@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <script src="https://unpkg.com/vue"></script>
+</head>
+
+<body>
+    <div id="myapp">
+        <ul>
+            <li v-for="item in items">
+                {{item.msg}}
+            </li>
+        </ul>
+        <ul>
+            <li v-for="(item,index) in items">
+                {{index}}-{{item.msg}}
+            </li>
+        </ul>
+        </ul>
+        <ul>
+            <li v-for="(item,index) of items">
+                {{index}}-{{item.msg}}
+            </li>
+        </ul>
+        <ul>
+            <li v-for="value in object">
+                {{value}}
+            </li>
+        </ul>
+        <ul>
+            <li v-for="(value,key) in object">
+                {{key}}:{{value}}
+            </li>
+        </ul>
+        <ul>
+            <li v-for="(value,key,index) in object">
+                {{index}}-{{key}}:{{value}}
+            </li>
+        </ul>
+        <ul>
+            <li v-for="n in 10">
+                {{n}}
+            </li>
+        </ul>
+        <ul>
+            <li v-for="s in string">
+                {{s}}
+            </li>
+        </ul>        
+    </div>
+    <script type="text/javascript">
+    var vm = new Vue({
+        el: '#myapp',
+        data: {
+            items: [{
+                msg: 'aaa'
+            }, {
+                msg: 'bbb'
+            }, {
+                msg: 'ccc'
+            }, {
+                msg: 'ddd'
+            }],
+            object: {
+                name: 'lhm',
+                age: 25,
+                sex: 'man'
+            },
+            string: 'my name is menglinghua'
+        }
+    });
+    </script>
+</body>
+
+</html>
