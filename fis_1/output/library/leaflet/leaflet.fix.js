@@ -1,1 +1,0 @@
-define("leaflet/fix",["leaflet"],function(t){t.Marker.include({setOpacity:function(t){return this.options.opacity=t,this._map&&this._updateOpacity(),this},_updateOpacity:function(){var i=this.options.opacity;0===i?this._icon.style.display="none":1===i?this._icon.style.display="block":t.DomUtil.setOpacity(this._icon,i),this._shadow&&t.DomUtil.setOpacity(this._shadow,i)}})});

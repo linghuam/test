@@ -1,1 +1,0 @@
-define("core/namespace",["leaflet"],function(e){window.L=window.L||{},e.ICT=e.ICT||{},e.ict=e.ict||{},e.ICT.App=e.ict.app=e.ICT.App||{},e.ICT.Func=e.ICT.Func||{},e.ICT.Util=e.ICT.Util||{},e.ICT.Control=e.ICT.Control||{}});

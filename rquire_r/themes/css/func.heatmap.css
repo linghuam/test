@@ -1,7 +1,0 @@
-.submenu_heatmap {}
-.submenu_heatmap > .submenu_heatmap_li{padding:5px;cursor:pointer;}
-.submenu_heatmap > .submenu_heatmap_li >label{cursor:pointer;}
-.submenu_heatmap > .submenu_heatmap_li:not(.active):hover{background-color:#2276c2;}
-.submenu_heatmap > .submenu_heatmap_li.active{background-color:#02408B;border-radius:12px;}
-.submenu_heatmap > .submenu_heatmap_li select{color:initial;margin-left:5px;border-radius:6px;}
-.submenu_heatmap > .submenu_heatmap_li > .time_ul label{font-size:normal;margin-bottom:5px;}

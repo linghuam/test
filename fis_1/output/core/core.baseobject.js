@@ -1,1 +1,0 @@
-define("core/baseobject",["leaflet","core/namespace"],function(e){return e.ICT.BaseObject=e.Class.extend({includes:e.Mixin.Events,id:null,initialize:function(){},getType:function(){return typeof this}}),e.ICT.BaseObject});

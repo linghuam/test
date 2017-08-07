@@ -1,8 +1,0 @@
-.ict-leaflet-control-layers{position:relative;}
-.ict-leaflet-control-layers>ul{list-style: none; padding-left:0; margin-top:0; clear:both;border-radius:6px;}
-.ict-leaflet-control-layers>ul:before,
-.ict-leaflet-control-layers>ul:after{display: table; content: " "; clear:both;}
-.ict-leaflet-control-layers>ul>li{float:left;cursor:pointer;}
-.ict-leaflet-control-layers>ul>li>a{position:relative; display:block; text-decoration:none; padding:3px 18px; color:#637993; background-color:#D8E6F4;}
-.ict-leaflet-control-layers>ul>li:nth-child(2n)>a{border-left:solid 1px silver;border-right:solid 1px silver;}
-.ict-leaflet-control-layers>ul>.active>a{color:#E96037; background-color:#B0E9FD; }
