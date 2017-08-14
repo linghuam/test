@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Demo</title>
-	<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
-	<script src="lib/jquery/jquery.min.js"></script>
-	<script src="lib/bootstrap/js/bootstrap.min.js"></script>
-	<script src="https://d3js.org/d3.v4.min.js"></script>
-	<script src="lib/echarts.min.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Demo</title>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="lib/echarts.min.js"></script>
 </head>
+
 <body>
-	
+    <script type="text/javascript">
+    d3.csv("/path/to/file.csv", function (error, data) {
+        if(error) throw error;
+        console.log(data); // [{"Hello": "world"}, …]
+    });
+    </script>
 </body>
+
 </html>
