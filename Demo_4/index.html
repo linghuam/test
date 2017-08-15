@@ -10,13 +10,15 @@
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="lib/echarts.min.js"></script>
+    <script src="util.js"></script>
 </head>
 
 <body>
     <script type="text/javascript">
-    d3.csv("/path/to/file.csv", function (error, data) {
+    d3.csv("data/标签关联边.csv", function (error, data) {
         if(error) throw error;
-        console.log(data); // [{"Hello": "world"}, …]
+        console.log(data); 
+        
     });
     </script>
 </body>
