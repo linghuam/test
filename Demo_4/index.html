@@ -29,6 +29,7 @@
     <script src="tagpie.js"></script>
     <script src="tagrect.js"></script>
     <script src="tagline.js"></script>
+    <script src="radar.js"></script>
 </head>
 
 <body>
@@ -40,6 +41,7 @@
     <div id="tagpie" style="width:800px;height:600px;"></div>
     <div id="tagrect" style="width:800px;height:600px;"></div>
     <div id="tagline" style="width:800px;height:600px;"></div>
+    <div id="radar" style="width:800px;height:600px;"></div>
 
 
     <script type="text/javascript">
@@ -51,6 +53,7 @@
         new TagPie('data/全部标签统计.csv', 'tagpie');
         new TagRect('data/全部标签统计.csv', 'tagrect');
         new TagLine('data/全部标签统计.csv', 'tagline');
+        new RadarGraph('data/装备雷达-总.csv', 'radar', 'EQ1090型汽车');
     </script>
 </body>
 
