@@ -49,8 +49,6 @@ class RadarGraph {
     };
 
     this._echarts.setOption(option);
-
-    window.onresize = this._echarts.resize;
   }
 
   getOptData(data) {
