@@ -11,154 +11,17 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="lib/echarts.js"></script>
     <script src="lib/LinqToJavascript.js"></script>
+
+    <!-- myjs -->
+    <script src="config.js"></script>
     <script src="util.js"></script>
+    <script src="graph.js"></script>
 </head>
 
 <body>
     <div id="chart" style="width:800px;height:600px;"></div>
     <script type="text/javascript">
-    var nodesData, linkData, docData, tagDocData;
-    var options = {};
-
-    var readFile = function (fileName) {
-        return new Promise(function (resolve, reject) {
-            d3.csv(fileName, function (error, data) {
-                if(error) throw error;
-                resolve(data);
-
-            });
-        });
-    };
-
-    async function getData() {
-        nodesData = await readFile('data/标签关联点.csv');
-        linkData = await readFile('data/标签关联边.csv');
-        tagDocData = await readFile('data/标签关联文章列表.csv');
-        docData = await readFile('data/文章列表.csv');
-    }
-
-    var callbackFunc = function () {
-        var selected_tag_name = '不定时检查车况';
-        var _categories = ["行为", "器件", "故障"];
-        var categories = [
-            { name: "行为" },
-            { name: "器件" },
-            { name: "故障" }
-        ];
-        var nodes = [];
-        var select_nodes = nodesData.where(o => o.selected_tag_name === selected_tag_name);
-        for(let i = 0, len = select_nodes.length; i < len; i++) {
-            let n = select_nodes[i];
-            let j = 0;
-            let lenj = nodes.length;
-            for (; j < lenj; j++) {
-                if (n.p_tag_name === nodes[j].name) {
-                    nodes[j].value += 1;
-                    break;
-                }
-            }
-            if (j === lenj) {
-                if (n.p_tag_name === selected_tag_name) {
-                    nodes.push({
-                        symbol:'roundRect',
-                        // fixed: true, //'circular'
-                        category: _categories.indexOf(n.p_tag_type),
-                        name: n.p_tag_name,
-                        value: 1
-                    });                     
-                } else {
-                    nodes.push({
-                        category: _categories.indexOf(n.p_tag_type),
-                        name: n.p_tag_name,
-                        value: 1
-                    });                      
-                }
-              
-            }
-        }
-        console.log(nodes);
-
-        var links = [];
-        var select_links = linkData.where(o => o.selected_tag_name === selected_tag_name);
-        for(let i = 0, len = select_links.length; i < len; i++) {
-            let lnk = select_links[i];
-            let j = 0;
-            let lenj = links.length;
-            for(; j < lenj; j++) {
-                let lnkj = links[j];
-                if(lnk.S_tag_name === lnkj.source && lnk.T_tag_name === lnkj.target && lnkj.docids.indexOf(lnk.doc_id) === -1) {
-                    lnkj.docids.push(lnk.doc_id);
-                    lnkj.value += 1;
-                    break;
-                }
-            }
-            if(j === lenj) {
-                links.push({
-                    source: lnk.S_tag_name,
-                    target: lnk.T_tag_name,
-                    value:1,
-                    docids: [lnk.doc_id]
-                });
-            }
-        }
-        console.log(links);
-
-        var options = {
-            title: {
-                text: '单标签'
-            },
-            tooltip: {
-                trigger: 'item',
-                formatter: '{a} : {b}'
-            },
-            toolbox: {
-                show: true,
-                feature: {
-                    restore: { show: true },
-                    magicType: { show: true, type: ['force', 'chord'] },
-                    saveAsImage: { show: true }
-                }
-            },
-            legend: {
-                data: categories
-            },
-            series: [{
-                name: '单标签',
-                type: 'graph',               
-                layout: 'force', //'force', 'circular'
-                categories: categories,
-                nodes: nodes,
-                links: links,                
-                roam: true, 
-                force: { //force -start
-                    repulsion: 100,
-                    edgeLength: [80, 400]
-                },
-                focusNodeAdjacency: true,
-                draggable: true, // forec-end               
-                symbolSize: 40,
-                itemStyle:{
-                    normal:{
-                    },
-                    emphasis:{}
-                },
-                label:{
-                    normal:{
-                        show:true,
-                        position:'insideLeft'
-                    },
-                    emphasis:{
-                        show:true
-                    }
-                }
-            }]
-        };
-        console.log(options)
-        var myChart = echarts.init(document.getElementById('chart'));
-        myChart.setOption(options);
-    }
-
-    getData().then(callbackFunc);
+        new GraphAnalysis('chart', '启动困难');
     </script>
 </body>
 

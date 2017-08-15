@@ -1,5 +1,16 @@
 var Util = {};
 
+// 读取文件
+Util.readFile = function (fileName) {
+    return new Promise(function (resolve, reject) {
+        d3.csv(fileName, function (error, data) {
+            if(error) throw error;
+            resolve(data);
+        });
+    });
+}
+
+//将unix时间戳转化为字符串(yy-mm-dd hh:mm:ss)
 Util.getTimeStrFromUnix = function (time) {
     time = parseInt(time * 1000)
     if(isNaN(time)) {
@@ -14,4 +25,19 @@ Util.getTimeStrFromUnix = function (time) {
     var seconds = newDate.getSeconds() < 10 ? '0' + newDate.getSeconds() : newDate.getSeconds()
     var ret = year + '-' + month + '-' + day + ' ' + hours + ':' + minuts + ':' + seconds
     return ret
+}
+
+//得到特定格式(yy-mm-dd hh:mm:ss)时间的unix时间戳
+Util.getCusUnixTime = function (sjstr) {
+    var sjsplit = sjstr.split(" ");
+    var ymd = sjsplit[0].split("-");
+    var hms = sjsplit[1].split(":");
+    var year = parseInt(ymd[0]);
+    var month = parseInt(ymd[1]) > 0 ? parseInt(ymd[1]) - 1 : 0;
+    var day = parseInt(ymd[2]);
+    var hour = parseInt(hms[0]);
+    var minutes = parseInt(hms[1]);
+    var seconds = parseInt(hms[2]);
+    var d = new Date(year, month, day, hour, minutes, seconds);
+    return d.valueOf() / 1000;
 }
