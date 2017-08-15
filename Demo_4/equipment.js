@@ -17,6 +17,7 @@ class EquipmentAnalysis {
         this._linkData = null;
         this._docData = null;
         this._tagDocData = null;
+        this._timeData = null;
 
         this.getData().then(this._callbackFunc.bind(this));
     }
@@ -26,18 +27,37 @@ class EquipmentAnalysis {
         this._linkData = await Util.readFile('data/装备关联边-时间戳-无向.csv');
         this._tagDocData = await Util.readFile('data/装备关联文章列表.csv');
         this._docData = await Util.readFile('data/文章列表.csv');
+        this._timeData = await Util.readFile('data/装备关联最大值最小值-时间戳.csv');
     }
 
     _callbackFunc() {
-        var nodes = this.getNodes();
-        var links = this.getLinks();
+
+        let {startTime, endTime } = this.getStartEndTime();
+        this._startTime = startTime;
+        this._endTime = endTime;
+        this.update(startTime, endTime);
+    }
+
+    update (startTime, endTime) {
+         var nodes = this.getNodes(startTime, endTime);
+        var links = this.getLinks(startTime, endTime);
         var options = this.getChartOptions(this._categories, nodes, links);
         this._echarts.setOption(options);
     }
 
-    getNodes() {
+    getStartEndTime () {
+        var ts = this._timeData.where(o => o.selected_equipment === this._selectTagName);
+        if (ts.length) {
+            return {
+                startTime: ts[0].min_time,
+                endTime: ts[0].max_time
+            }
+        }
+    }
+
+    getNodes(startTime, endTime) {
         var nodes = [];
-        var select_nodes = this._nodesData.where(o => o.selected_equipment === this._selectTagName);
+        var select_nodes = this._nodesData.where(o => o.selected_equipment === this._selectTagName && o.create_time <= endTime && o.create_time >= startTime);
         for(let i = 0, len = select_nodes.length; i < len; i++) {
             let n = select_nodes[i];
             let j = 0;
@@ -61,9 +81,9 @@ class EquipmentAnalysis {
         return nodes;
     }
 
-    getLinks() {
+    getLinks(startTime, endTime) {
         var links = [];
-        var select_links = this._linkData.where(o => o.selected_equipment === this._selectTagName);
+        var select_links = this._linkData.where(o => o.selected_equipment === this._selectTagName && o.create_time <= endTime && o.create_time >= startTime);
         for(let i = 0, len = select_links.length; i < len; i++) {
             let lnk = select_links[i];
             let j = 0;
