@@ -61,7 +61,7 @@
                 if (n.p_tag_name === selected_tag_name) {
                     nodes.push({
                         symbol:'roundRect',
-                        fixed: true, //'circular'
+                        // fixed: true, //'circular'
                         category: _categories.indexOf(n.p_tag_type),
                         name: n.p_tag_name,
                         value: 1
@@ -125,17 +125,17 @@
             series: [{
                 name: '单标签',
                 type: 'graph',               
-                layout: 'circular', //'force', 'circular'
+                layout: 'force', //'force', 'circular'
                 categories: categories,
                 nodes: nodes,
                 links: links,                
                 roam: true, 
-                // force: { //force -start
-                //     repulsion: 100,
-                //     edgeLength: [80, 400]
-                // },
-                // focusNodeAdjacency: true,
-                // draggable: true, // forec-end               
+                force: { //force -start
+                    repulsion: 100,
+                    edgeLength: [80, 400]
+                },
+                focusNodeAdjacency: true,
+                draggable: true, // forec-end               
                 symbolSize: 40,
                 itemStyle:{
                     normal:{
