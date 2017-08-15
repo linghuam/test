@@ -26,6 +26,9 @@
     <script src="wordcloud1.js"></script>
     <script src="wordcloud2.js"></script>
     <script src="wordcloud3.js"></script>
+    <script src="tagpie.js"></script>
+    <script src="tagrect.js"></script>
+    <script src="tagline.js"></script>
 </head>
 
 <body>
@@ -34,6 +37,10 @@
     <div id="wordcloud1" style="width:800px;height:600px;"></div>   
     <canvas id="wordcloud2" width="900" height="900">your browser is not soupport canvas!</canvas>
     <div id="wordcloud3" style="width:600px;height: 400px;"></div> 
+    <div id="tagpie" style="width:800px;height:600px;"></div>
+    <div id="tagrect" style="width:800px;height:600px;"></div>
+    <div id="tagline" style="width:800px;height:600px;"></div>
+
 
     <script type="text/javascript">
         new GraphAnalysis('chart1', '启动困难');
@@ -41,6 +48,9 @@
         new WordCloud1('data/全部标签统计.csv', 'wordcloud1');
         new WordCloud2('data/全部标签统计.csv', 'wordcloud2');
         new WordCloud3('data/行为原因标签统计.csv', 'wordcloud3');
+        new TagPie('data/全部标签统计.csv', 'tagpie');
+        new TagRect('data/全部标签统计.csv', 'tagrect');
+        new TagLine('data/全部标签统计.csv', 'tagline');
     </script>
 </body>
 
