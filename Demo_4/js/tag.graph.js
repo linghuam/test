@@ -30,7 +30,7 @@ class TagGraph {
     }
   }
 
-  updateWordCloud　(type, elementId) {
+  updateWordCloud(type, elementId) {
     var data = null;
     if(type === 'all') {
       data = this._allData;

@@ -3,11 +3,13 @@ class TagLayout {
 	constructor (containerClass) {
 		this._contanier = $('.' + containerClass);
         this._tagGraph = new TagGraph();
-		this._initEvt();		
+        this._initEvt();        
 	}
 
 	start () {
 		this._contanier.css('display', 'block');
+        this._tagGraph.loadData();
+
 	}
 
  	stop () {
@@ -33,17 +35,11 @@ class TagLayout {
     }
 
     _update (type){
-
-    	if (type === 'all') {
-    		new WordCloud3('data/全部标签统计.csv', 'tag_wordcloud');
-    		new TagPie('data/全部标签统计.csv', 'tagpie');
-    	} else if (type === 'gz') {
-    		new WordCloud3('data/故障原因标签统计.csv', 'tag_wordcloud');    		
-    	} else if (type === 'qj') {
-    		new WordCloud3('data/器件原因标签统计.csv', 'tag_wordcloud');
-    	} else if (type === 'xw') {
-    		new WordCloud3('data/行为原因标签统计.csv', 'tag_wordcloud');
-    	}
+        this._tagGraph.updateWordCloud(type, 'tag_wordcloud');
+        this._tagGraph.updatePie(type, 'tag_pie');
+        this._tagGraph.updateBar(type, 'tag_bar');
+        this._tagGraph.updateLine(type, 'tag_line');
+        this._tagGraph.updateTable(type, 'tag_table');
     }
 
 
