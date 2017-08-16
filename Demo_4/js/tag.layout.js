@@ -1,7 +1,8 @@
-class LayoutTagAnalysis {
+class TagLayout {
 
 	constructor (containerClass) {
 		this._contanier = $('.' + containerClass);
+        this._tagGraph = new TagGraph();
 		this._initEvt();		
 	}
 
@@ -32,6 +33,7 @@ class LayoutTagAnalysis {
     }
 
     _update (type){
+
     	if (type === 'all') {
     		new WordCloud3('data/全部标签统计.csv', 'tag_wordcloud');
     		new TagPie('data/全部标签统计.csv', 'tagpie');
