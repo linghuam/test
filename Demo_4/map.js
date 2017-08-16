@@ -47,22 +47,23 @@ class MapGraph {
     var option = {
       backgroundColor: '#404a59',
       title: {
-        text: '城市分布',
-        subtext: 'data from PM25.in',
-        sublink: 'http://www.pm25.in',
+        text: '地点分布',
         left: 'center',
         textStyle: {
           color: '#fff'
         }
       },
       tooltip: {
-        trigger: 'item'
+        trigger: 'item',
+        formatter: function (params) {
+          return params.name + ' : ' + params.value[2];
+        }
       },
       // legend: {
       //   orient: 'vertical',
       //   y: 'bottom',
       //   x: 'right',
-      //   data: ['pm2.5'],
+      //   data: ['count'],
       //   textStyle: {
       //     color: '#fff'
       //   }
@@ -86,7 +87,7 @@ class MapGraph {
         }
       },
       series: [{
-          name: 'pm2.5',
+          name: 'count',
           type: 'scatter',
           coordinateSystem: 'geo',
           data: convertData(data),
@@ -110,7 +111,7 @@ class MapGraph {
           }
         },
         {
-          name: 'Top 5',
+          name: 'Top5',
           type: 'effectScatter',
           coordinateSystem: 'geo',
           data: convertData(data.sort(function (a, b) {
