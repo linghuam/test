@@ -26,12 +26,11 @@ class TagPie {
     var option = {
       title: {
         text: '饼图',
-        subtext: '',
-        x: 'center'
+        left: 'left'
       },
       tooltip: {
         trigger: 'item',
-        formatter: "{a} <br/>{b} : {c} ({d}%)"
+        formatter: "{b} : {c} ({d}%)"
       },
       // legend: {
       //   orient: 'vertical',
@@ -39,7 +38,7 @@ class TagPie {
       //   data: data
       // },
       series: [{
-        name: '访问来源',
+        name: 'count',
         type: 'pie',
         radius: '55%',
         center: ['50%', '60%'],
