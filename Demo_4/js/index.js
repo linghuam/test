@@ -18,4 +18,6 @@ $(function () {
 		$('.module-container').css('display', 'none');
 
 	});
+
+	$('#tag_analysis').click();
 });

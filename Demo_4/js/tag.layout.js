@@ -3,7 +3,7 @@ class TagLayout {
 	constructor (containerClass) {
 		this._contanier = $('.' + containerClass);
         this._tagGraph = new TagGraph();
-        this._initEvt();        
+        this._initEvt();               
 	}
 
 	start () {
@@ -16,21 +16,23 @@ class TagLayout {
 	}   
 
     _initEvt () {
-    	this._contanier.find('.operate_container .tag_select').on('click', function(){
+        var self = this;
+    	this._contanier.find('.tag_select').on('click', function(){
     		$(this).addClass('active').siblings().removeClass('active');
     		if ($(this).hasClass('tag_all')){
-    			this._update('all');
+    			self._update('all');
+
     		} else if ($(this).hasClass('tag_gz')) {
-    			this._update('gz');
+    			self._update('gz');
 
     		} else if ($(this).hasClass('tag_qj')) {
-    			this._update('qj');
+    			self._update('qj');
 
     		} else if ($(this).hasClass('tag_xw')) {
-    			this._update('xw');
+    			self._update('xw');
 
     		}
-    	})
+    	});
     }
 
     _update (type){

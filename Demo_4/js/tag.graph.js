@@ -8,7 +8,7 @@ class TagGraph {
     this._xwData = null;
     this._lineData = null;
     this.categories = {
-      all: '全部'，
+      all: '全部',
       qj: '器件',
       gz: '故障',
       xw: '行为'
@@ -16,11 +16,11 @@ class TagGraph {
   }
 
   async getData() {
-    this._allData = await Util.readFile('../data/全部标签统计.csv');
-    this._gzData = await Util.readFile('../data/故障原因标签统计.csv');
-    this._qjData = await Util.readFile('../data/器件原因标签统计.csv');
-    this._xwData = await Util.readFile('../data/行为原因标签统计.csv');
-    this._lineData = await Util.readFile('../data/TOP5折线图 - 日期.csv');
+    this._allData = await Util.readFile('data/全部标签统计.csv');
+    this._gzData = await Util.readFile('data/故障原因标签统计.csv');
+    this._qjData = await Util.readFile('data/器件原因标签统计.csv');
+    this._xwData = await Util.readFile('data/行为原因标签统计.csv');
+    this._lineData = await Util.readFile('data/TOP5折线图 - 日期.csv');
   }
 
   loadData() {
@@ -31,23 +31,26 @@ class TagGraph {
   }
 
   updateWordCloud(type, elementId) {
-    var data = null;
+    var origdata = null;
     if(type === 'all') {
-      data = this._allData;
-      new TagPie('data/全部标签统计.csv', 'tagpie');
+      origdata = this._allData;
     } else if(type === 'gz') {
-      data = this._gzData;
+      origdata = this._gzData;
     } else if(type === 'qj') {
-      data = this._qjData;
+      origdata = this._qjData;
     } else if(type === 'xw') {
-      data = this._xwData;
+      origdata = this._xwData;
     }
-    if(!data) return;
+    if(!origdata) return;
     var list = [];
-    for(let i = 0, len = data.length; i < len; i++) {
-      list.push([data[i].tag_name, parseInt(data[i].tag_count)]);
+    for(let i = 0, len = origdata.length; i < len; i++) {
+      list.push([origdata[i].tag_name, parseInt(origdata[i].tag_count)]);
     }
     var option = {
+      title:{
+        text: '词云',
+        left: 'center'
+      },
       tooltip: {
         show: true,
         formatter: function (item) {
@@ -66,7 +69,6 @@ class TagGraph {
     var origdata = null;
     if(type === 'all') {
       origdata = this._allData;
-      new TagPie('data/全部标签统计.csv', 'tagpie');
     } else if(type === 'gz') {
       origdata = this._gzData;
     } else if(type === 'qj') {
@@ -119,7 +121,6 @@ class TagGraph {
     var origdata = null;
     if(type === 'all') {
       origdata = this._allData;
-      new TagPie('data/全部标签统计.csv', 'tagpie');
     } else if(type === 'gz') {
       origdata = this._gzData;
     } else if(type === 'qj') {
@@ -265,7 +266,6 @@ class TagGraph {
     var origdata = null;
     if(type === 'all') {
       origdata = this._allData;
-      new TagPie('data/全部标签统计.csv', 'tagpie');
     } else if(type === 'gz') {
       origdata = this._gzData;
     } else if(type === 'qj') {
@@ -282,7 +282,9 @@ class TagGraph {
         field: 'tag_count',
         title: '计数项'
       }],
-      data:origdata
+      data:origdata,
+      sortable:true,
+      height:400
     });
   }
 
