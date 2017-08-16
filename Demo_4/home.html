@@ -34,6 +34,7 @@
   <script src="js/proj.util.js"></script>
   <script src="js/tag.graph.js"></script>
   <script src="js/tag.single.js"></script>
+  <script src="js/tag.single.graph.js"></script>
   <script src="js/tag.layout.js"></script>
 
 </head>
@@ -97,7 +98,7 @@
             <form action="" class="form-inline" role="form">
               <div class="form-group">
                 <label for="dtp_input1" class="control-label">起始时间:</label>
-                <div class="input-group date form_datetime" data-link-field="dtp_input1">
+                <div id="tag_single_time_start" class="input-group date form_datetime" data-link-field="dtp_input1">
                   <input class="form-control" size="16" type="text" value="" readonly>
                   <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
                 </div>
@@ -106,7 +107,7 @@
               </div>
               <div class="form-group">
                 <label for="dtp_input2" class="control-label">终止时间:</label>
-                <div class="input-group date form_datetime" data-link-field="dtp_input2">
+                <div id="tag_single_time_end" class="input-group date form_datetime" data-link-field="dtp_input2">
                   <input class="form-control" size="16" type="text" value="" readonly>
                   <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
                 </div>

@@ -3,29 +3,7 @@ class TagSingle {
   constructor(containerClass) {
     this._contanier = $('.' + containerClass);
     this._months = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
-  }
-
-  start(tagname) {
-    this._contanier.css('display', 'block');
-    this._tagname = tagname;
-    this._initEvt();
-  }
-
-  stop() {
-    this._contanier.css('display', 'none');
-  }
-
-  _initEvt() {
-    var self = this;
-    // 标题
-    this._contanier.find('.tagname').html(this._tagname );
-    // back按钮
-    this._contanier.find('.backbtn').on('click', function () {
-    	self._contanier.css('display', 'none');
-    	$('.tag_container').css('display', 'block');
-    });
-    // 日期控件
-    $(".form_datetime").datetimepicker({
+    this._dataOptions = {
       language: 'zh-CN',
       format: 'yyyy-mm-dd',
       minView: 2,
@@ -35,7 +13,42 @@ class TagSingle {
       todayHighlight: true,
       todayBtn: true,
       pickerPosition: "bottom-left"
+    };
+    this._singleGraph = new TagSingleGraph('tag_single_relationchart');
+  }
+
+  start(tagname) {
+    this._contanier.css('display', 'block');
+    this._tagname = tagname;
+    this._singleGraph.loadData(this._loadDataCallback.bind(this), tagname);
+  }
+
+  stop() {
+    this._contanier.css('display', 'none');
+  }
+
+  _loadDataCallback() {
+  	this._initEvt();
+  }
+
+  _initEvt() {
+    var self = this;
+    // 标题
+    this._contanier.find('.tagname').html(this._tagname);
+    // back按钮
+    this._contanier.find('.backbtn').on('click', function () {
+      self._contanier.css('display', 'none');
+      $('.tag_container').css('display', 'block');
     });
+    // 日期控件
+    $('#tag_single_time_start').datetimepicker(this._dataOptions).on('changeDate', function (ev) {
+      alert(ev.timeStamp);
+    });
+    $('#tag_single_time_end').datetimepicker(this._dataOptions).on('changeDate', function (ev) {
+      alert(ev.timeStamp);
+    });
+    $('#tag_single_time_start').find('input').val(Util.getTimeStrFromUnixYMD(this._singleGraph.getStartTime()));
+    $('#tag_single_time_end').find('input').val(Util.getTimeStrFromUnixYMD(this._singleGraph.getEndTime()));
     // 时间轴
     this._createDemos();
   }

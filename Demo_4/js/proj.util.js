@@ -65,6 +65,23 @@ Util.getTimeStrFromUnix2 = function (time) {
   return ret
 }
 
+//将unix时间戳转化为字符串(yy-mm-dd)
+Util.getTimeStrFromUnixYMD = function (time) {
+  time = parseInt(time * 1000)
+  if(isNaN(time)) {
+    return ''
+  }
+  var newDate = new Date(time)
+  var year = newDate.getFullYear()
+  var month = (newDate.getMonth() + 1) < 10 ? '0' + (newDate.getMonth() + 1) : newDate.getMonth() + 1
+  var day = newDate.getDate() < 10 ? '0' + newDate.getDate() : newDate.getDate()
+  var hours = newDate.getHours() < 10 ? '0' + newDate.getHours() : newDate.getHours()
+  var minuts = newDate.getMinutes() < 10 ? '0' + newDate.getMinutes() : newDate.getMinutes()
+  var seconds = newDate.getSeconds() < 10 ? '0' + newDate.getSeconds() : newDate.getSeconds()
+  var ret = year + '-' + month + '-' + day
+  return ret
+}
+
 //得到特定格式(yy-mm-dd hh:mm:ss)时间的unix时间戳
 Util.getCusUnixTime = function (sjstr) {
   var sjsplit = sjstr.split(" ");

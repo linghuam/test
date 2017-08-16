@@ -1,13 +1,13 @@
 class TagSingleGraph {
 
-  constructor(elementId, selectTagName) {
+  constructor(elementId) {
 
     this._echarts = echarts.init(document.getElementById(elementId));
     this._echarts.on('click', this._clickEvt.bind(this));
 
     this._chartOptions = {};
 
-    this._selectTagName = selectTagName;
+    this._selectTagName = null;
     this._categories = [
       { name: "行为" },
       { name: "器件" },
@@ -20,7 +20,6 @@ class TagSingleGraph {
     this._tagDocData = null;
     this._timeData = null;
 
-    // this.getData().then(this._callbackFunc.bind(this));
   }
 
   async getData() {
@@ -31,20 +30,36 @@ class TagSingleGraph {
     this._timeData = await Util.readFile('data/标签关联最大值最小值-时间戳.csv');
   }
 
-  loadData() {
+  loadData(callback, selectTagName) {
+    var self = this;
+    this._selectTagName = selectTagName;
     if(!this._nodesData || !this._linkData || !this._tagDocData || !this._docData || !this._timeData) {
       $('#loading').css('display', 'block');
-      this.getData().then(this._callbackFunc.bind(this));
+      this.getData().then(function(){
+        self._callbackFunc();
+        callback();
+      });
+    } else {
+      callback();
     }
   }
+
   _callbackFunc() {
+    $('#loading').css('display', 'none');
     let { startTime, endTime } = this.getStartEndTime();
     this._startTime = startTime;
     this._endTime = endTime;
-    this.update(startTime, endTime);
   }
 
-  update(startTime, endTime) {
+  getStartTime() {
+    return this._startTime;
+  }
+
+  getEndTime() {
+    return this._endTime;
+  }
+
+  updateGraph(startTime, endTime) {
     var nodes = this.getNodes(startTime, endTime);
     var links = this.getLinks(startTime, endTime);
     var options = this.getChartOptions(this._categories, nodes, links);
