@@ -3,6 +3,7 @@ class TagLayout {
   constructor(containerClass) {
     this._contanier = $('.' + containerClass);
     this._tagGraph = new TagGraph();
+    this._tagSingle = new TagSingle('tag_single_container');
     this._initEvt();
   }
 
@@ -44,6 +45,7 @@ class TagLayout {
   }
 
   _updateTable(type, tableId) {
+    var self = this;
     var data = this._tagGraph.getTableData(type);
     if(data && data.length) {
       $('#' + tableId).bootstrapTable('destroy');
@@ -56,7 +58,8 @@ class TagLayout {
           title: '计数项'
         }],
         onClickRow: function (row, $element, field) {
-          alert(row.tag_name);
+          self._contanier.css('display', 'none');
+          self._tagSingle.start(row.tag_name);
           console.log(row);
         },
         data: data,
