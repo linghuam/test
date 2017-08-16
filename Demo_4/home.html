@@ -93,9 +93,9 @@
         <div class="container-fluid module-container tag_single_container">
           <div class="operate_container">
           <div><button type="button" class="btn btn-link backbtn">返回</button></div>
-            <h2 class='tagname'></h2>
+            <h4 class='tagname' style="display:none;"></h4>
             <!-- 时间控件 -->
-            <form action="" class="form-inline" role="form">
+            <form action="" class="form-inline" role="form" style="display:none;">
               <div class="form-group">
                 <label for="dtp_input1" class="control-label">起始时间:</label>
                 <div id="tag_single_time_start" class="input-group date form_datetime" data-link-field="dtp_input1">
@@ -116,17 +116,17 @@
               </div>
             </form>
             <!-- 时间轴 -->
-            <div class="dateSlider" style="width:970px; height:40px;"><div id="tag_single_timeslider"></div></div>
+            <div class="dateSlider" style="width:970px; height:40px;margin-top:40px;margin-bottom:20px;"><div id="tag_single_timeslider"></div></div>
           </div>
-          <div class="chart_container" style="margin-top:80px;">
+          <div class="chart_container" style="margin-top:160px;">
             <div class="row">
               <div class="col-md-4">
-                <div style="position:absolute;left:0;top:0;width:200px;">
+                <div style="">
                   <table id="tag_single_table"></table>
                 </div>
               </div>
               <div class="col-md-8">
-                <div id="tag_single_relationchart" style="width:100%;height: 400px;"></div>
+                <div id="tag_single_relationchart" style="width:600px;height: 400px;"></div>
               </div>
             </div>
           </div>

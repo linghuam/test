@@ -92,6 +92,9 @@ class TagSingle {
       self._singleGraph.updateGraph(Util.getCusUnixTime(stime + ' 00:00:00'), Util.getCusUnixTime(etime + ' 00:00:00'));
       console.log("起止时间：" + stime + " 至 " + etime);
     });
+
+    this._singleGraph.updateGraph(this._singleGraph.getStartTime(), this._singleGraph.getEndTime());
+
   }
 
 }

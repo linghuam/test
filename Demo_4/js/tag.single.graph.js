@@ -133,7 +133,7 @@ class TagSingleGraph {
   getChartOptions(categories, nodes, links) {
     var options = {
       title: {
-        text: '单标签'
+        text:  this._selectTagName
       },
       tooltip: {
         trigger: 'item',
