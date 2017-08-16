@@ -9,7 +9,6 @@ class TagLayout {
 	start () {
 		this._contanier.css('display', 'block');
         this._tagGraph.loadData();
-
 	}
 
  	stop () {
