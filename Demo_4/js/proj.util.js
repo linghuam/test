@@ -96,3 +96,17 @@ Util.getCusUnixTime = function (sjstr) {
   var d = new Date(year, month, day, hour, minutes, seconds);
   return d.valueOf() / 1000;
 }
+
+Util.getCusUnixDate = function (sjstr) {
+  var sjsplit = sjstr.split(" ");
+  var ymd = sjsplit[0].split("-");
+  var hms = sjsplit[1].split(":");
+  var year = parseInt(ymd[0]);
+  var month = parseInt(ymd[1]) > 0 ? parseInt(ymd[1]) - 1 : 0;
+  var day = parseInt(ymd[2]);
+  var hour = parseInt(hms[0]);
+  var minutes = parseInt(hms[1]);
+  var seconds = parseInt(hms[2]);
+  var d = new Date(year, month, day, hour, minutes, seconds);
+  return d
+}

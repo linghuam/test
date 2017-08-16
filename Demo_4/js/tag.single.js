@@ -28,7 +28,7 @@ class TagSingle {
   }
 
   _loadDataCallback() {
-  	this._initEvt();
+    this._initEvt();
   }
 
   _initEvt() {
@@ -42,25 +42,24 @@ class TagSingle {
     });
     // 日期控件
     $('#tag_single_time_start').datetimepicker(this._dataOptions).on('changeDate', function (ev) {
-      alert(ev.timeStamp);
+      // var endt = Util.getCusUnixDate($('#tag_single_time_end').find('input').val() + ' 00:00:00');
+      var endt = self._dateSilderObj.dateRangeSlider('values').max;
+      if(self._dateSilderObj)
+        self._dateSilderObj.dateRangeSlider("values", new Date(ev.timeStamp), endt);
     });
     $('#tag_single_time_end').datetimepicker(this._dataOptions).on('changeDate', function (ev) {
-      alert(ev.timeStamp);
+      // var start = Util.getCusUnixDate($('#tag_single_time_start').find('input').val() + ' 00:00:00');
+      var start = self._dateSilderObj.dateRangeSlider('values').min;      
+      if(self._dateSilderObj)
+        self._dateSilderObj.dateRangeSlider("values", start, new Date(ev.timeStamp));
     });
     $('#tag_single_time_start').find('input').val(Util.getTimeStrFromUnixYMD(this._singleGraph.getStartTime()));
     $('#tag_single_time_end').find('input').val(Util.getTimeStrFromUnixYMD(this._singleGraph.getEndTime()));
     // 时间轴
-    this._createDemos();
-  }
-
-  _createDemos() {
-    var self = this;
-    var date = $("<div id='date' />").appendTo($(".dateSlider")); //渲染日期组件
-    var dateSilderObj = date.dateRangeSlider({
+    this._dateSilderObj = $('#tag_single_timeslider').dateRangeSlider({
       arrows: false, //是否显示左右箭头
-      bounds: { min: new Date(2013, 7, 1), max: new Date(2014, 6, 31, 12, 59, 59) }, //最大 最少日期
-      defaultValues: { min: new Date(2014, 1, 23), max: new Date(2014, 4, 23) } //默认选中区域
-      ,
+      bounds: { min: new Date(this._singleGraph.getStartTime() * 1000), max: new Date(this._singleGraph.getEndTime() * 1000) }, //最大 最少日期
+      defaultValues: { min: new Date(this._singleGraph.getStartTime() * 1000), max: new Date(this._singleGraph.getEndTime() * 1000) }, //默认选中区域
       scales: [{
         first: function (value) { return value; },
         end: function (value) { return value; },
@@ -75,20 +74,22 @@ class TagSingle {
           tickContainer.addClass("myCustomClass");
         }
       }]
-
-    }); //日期控件
+    });
 
     //重新赋值（整个时间轴）
-    dateSilderObj.dateRangeSlider("bounds", new Date(2013, 8, 1), new Date(2014, 7, 31, 12, 59, 59));
+    // dateSilderObj.dateRangeSlider("bounds", new Date(2013, 8, 1), new Date(2014, 7, 31, 12, 59, 59));
 
     //重新赋值（选中区域）
-    dateSilderObj.dateRangeSlider("values", new Date(2014, 2, 23), new Date(2014, 5, 23));
+    // dateSilderObj.dateRangeSlider("values", new Date(2014, 2, 23), new Date(2014, 5, 23));
 
     //拖动完毕后的事件
-    dateSilderObj.bind("valuesChanged", function (e, data) {
+    this._dateSilderObj.bind("valuesChanged", function (e, data) {
       var val = data.values;
       var stime = val.min.getFullYear() + "-" + (val.min.getMonth() + 1) + "-" + val.min.getDate();
       var etime = val.max.getFullYear() + "-" + (val.max.getMonth() + 1) + "-" + val.max.getDate();
+      // $('#tag_single_time_start').find('input').val(stime);
+      // $('#tag_single_time_end').find('input').val(etime);
+      self._singleGraph.updateGraph(Util.getCusUnixTime(stime + ' 00:00:00'), Util.getCusUnixTime(etime + ' 00:00:00'));
       console.log("起止时间：" + stime + " 至 " + etime);
     });
   }
