@@ -24,6 +24,13 @@ class RadarGraph {
     this._gzData = this._allData.where(o => o.equipment === this._eqname && o.tag_type === this.categories[2]);
     
     var {categoryData, countData} = this.getOptData(this._gzData);
+    var max = this.getMax(countData);
+    if (max) {
+      categoryData = categoryData.map(function (d) {
+         d.max = max;
+         return d;
+      });
+    }
     var option = {
       title: {
         text: '基础雷达图'
@@ -60,10 +67,9 @@ class RadarGraph {
         let obj = d2[i];
         let cd = {
           name: obj.key,
-          max: 1000
+          max: 100
         };
         let sum = this.getSum(obj.value);
-        cd.max = sum;
         categoryData.push(cd);
         countData.push(sum);
       }
@@ -72,6 +78,18 @@ class RadarGraph {
       categoryData,
       countData
     };
+  }
+
+  getMax(arr) {
+    if (arr.length) {
+     var max =  arr[0];
+     for (let i = 0,len = arr.length; i < len; i++) {
+        if (arr[i] > max) {
+          max = arr[i];
+        }
+     }
+     return max;
+    }
   }
 
   getSum(arr) {

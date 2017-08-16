@@ -4,20 +4,19 @@ class MapGraph {
 
     this._eqname = equipmentName;
     this._allData = [];
+    this._chinajson = null;
     this._echarts = echarts.init(document.getElementById(elementId));
-    $.get('data/china.json', function(chinaJson) {
-    	echarts.registerMap('china',chinaJson);
-    }.bind(this))
     this.getData(filename).then(this._callbackFunc.bind(this));
 
   }
 
   async getData(filename) {
     this._allData = await Util.readFile(filename);
+    this._chinajson = await Util.getJson('data/china.json');
   }
 
   _callbackFunc() {
-
+    echarts.registerMap('china',this._chinajson);
     var filterData = this._allData.where(o => o.equipment === this._eqname);
     var catedata = filterData.groupBy('location');
     var data = [];

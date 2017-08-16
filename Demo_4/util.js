@@ -1,6 +1,6 @@
 var Util = {};
 
-// 读取文件
+// d3读取csv文件
 Util.readFile = function (fileName) {
   return new Promise(function (resolve, reject) {
     d3.csv(fileName, function (error, data) {
@@ -10,6 +10,7 @@ Util.readFile = function (fileName) {
   });
 }
 
+// 用Paparse读取csv文件
 Util.readFileByPaparse = function (fileName) {
   return new Promise(function (resolve, reject) {
     Papa.parse(fileName, {
@@ -17,6 +18,16 @@ Util.readFileByPaparse = function (fileName) {
       complete: function (results) {
         resolve(results.data);
       }
+    });
+  });
+}
+
+//获取json文件
+Util.getJson = function (fileName) {
+  return new Promise(function (resolve, reject) {
+    d3.json(fileName, function (error, data) {
+      if(error) throw error;
+      resolve(data);
     });
   });
 }
