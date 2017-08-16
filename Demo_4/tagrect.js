@@ -17,6 +17,10 @@ class TagRect {
       x.push(this._worldsData[i].tag_name);
       y.push(parseInt(this._worldsData[i].tag_count));
     }
+     
+    //数据个数限制
+    x = x.slice(0,30);
+    y = y.slice(0,30);
 
     var option = {
       title: {

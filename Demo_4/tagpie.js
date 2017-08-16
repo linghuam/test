@@ -19,8 +19,9 @@ class TagPie {
         value: parseInt(this._worldsData[i].tag_count)
       });
     }
-
-    data = data.slice(0,10);
+    
+    //数据个数限制
+    data = data.slice(0,30);
 
     var option = {
       title: {
