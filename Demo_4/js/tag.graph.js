@@ -47,7 +47,7 @@ class TagGraph {
       list.push([origdata[i].tag_name, parseInt(origdata[i].tag_count)]);
     }
     var option = {
-      title:{
+      title: {
         text: '词云',
         left: 'center'
       },
@@ -262,7 +262,7 @@ class TagGraph {
     ect.setOption(option);
   }
 
-  updateTable(type, tableId) {
+  getTableData(type) {
     var origdata = null;
     if(type === 'all') {
       origdata = this._allData;
@@ -273,19 +273,7 @@ class TagGraph {
     } else if(type === 'xw') {
       origdata = this._xwData;
     }
-    if(!origdata) return;
-    $('#' + tableId).bootstrapTable({
-      columns: [{
-        field: 'tag_name',
-        title: '标签'
-      }, {
-        field: 'tag_count',
-        title: '计数项'
-      }],
-      data:origdata,
-      sortable:true,
-      height:400
-    });
+    return origdata;
   }
 
   getseriesData(arr) {
