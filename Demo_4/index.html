@@ -33,7 +33,7 @@
     <script src="map.js"></script>
 </head>
 
-<body>
+<body style="margin-left:120px;">
     <div id="chart1" style="width:800px;height:600px;"></div>
     <div id="chart2" style="width:800px;height:600px;"></div>
     <!-- <div id="wordcloud1" style="width:800px;height:600px;"></div>    -->
@@ -54,7 +54,7 @@
         new WordCloud3('data/行为原因标签统计.csv', 'wordcloud3');
         new TagPie('data/全部标签统计.csv', 'tagpie');
         new TagRect('data/全部标签统计.csv', 'tagrect');
-        new TagLine('data/全部标签统计.csv', 'tagline');
+        new TagLine('data/TOP5折线图 - 日期.csv', 'tagline', '全部');
         new RadarGraph('data/装备雷达-总.csv', 'radar', 'EQ1090型汽车');
         new MapGraph('data/装备故障地点-经纬度.csv', 'map', '汉阳HY4320S半挂牵引车');
     </script>
