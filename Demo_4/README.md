@@ -1,7 +1,10 @@
-jQuery横向时间轴插件:http://www.jq22.com/jquery-info2833
 jQuery滑块插件slider:http://www.jq22.com/jquery-info6088
 jQuery左右滑动 选取数值:http://www.jq22.com/jquery-info2517
+
 基于Bootstrap的炫酷jQuery slider插件http://www.jq22.com/yanshi9075
+
+jQuery横向时间轴插件:http://www.jq22.com/jquery-info2833
+
 
 词云生成：https://github.com/jasondavies/d3-cloud
 

@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="lib/bootstraptable/bootstrap-table.min.css">
     <link rel="stylesheet" type="text/css" href="lib/bootstrapdatepicker/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="lib/jqDateSlider/dateSlider.css">
     <link rel="stylesheet" type="text/css" href="main.css">
     <script src="lib/jquery/jquery.min.js"></script>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
@@ -15,6 +16,8 @@
     <script src="lib/bootstraptable/bootstrap-table-zh-CN.min.js"></script>
     <script src="lib/bootstrapdatepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="lib/bootstrapdatepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="lib/jqDateSlider/jquery.ui.js"></script>
+    <script src="lib/jqDateSlider/dateSlider.js"></script>
     <script src="lib/d3/d3.min.js"></script>
     <script src="lib/d3.layout.cloud.js"></script>
     <script src="lib/echarts.js"></script>
@@ -86,6 +89,13 @@
                                 <br/>
                             </div>
                         </form>
+                        <!-- 时间轴 -->
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <div class="dateSlider" id="dateSlider" style="width:970px; height:40px;">&nbsp;</div>
+                        <!-- 时间轴 -->
                     </div>
                     <div class="chart_container">
                         <div id="tag_wordcloud"></div>
@@ -109,6 +119,53 @@
         todayBtn: true,
         pickerPosition: "bottom-left"
     });
+    var Months = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+    $(function () {
+        createDemos();
+    });
+
+    function createDemos() {
+
+        var date = $("<div id='date' />").appendTo($("#dateSlider")); //渲染日期组件
+        var dateSilderObj = date.dateRangeSlider({
+            arrows: false, //是否显示左右箭头
+            bounds: { min: new Date(2013, 7, 1), max: new Date(2014, 6, 31, 12, 59, 59) }, //最大 最少日期
+            defaultValues: { min: new Date(2014, 1, 23), max: new Date(2014, 4, 23) } //默认选中区域
+            ,
+            scales: [{
+                first: function (value) { return value; },
+                end: function (value) { return value; },
+                next: function (val) {
+                    var next = new Date(val);
+                    return new Date(next.setMonth(next.getMonth() + 1));
+                },
+                label: function (val) {
+                    return Months[val.getMonth()];
+                },
+                format: function (tickContainer, tickStart, tickEnd) {
+                    tickContainer.addClass("myCustomClass");
+                }
+            }]
+
+
+        }); //日期控件
+
+        //重新赋值（整个时间轴）
+        dateSilderObj.dateRangeSlider("bounds", new Date(2013, 8, 1), new Date(2014, 7, 31, 12, 59, 59));
+
+        //重新赋值（选中区域）
+        dateSilderObj.dateRangeSlider("values", new Date(2014, 2, 23), new Date(2014, 5, 23));
+
+        //拖动完毕后的事件
+        dateSilderObj.bind("valuesChanged", function (e, data) {
+            var val = data.values;
+            var stime = val.min.getFullYear() + "-" + (val.min.getMonth() + 1) + "-" + val.min.getDate();
+            var etime = val.max.getFullYear() + "-" + (val.max.getMonth() + 1) + "-" + val.max.getDate();
+            console.log("起止时间：" + stime + " 至 " + etime);
+        });
+
+
+    }
     </script>
 </body>
 
