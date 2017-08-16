@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Demo</title>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="lib/bootstraptable/bootstrap-table.min.css">
+    <link rel="stylesheet" type="text/css" href="lib/bootstrapdatepicker/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="lib/bootstraptable/bootstrap-table.min.js"></script>
+    <script src="lib/bootstraptable/bootstrap-table-zh-CN.min.js"></script>
+    <script src="lib/bootstrapdatepicker/bootstrap-datetimepicker.min.js"></script>
+    <script src="lib/bootstrapdatepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="lib/d3/d3.min.js"></script>
+    <script src="lib/d3.layout.cloud.js"></script>
+    <script src="lib/echarts.js"></script>
+    <script src="lib/echarts-wordcloud.min.js"></script>
+    <script src="lib/papaparse.min.js"></script>
+    <script src="lib/LinqToJavascript.js"></script>
+    <script src="lib/wordcloud2.js"></script>
+    <script src="lib/js2wordcloud.js"></script>
+
+    <!-- myjs -->
+    <script src="config.js"></script>
+    <script src="util.js"></script>
+    <script src="graph.js"></script>
+    <script src="equipment.js"></script>
+    <script src="wordcloud1.js"></script>
+    <script src="wordcloud2.js"></script>
+    <script src="wordcloud3.js"></script>
+    <script src="tagpie.js"></script>
+    <script src="tagrect.js"></script>
+    <script src="tagline.js"></script>
+    <script src="radar.js"></script>
+    <script src="map.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Demo 演示系统</a>
+                </div>
+            </div>
+        </nav>
+        <div class="row">
+            <div class="col-md-2 container-left">
+                <ul class="nav nav-pills nav-stacked">
+                    <li role="presentation" id="tag_analysis" class="active"><a href="#">标签统计分析</a></li>
+                    <li role="presentation" id="equipment_analysis"><a href="#">装备故障分析</a></li>
+                    <li role="presentation" id="article_analysis"><a href="#">文章分析</a></li>
+                </ul>
+            </div>
+            <div class="col-md-10 container-right">
+                <div class="container-fluid tag_container">
+                    <div class="operate_container">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default">全部</button>
+                            <button type="button" class="btn btn-default">故障原因</button>
+                            <button type="button" class="btn btn-default">器件原因</button>
+                            <button type="button" class="btn btn-default">行为原因</button>
+                        </div>
+                        <table id="tag_table"></table>
+                        <form action="" class="form-inline" role="form">
+                            <div class="form-group">
+                                <label for="dtp_input1" class="control-label">起始时间:</label>
+                                <div class="input-group date form_datetime" data-link-field="dtp_input1">
+                                    <input class="form-control" size="16" type="text" value="" readonly>
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                                </div>
+                                <input type="hidden" id="dtp_input1" value="" />
+                                <br/>
+                            </div>
+                            <div class="form-group">
+                                <label for="dtp_input2" class="control-label">终止时间:</label>
+                                <div class="input-group date form_datetime" data-link-field="dtp_input2">
+                                    <input class="form-control" size="16" type="text" value="" readonly>
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                                </div>
+                                <input type="hidden" id="dtp_input2" value="" />
+                                <br/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="chart_container">
+                        <div id="tag_wordcloud"></div>
+                        <div id="tag_pie"></div>
+                        <div id="tag_line"></div>
+                        <div id="tag_bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+    $(".form_datetime").datetimepicker({
+        language: 'zh-CN',
+        format: 'yyyy-mm-dd',
+        minView: 2,
+        maxView: 3,
+        startView: 2,
+        autoclose: true,
+        todayHighlight: true,
+        todayBtn: true,
+        pickerPosition: "bottom-left"
+    });
+    </script>
+</body>
+
+</html>
