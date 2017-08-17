@@ -275,6 +275,26 @@ class EqpGraph {
         var links = this.getLinks(startTime, endTime, equipmentName);
         var options = this.getChartOptions(this._categories, nodes, links);
         myecharts.setOption(options);
+        myecharts.on('click', function (params) {
+            if(this._chartClickCallback) {
+                this._chartClickCallback(params);
+            }
+        });
+    }
+
+    setChartClickCallback(callback) {
+        this._chartClickCallback = callback;
+    }
+
+    getDocsByids(ids) {
+        var filterdata = [];
+        if(ids && ids.length) {
+            filterdata = this._docData.where(function (o) {
+                return ids.indexOf(o.id) !== -1;
+            });
+        }
+        return filterdata;
+
     }
 
     _callbackFunc() {

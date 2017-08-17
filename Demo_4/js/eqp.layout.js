@@ -29,9 +29,10 @@ class EquipMentLayout {
                     title: '装备列表'
                 }],
                 onClickRow: function (row, $element, field) {
-                	this._eqpGraph.updateRadar(['eqp_qj_chart', 'eqp_gz_chart', 'eqp_xw_chart'], row.equipment);
-                	this._eqpGraph.updateMap('eqp_map_chart', row.equipment);
                     this._updateTimeSlider(row.equipment);
+                    this._eqpGraph.updateRadar(['eqp_qj_chart', 'eqp_gz_chart', 'eqp_xw_chart'], row.equipment);
+                    this._eqpGraph.updateMap('eqp_map_chart', row.equipment);
+                    this._eqpGraph.setChartClickCallback(this._chartClickCallBack.bind(this));
                 }.bind(this),
                 data: data,
                 sortable: true,
@@ -41,14 +42,15 @@ class EquipMentLayout {
     }
 
     _updateTimeSlider(eqpName) {
+        var { startTime as initstime, endTime as initetime } = this._eqpGraph.getStartEndTime(eqpName);
         // 时间轴
         if(this._dateSilderObj) {
             this._dateSilderObj.dateRangeSlider("destroy");
         }
         this._dateSilderObj = $('#eqp_timeslider').dateRangeSlider({
             arrows: false, //是否显示左右箭头
-            bounds: { min: new Date(this._eqpGraph.getStartTime() * 1000), max: new Date(this._eqpGraph.getEndTime() * 1000) }, //最大 最少日期
-            defaultValues: { min: new Date(this._eqpGraph.getStartTime() * 1000), max: new Date(this._eqpGraph.getEndTime() * 1000) }, //默认选中区域
+            bounds: { min: new Date(initstime * 1000), max: new Date(initetime * 1000) }, //最大 最少日期
+            defaultValues: { min: new Date(initstime * 1000), max: new Date(initetime * 1000) }, //默认选中区域
             scales: [{
                 first: function (value) { return value; },
                 end: function (value) { return value; },
@@ -74,4 +76,35 @@ class EquipMentLayout {
             // console.log("起止时间：" + stime + " 至 " + etime);
         });
     }
+
+    _updateLinkDocTable(tableId, data) {
+        var self = this;
+        if(data && data.length) {
+            $('#' + tableId).bootstrapTable('destroy');
+            $('#' + tableId).bootstrapTable({
+                columns: [{
+                    field: 'id',
+                    title: '序号'
+                }, {
+                    field: 'title',
+                    title: '标题'
+                }, {
+                    field: 'create_time',
+                    title: '时间'
+                }],
+                onClickRow: function (row, $element, field) {
+                    console.log(row);
+                },
+                data: data,
+                sortable: true,
+                height: 500
+            });
+        }
+    }
+
+    _chartClickCallBack(param) {
+        var docData = this._eqpGraph.getDocsByids(param.data.docids);
+        this._updateLinkDocTable('eqp_doc_table', docData);
+    }
+}
 }
