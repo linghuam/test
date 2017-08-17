@@ -11,7 +11,7 @@ $(function () {
 	$('#equipment_analysis').on('click', function () {
 		$(this).addClass('active').siblings().removeClass('active');
 		$('.module-container').css('display', 'none');
-        eqplayoutInstance.strat();
+        eqplayoutInstance.start();
 	});
 
 	$('#article_analysis').on('click', function () {

@@ -65,6 +65,7 @@ class EqpGraph {
     }
 
     _updateRadar(elementId, category) {
+        echarts.dispose(document.getElementById(elementId));
         var myecharts = echarts.init(document.getElementById(elementId));
         if(category === this.categories.xw) {
             var { categoryData, countData } = this._getRadarOptData(this._xwData);
@@ -84,7 +85,7 @@ class EqpGraph {
             var option = {
                 title: {
                     text: category,
-                    left: 'center'
+                    left: 'left'
                 },
                 tooltip: {},
                 radar: {
@@ -148,6 +149,7 @@ class EqpGraph {
     }
 
     updateMap(elementId, equipmentName) {
+        echarts.dispose(document.getElementById(elementId));
         echarts.registerMap('china', this._chinajson);
         var myecharts = echarts.init(document.getElementById(elementId));
         var filterData = this._mapData.where(o => o.equipment === equipmentName);
@@ -270,16 +272,18 @@ class EqpGraph {
     }
 
     updateLinkChart(elementId, equipmentName, startTime, endTime) {
+        echarts.dispose(document.getElementById(elementId));
         var myecharts = echarts.init(document.getElementById(elementId));
-        var nodes = this.getNodes(startTime, endTime, equipmentName);
-        var links = this.getLinks(startTime, endTime, equipmentName);
-        var options = this.getChartOptions(this._categories, nodes, links);
-        myecharts.setOption(options);
         myecharts.on('click', function (params) {
             if(this._chartClickCallback) {
                 this._chartClickCallback(params);
             }
-        });
+        }.bind(this));
+        var nodes = this.getNodes(startTime, endTime, equipmentName);
+        var links = this.getLinks(startTime, endTime, equipmentName);
+        var options = this.getChartOptions(this._categories, nodes, links);
+        myecharts.setOption(options);
+
     }
 
     setChartClickCallback(callback) {

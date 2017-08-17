@@ -3,6 +3,7 @@ class EquipMentLayout {
     constructor(containerClass) {
         this._contanier = $('.' + containerClass);
         this._eqpGraph = new EqpGraph();
+        this._months = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
     }
 
     start() {
@@ -30,7 +31,7 @@ class EquipMentLayout {
                 }],
                 onClickRow: function (row, $element, field) {
                     this._updateTimeSlider(row.equipment);
-                    this._eqpGraph.updateRadar(['eqp_qj_chart', 'eqp_gz_chart', 'eqp_xw_chart'], row.equipment);
+                    this._eqpGraph.updateRadar(['eqp_xw_chart', 'eqp_qj_chart', 'eqp_gz_chart'], row.equipment);
                     this._eqpGraph.updateMap('eqp_map_chart', row.equipment);
                     this._eqpGraph.setChartClickCallback(this._chartClickCallBack.bind(this));
                 }.bind(this),
@@ -42,15 +43,16 @@ class EquipMentLayout {
     }
 
     _updateTimeSlider(eqpName) {
-        var { startTime as initstime, endTime as initetime } = this._eqpGraph.getStartEndTime(eqpName);
+        var self = this;
+        var { startTime, endTime} = this._eqpGraph.getStartEndTime(eqpName);
         // 时间轴
         if(this._dateSilderObj) {
             this._dateSilderObj.dateRangeSlider("destroy");
         }
         this._dateSilderObj = $('#eqp_timeslider').dateRangeSlider({
             arrows: false, //是否显示左右箭头
-            bounds: { min: new Date(initstime * 1000), max: new Date(initetime * 1000) }, //最大 最少日期
-            defaultValues: { min: new Date(initstime * 1000), max: new Date(initetime * 1000) }, //默认选中区域
+            bounds: { min: new Date(startTime * 1000), max: new Date(endTime * 1000) }, //最大 最少日期
+            defaultValues: { min: new Date(startTime * 1000), max: new Date(endTime * 1000) }, //默认选中区域
             scales: [{
                 first: function (value) { return value; },
                 end: function (value) { return value; },
@@ -75,6 +77,8 @@ class EquipMentLayout {
             self._eqpGraph.updateLinkChart('eqp_relation_chart', eqpName, Util.getCusUnixTime(stime + ' 00:00:00'), Util.getCusUnixTime(etime + ' 00:00:00'));
             // console.log("起止时间：" + stime + " 至 " + etime);
         });
+
+        self._eqpGraph.updateLinkChart('eqp_relation_chart', eqpName, startTime, endTime);
     }
 
     _updateLinkDocTable(tableId, data) {
@@ -106,5 +110,5 @@ class EquipMentLayout {
         var docData = this._eqpGraph.getDocsByids(param.data.docids);
         this._updateLinkDocTable('eqp_doc_table', docData);
     }
-}
+
 }

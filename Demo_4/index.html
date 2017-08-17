@@ -51,14 +51,14 @@
             </div>
         </nav>
         <div class="row">
-            <div class="col-md-2 container-left">
+            <div class="col-md-1 container-left">
                 <ul class="nav nav-pills nav-stacked">
                     <li role="presentation" id="tag_analysis" class="active"><a href="#">标签统计分析</a></li>
                     <li role="presentation" id="equipment_analysis"><a href="#">装备故障分析</a></li>
                     <li role="presentation" id="article_analysis"><a href="#">文章分析</a></li>
                 </ul>
             </div>
-            <div class="col-md-10 container-right">
+            <div class="col-md-11 container-right">
                 <div id="loading">loading data ....</div>
                 <div class="container-fluid module-container tag_container">
                     <div class="operate_container">
@@ -145,28 +145,36 @@
                 <div class="container-fluid module-container eqp_container">
                     <div class="operate_container">
                         <!-- 时间轴 -->
-                        <div class="dateSlider" style="width:1000px; height:40px;margin-top:40px;margin-bottom:20px;">
+                        <div class="dateSlider" style="width:80%; height:40px;margin-left:220px;margin-top:20px;margin-bottom:20px;">
                             <div id="eqp_timeslider"></div>
                         </div>
                         <!-- 装备列表  -->
-                        <div style="position: relative;left:10px;top:10px;width:100px;height:500px;">
+                        <div style="position: absolute;left:10px;top:10px;width:200px;height:500px;">
                             <table id="eqp_list_all_table"></table>
                         </div>
                     </div>
-                    <div class="chart_container" style="margin-top:60px;">
+                    <div class="chart_container" style="margin-top:80px;padding-left:220px;">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div id="eqp_relation_chart" style="width:90%;height:500px;margin-left:auto;margin-right:auto;"></div>
+                            </div>
+                            <div class="col-md-3">
+                                <table id="eqp_doc_table"></table>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-4">
                                 <div id="eqp_gz_chart" style="width:100%;height: 400px;"></div>
-                                <div id="eqp_xw_chart" style="width:100%;height: 400px;"></div>
-                                <div id="eqp_qj_chart" style="width:100%;height: 400px;"></div>
-                                <div id="eqp_map_chart" style="width:100%;height: 400px;"></div>                                
                             </div>
-                            <div class="col-md-5">
-                                <div id="eqp_relation_chart" style="width:100%;height: 400px;"></div>
-                            </div>     
-                            <div class="col-md-3">
-                                <div id="eqp_doc_table" style="width:100%;height: 400px;"></div>
-                            </div> 
+                            <div class="col-md-4">
+                                <div id="eqp_xw_chart" style="width:100%;height: 400px;"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="eqp_qj_chart" style="width:100%;height: 400px;"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div id="eqp_map_chart" style="width:100%;height: 400px;"></div>
                         </div>
                     </div>
                 </div>
