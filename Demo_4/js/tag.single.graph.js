@@ -44,12 +44,17 @@ class TagSingleGraph {
         }
     }
 
+    getDocDetailById(id) {
+        var data = this._docData.where(o => o.id === id);
+        return data;
+    }
+
     getTableData() {
         return this._docData;
     }
 
     getDocsByids(ids) {
-        var filterdata  = [];
+        var filterdata = [];
         if(ids && ids.length) {
             filterdata = this._docData.where(function (o) {
                 return ids.indexOf(o.id) !== -1;
