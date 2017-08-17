@@ -15,7 +15,8 @@ class EqpGraph {
         this._categories = [
             { name: "行为" },
             { name: "器件" },
-            { name: "故障" }
+            { name: "故障" },
+            { name: "装备" }
         ];
         this.categories = {
             all: '全部',
@@ -74,7 +75,7 @@ class EqpGraph {
         } else if(category === this.categories.gz) {
             var { categoryData, countData } = this._getRadarOptData(this._gzData);
         }
-        if(categoryData && countData) {
+        if(categoryData.length && countData.length) {
             var max = this.getMax(countData);
             if(max) {
                 categoryData = categoryData.map(function (d) {
@@ -401,7 +402,7 @@ class EqpGraph {
                     repulsion: 100,
                     edgeLength: [80, 400]
                 },
-                focusNodeAdjacency: true,
+                focusNodeAdjacency: false,
                 draggable: true, // forec-end               
                 symbolSize: 40,
                 itemStyle: {

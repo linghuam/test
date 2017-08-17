@@ -30,6 +30,7 @@ class EquipMentLayout {
                     title: '装备列表'
                 }],
                 onClickRow: function (row, $element, field) {
+                    $element.addClass('activeRow').siblings().removeClass('activeRow');
                     this._updateTimeSlider(row.equipment);
                     this._eqpGraph.updateRadar(['eqp_xw_chart', 'eqp_qj_chart', 'eqp_gz_chart'], row.equipment);
                     this._eqpGraph.updateMap('eqp_map_chart', row.equipment);
