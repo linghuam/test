@@ -101,7 +101,7 @@ class TagSingle {
       // $('#tag_single_time_start').find('input').val(stime);
       // $('#tag_single_time_end').find('input').val(etime);
       self._singleGraph.updateGraph(Util.getCusUnixTime(stime + ' 00:00:00'), Util.getCusUnixTime(etime + ' 00:00:00'));
-      console.log("起止时间：" + stime + " 至 " + etime);
+      // console.log("起止时间：" + stime + " 至 " + etime);
     });
 
     this._singleGraph.updateGraph(this._singleGraph.getStartTime(), this._singleGraph.getEndTime());
@@ -124,7 +124,7 @@ class TagSingle {
           title: '时间'
         }],
         onClickRow: function (row, $element, field) {
-          console.log(row);
+          // console.log(row);
         },
         data: data,
         sortable: true,
@@ -149,7 +149,7 @@ class TagSingle {
           title: '时间'
         }],
         onClickRow: function (row, $element, field) {
-          console.log(row);
+          // console.log(row);
         },
         data: data,
         sortable: true,

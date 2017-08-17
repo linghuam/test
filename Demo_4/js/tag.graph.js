@@ -113,6 +113,7 @@ class TagGraph {
         }
       }]
     };
+    echarts.dispose(document.getElementById(elementId));
     var ect = echarts.init(document.getElementById(elementId));
     ect.setOption(option);
   }
@@ -187,7 +188,7 @@ class TagGraph {
         data: y
       }]
     };
-
+    echarts.dispose(document.getElementById(elementId));
     var ect = echarts.init(document.getElementById(elementId));
     ect.setOption(option);
   }
@@ -258,6 +259,7 @@ class TagGraph {
       },
       series: series
     };
+    echarts.dispose(document.getElementById(elementId));
     var ect = echarts.init(document.getElementById(elementId));
     ect.setOption(option);
   }

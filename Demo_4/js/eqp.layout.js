@@ -97,7 +97,7 @@ class EquipMentLayout {
                     title: '时间'
                 }],
                 onClickRow: function (row, $element, field) {
-                    console.log(row);
+                    // console.log(row);
                 },
                 data: data,
                 sortable: true,

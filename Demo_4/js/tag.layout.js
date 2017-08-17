@@ -60,7 +60,7 @@ class TagLayout {
         onClickRow: function (row, $element, field) {
           self._contanier.css('display', 'none');
           self._tagSingle.start(row.tag_name);
-          console.log(row);
+          // console.log(row);
         },
         data: data,
         sortable: true,

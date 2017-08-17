@@ -113,7 +113,7 @@ class TagSingleGraph {
                 });
             }
         }
-        console.log(nodes);
+        // console.log(nodes);
         return nodes;
     }
 
@@ -141,7 +141,7 @@ class TagSingleGraph {
                 });
             }
         }
-        console.log(links);
+        // console.log(links);
         return links;
     }
 
@@ -177,7 +177,7 @@ class TagSingleGraph {
                     repulsion: 100,
                     edgeLength: [80, 400]
                 },
-                focusNodeAdjacency: true,
+                focusNodeAdjacency: false,
                 draggable: true, // forec-end               
                 symbolSize: 40,
                 itemStyle: {
