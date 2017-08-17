@@ -45,7 +45,7 @@ class EquipMentLayout {
 
     _updateTimeSlider(eqpName) {
         var self = this;
-        var { startTime, endTime} = this._eqpGraph.getStartEndTime(eqpName);
+        var { startTime, endTime } = this._eqpGraph.getStartEndTime(eqpName);
         // 时间轴
         if(this._dateSilderObj) {
             this._dateSilderObj.dateRangeSlider("destroy");
@@ -98,7 +98,8 @@ class EquipMentLayout {
                     title: '时间'
                 }],
                 onClickRow: function (row, $element, field) {
-                    // console.log(row);
+                    var docdata = self._eqpGraph.getDocDetailById(row.id);
+                    window.dialogPopover.alert('文章详情', self.getDocContent(docdata));
                 },
                 data: data,
                 sortable: true,
@@ -112,4 +113,56 @@ class EquipMentLayout {
         this._updateLinkDocTable('eqp_doc_table', docData);
     }
 
+    getDocContent(data) {
+        var html = [];
+        html.push('<table>');
+        for(let i = 0, len = data.length; i < len; i++) {
+            html.push('<tr>');
+            html.push('<td width="20%">标题</td>');
+            html.push('<td width="80%">' + data[i].title + '</td>');
+            html.push('</tr>');
+
+            html.push('<tr>');
+            html.push('<td>原因</td>');
+            html.push('<td>' + data[i].reason + '</td>');
+            html.push('</tr>');
+
+            html.push('<tr>');
+            html.push('<td>说明</td>');
+            html.push('<td>' + data[i].description + '</td>');
+            html.push('</tr>');
+
+            html.push('<tr>');
+            html.push('<td>时间</td>');
+            html.push('<td>' + data[i].create_time + '</td>');
+            html.push('</tr>');
+
+            html.push('<tr>');
+            html.push('<td>装备</td>');
+            html.push('<td>' + data[i].equipment + '</td>');
+            html.push('</tr>');
+
+            html.push('<tr>');
+            html.push('<td>地点</td>');
+            html.push('<td>' + data[i].location + '</td>');
+            html.push('</tr>');
+
+            html.push('<tr>');
+            html.push('<td>故障标签</td>');
+            html.push('<td>' + data[i].gz_tag + '</td>');
+            html.push('</tr>');
+
+            html.push('<tr>');
+            html.push('<td>器件标签</td>');
+            html.push('<td>' + data[i].qj_tag + '</td>');
+            html.push('</tr>');
+
+            html.push('<tr>');
+            html.push('<td>行为标签</td>');
+            html.push('<td>' + data[i].xw_tag + '</td>');
+            html.push('</tr>');
+        }
+        html.push('</table>');
+        return html.join('');
+    }
 }

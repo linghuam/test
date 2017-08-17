@@ -37,6 +37,11 @@ class EqpGraph {
         this._mapData = await Util.readFile('data/装备故障地点-经纬度.csv');
         this._chinajson = await Util.getJson('data/china.json');
     }
+    
+    getDocDetailById (id) {
+        var data = this._docData.where(o => o.id === id);
+        return data;
+    }
 
     loadData(callback) {
         var self = this;

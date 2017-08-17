@@ -13,6 +13,10 @@
     background-color: #05A0F9;
 }
 
+#modal-dialog td {
+	border: solid 1px silver;
+}
+
 td {
 	cursor:pointer !important;
 }
