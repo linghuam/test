@@ -29,7 +29,8 @@ class TagSingle {
 
   _loadDataCallback() {
     this._initEvt();
-    this._updateTable('tag_single_docall_table');
+    this._updateAllDocTable('tag_single_docall_table');
+    this._singleGraph.addChartClickCallback(this._chartClickCallback.bind(this));
   }
 
   _initEvt() {
@@ -106,7 +107,7 @@ class TagSingle {
     this._singleGraph.updateGraph(this._singleGraph.getStartTime(), this._singleGraph.getEndTime());
   }
 
-  _updateTable(tableId) {
+  _updateAllDocTable(tableId) {
     var self = this;
     var data = this._singleGraph.getTableData();
     if(data && data.length) {
@@ -130,6 +131,36 @@ class TagSingle {
         height: 500
       });
     }
+  }
+
+  _updateLinkDocTable (tableId, data) {
+        var self = this;
+    if(data && data.length) {
+      $('#' + tableId).bootstrapTable('destroy');
+      $('#' + tableId).bootstrapTable({
+        columns: [{
+          field: 'id',
+          title: '序号'
+        }, {
+          field: 'title',
+          title: '标题'
+        }, {
+          field: 'create_time',
+          title: '时间'
+        }],
+        onClickRow: function (row, $element, field) {
+          console.log(row);
+        },
+        data: data,
+        sortable: true,
+        height: 500
+      });
+    }
+  }
+
+  _chartClickCallback (param) {
+    var docData = this._singleGraph.getDocsByids(param.data.docids);
+    this._updateLinkDocTable('tag_single_doctarget_table', docData);
   }
 
 }
