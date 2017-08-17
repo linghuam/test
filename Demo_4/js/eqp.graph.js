@@ -10,6 +10,7 @@ class EqpGraph {
         this._timeData = null;
         this._radarData = null;
         this._mapData = null;
+        this._chinajson = null;
 
         this.categories = {
             all: '全部',
@@ -28,11 +29,12 @@ class EqpGraph {
         this._timeData = await Util.readFile('data/装备关联最大值最小值-时间戳.csv');
         this._radarData = await Util.readFile('data/装备雷达-总.csv');
         this._mapData = await Util.readFile('data/装备故障地点-经纬度.csv');
+        this._chinajson = await Util.getJson('data/china.json');
     }
 
     loadData(callback) {
         var self = this;
-        if(!this._eqpListData || !this._nodesData || !this._linkData || !this._tagDocData || !this._docData || !this._timeData || !this._radarData || !this._mapData) {
+        if(!this._eqpListData || !this._nodesData || !this._linkData || !this._tagDocData || !this._docData || !this._timeData || !this._radarData || !this._mapData || !this._chinajson) {
             $('#loading').css('display', 'block');
             this.getData().then(function () {
                 self._callbackFunc();
@@ -108,7 +110,7 @@ class EqpGraph {
                     name: obj.key,
                     max: 100
                 };
-                let sum = this.getSum(obj.value);
+                let sum = this.getSum(obj.value, 'tag_count');
                 categoryData.push(cd);
                 countData.push(sum);
             }
@@ -131,17 +133,135 @@ class EqpGraph {
         }
     }
 
-    getSum(arr) {
+    getSum(arr, feild) {
         var sum = 0;
         for(let i = 0, len = arr.length; i < len; i++) {
-            let value = parseInt(arr[i].tag_count);
+            let value = parseInt(arr[i][feild]);
             sum += value;
         }
         return sum;
     }
 
     updateMap(elementId, equipmentName) {
+        echarts.registerMap('china', this._chinajson);
+        var myecharts = echarts.init(document.getElementById(elementId));
+        var filterData = this._mapData.where(o => o.equipment === equipmentName);
+        var catedata = filterData.groupBy('location');
+        var data = [];
+        var geoCoordMap = {};
+        for(let i = 0, len = catedata.length; i < len; i++) {
+            data.push({
+                name: catedata[i].key,
+                value: this.getSum(catedata[i].value, 'loc_count')
+            });
+            geoCoordMap[catedata[i].key] = [parseFloat(catedata[i].value[0].longitude), parseFloat(catedata[i].value[0].latitude)];
+        }
 
+        var convertData = function (data) {
+            var res = [];
+            for(var i = 0; i < data.length; i++) {
+                var geoCoord = geoCoordMap[data[i].name];
+                if(geoCoord) {
+                    res.push({
+                        name: data[i].name,
+                        value: geoCoord.concat(data[i].value)
+                    });
+                }
+            }
+            return res;
+        };
+
+        var option = {
+            backgroundColor: '#404a59',
+            title: {
+                text: '地点分布',
+                left: 'center',
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: function (params) {
+                    return params.name + ' : ' + params.value[2];
+                }
+            },
+            geo: {
+                map: 'china',
+                label: {
+                    emphasis: {
+                        show: false
+                    }
+                },
+                roam: true,
+                itemStyle: {
+                    normal: {
+                        areaColor: '#323c48',
+                        borderColor: '#111'
+                    },
+                    emphasis: {
+                        areaColor: '#2a333d'
+                    }
+                }
+            },
+            series: [{
+                    name: 'count',
+                    type: 'scatter',
+                    coordinateSystem: 'geo',
+                    data: convertData(data),
+                    symbolSize: function (val) {
+                        return val[2] / 10;
+                    },
+                    label: {
+                        normal: {
+                            formatter: '{b}',
+                            position: 'right',
+                            show: false
+                        },
+                        emphasis: {
+                            show: true
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: '#ddb926'
+                        }
+                    }
+                },
+                {
+                    name: 'Top5',
+                    type: 'effectScatter',
+                    coordinateSystem: 'geo',
+                    data: convertData(data.sort(function (a, b) {
+                        return b.value - a.value;
+                    }).slice(0, 6)),
+                    symbolSize: function (val) {
+                        return val[2] / 10;
+                    },
+                    showEffectOn: 'render',
+                    rippleEffect: {
+                        brushType: 'stroke'
+                    },
+                    hoverAnimation: true,
+                    label: {
+                        normal: {
+                            formatter: '{b}',
+                            position: 'right',
+                            show: true
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: '#f4e925',
+                            shadowBlur: 10,
+                            shadowColor: '#333'
+                        }
+                    },
+                    zlevel: 1
+                }
+            ]
+        };
+        myecharts.setOption(option);
     }
 
     _callbackFunc() {
