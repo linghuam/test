@@ -1,4 +1,5 @@
 class EquipMentLayout {
+	
     constructor(containerClass) {
         this._contanier = $('.' + containerClass);
         this._tagGraph = new TagGraph();
