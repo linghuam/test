@@ -38,6 +38,10 @@ class EqpGraph {
       callback();
     }
   }
+  
+  getEqpListData () {
+    return this._eqpListData;
+  }
 
   _callbackFunc() {
     $('#loading').css('display', 'none');
