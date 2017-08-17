@@ -289,6 +289,7 @@ class TagGraph {
 
   _callbackFunc() {
     $('#loading').css('display', 'none');
+    $('.tag_container .tag_all').click();
   }
 
 
