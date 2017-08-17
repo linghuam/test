@@ -39,7 +39,7 @@ class EquipmentAnalysis {
     }
 
     update (startTime, endTime) {
-         var nodes = this.getNodes(startTime, endTime);
+        var nodes = this.getNodes(startTime, endTime);
         var links = this.getLinks(startTime, endTime);
         var options = this.getChartOptions(this._categories, nodes, links);
         this._echarts.setOption(options);

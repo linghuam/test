@@ -12,6 +12,11 @@ class EqpGraph {
         this._mapData = null;
         this._chinajson = null;
 
+        this._categories = [
+            { name: "行为" },
+            { name: "器件" },
+            { name: "故障" }
+        ];
         this.categories = {
             all: '全部',
             qj: '器件',
@@ -264,9 +269,133 @@ class EqpGraph {
         myecharts.setOption(option);
     }
 
+    updateLinkChart(elementId, equipmentName, startTime, endTime) {
+        var myecharts = echarts.init(document.getElementById(elementId));
+        var nodes = this.getNodes(startTime, endTime, equipmentName);
+        var links = this.getLinks(startTime, endTime, equipmentName);
+        var options = this.getChartOptions(this._categories, nodes, links);
+        myecharts.setOption(options);
+    }
+
     _callbackFunc() {
         $('#loading').css('display', 'none');
     }
 
+    getStartEndTime(equipmentName) {
+        var ts = this._timeData.where(o => o.selected_equipment === equipmentName);
+        if(ts.length) {
+            return {
+                startTime: ts[0].min_time,
+                endTime: ts[0].max_time
+            }
+        }
+    }
+
+    getNodes(startTime, endTime, equipmentName) {
+        var nodes = [];
+        var select_nodes = this._nodesData.where(o => o.selected_equipment === equipmentName && o.create_time <= endTime && o.create_time >= startTime);
+        for(let i = 0, len = select_nodes.length; i < len; i++) {
+            let n = select_nodes[i];
+            let j = 0;
+            let lenj = nodes.length;
+            for(; j < lenj; j++) {
+                if(n.p_tag_name === nodes[j].name) {
+                    nodes[j].value += 1;
+                    break;
+                }
+            }
+            if(j === lenj) {
+                nodes.push({
+                    symbol: n.p_tag_name === equipmentName ? 'roundRect' : 'circle',
+                    category: Config.categories.indexOf(n.p_tag_type),
+                    name: n.p_tag_name,
+                    value: 1
+                });
+            }
+        }
+        // console.log(nodes);
+        return nodes;
+    }
+
+    getLinks(startTime, endTime, equipmentName) {
+        var links = [];
+        var select_links = this._linkData.where(o => o.selected_equipment === equipmentName && o.create_time <= endTime && o.create_time >= startTime);
+        for(let i = 0, len = select_links.length; i < len; i++) {
+            let lnk = select_links[i];
+            let j = 0;
+            let lenj = links.length;
+            for(; j < lenj; j++) {
+                let lnkj = links[j];
+                if(lnk.S_tag_name === lnkj.source && lnk.T_tag_name === lnkj.target && lnkj.docids.indexOf(lnk.doc_id) === -1) {
+                    lnkj.docids.push(lnk.doc_id);
+                    lnkj.value += 1;
+                    break;
+                }
+            }
+            if(j === lenj) {
+                links.push({
+                    source: lnk.S_tag_name,
+                    target: lnk.T_tag_name,
+                    value: 1,
+                    docids: [lnk.doc_id]
+                });
+            }
+        }
+        // console.log(links);
+        return links;
+    }
+
+    getChartOptions(categories, nodes, links) {
+        var options = {
+            title: {
+                text: '装备'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} : {b}'
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    restore: { show: true },
+                    magicType: { show: true, type: ['force', 'chord'] },
+                    saveAsImage: { show: true }
+                }
+            },
+            legend: {
+                data: categories
+            },
+            series: [{
+                name: '装备',
+                type: 'graph',
+                layout: 'force', //'force', 'circular'
+                categories: categories,
+                nodes: nodes,
+                links: links,
+                roam: true,
+                force: { //force -start
+                    repulsion: 100,
+                    edgeLength: [80, 400]
+                },
+                focusNodeAdjacency: true,
+                draggable: true, // forec-end               
+                symbolSize: 40,
+                itemStyle: {
+                    normal: {},
+                    emphasis: {}
+                },
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'insideLeft'
+                    },
+                    emphasis: {
+                        show: true
+                    }
+                }
+            }]
+        };
+        return options;
+    }
 
 }

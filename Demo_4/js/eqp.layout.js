@@ -29,6 +29,8 @@ class EquipMentLayout {
                     title: '装备列表'
                 }],
                 onClickRow: function (row, $element, field) {
+                	this._eqpGraph.updateRadar(['eqp_qj_chart', 'eqp_gz_chart', 'eqp_xw_chart'], row.equipment);
+                	this._eqpGraph.updateMap('eqp_map_chart', row.equipment);
                     this._updateTimeSlider(row.equipment);
                 }.bind(this),
                 data: data,
@@ -68,9 +70,8 @@ class EquipMentLayout {
             var val = data.values;
             var stime = val.min.getFullYear() + "-" + (val.min.getMonth() + 1) + "-" + val.min.getDate();
             var etime = val.max.getFullYear() + "-" + (val.max.getMonth() + 1) + "-" + val.max.getDate();
-            self._eqpGraph.updateGraph(Util.getCusUnixTime(stime + ' 00:00:00'), Util.getCusUnixTime(etime + ' 00:00:00'));
-            console.log("起止时间：" + stime + " 至 " + etime);
+            self._eqpGraph.updateLinkChart('eqp_relation_chart', eqpName, Util.getCusUnixTime(stime + ' 00:00:00'), Util.getCusUnixTime(etime + ' 00:00:00'));
+            // console.log("起止时间：" + stime + " 至 " + etime);
         });
-
     }
 }
