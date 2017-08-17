@@ -29,33 +29,43 @@ class TagSingle {
 
   _loadDataCallback() {
     this._initEvt();
+    this._updateTable('tag_single_docall_table');
   }
 
   _initEvt() {
+
     var self = this;
+
     // 标题
     this._contanier.find('.tagname').html(this._tagname);
+
     // back按钮
     this._contanier.find('.backbtn').on('click', function () {
       self._contanier.css('display', 'none');
       $('.tag_container').css('display', 'block');
     });
+
     // 日期控件
-    $('#tag_single_time_start').datetimepicker(this._dataOptions).on('changeDate', function (ev) {
-      // var endt = Util.getCusUnixDate($('#tag_single_time_end').find('input').val() + ' 00:00:00');
-      var endt = self._dateSilderObj.dateRangeSlider('values').max;
-      if(self._dateSilderObj)
-        self._dateSilderObj.dateRangeSlider("values", new Date(ev.timeStamp), endt);
-    });
-    $('#tag_single_time_end').datetimepicker(this._dataOptions).on('changeDate', function (ev) {
-      // var start = Util.getCusUnixDate($('#tag_single_time_start').find('input').val() + ' 00:00:00');
-      var start = self._dateSilderObj.dateRangeSlider('values').min;      
-      if(self._dateSilderObj)
-        self._dateSilderObj.dateRangeSlider("values", start, new Date(ev.timeStamp));
-    });
-    $('#tag_single_time_start').find('input').val(Util.getTimeStrFromUnixYMD(this._singleGraph.getStartTime()));
-    $('#tag_single_time_end').find('input').val(Util.getTimeStrFromUnixYMD(this._singleGraph.getEndTime()));
+    // $('#tag_single_time_start').datetimepicker(this._dataOptions).on('changeDate', function (ev) {
+    //   // var endt = Util.getCusUnixDate($('#tag_single_time_end').find('input').val() + ' 00:00:00');
+    //   var endt = self._dateSilderObj.dateRangeSlider('values').max;
+    //   if(self._dateSilderObj)
+    //     self._dateSilderObj.dateRangeSlider("values", new Date(ev.timeStamp), endt);
+    // });
+    // $('#tag_single_time_end').datetimepicker(this._dataOptions).on('changeDate', function (ev) {
+    //   // var start = Util.getCusUnixDate($('#tag_single_time_start').find('input').val() + ' 00:00:00');
+    //   var start = self._dateSilderObj.dateRangeSlider('values').min;      
+    //   if(self._dateSilderObj)
+    //     self._dateSilderObj.dateRangeSlider("values", start, new Date(ev.timeStamp));
+    // });
+    // $('#tag_single_time_start').find('input').val(Util.getTimeStrFromUnixYMD(this._singleGraph.getStartTime()));
+    // $('#tag_single_time_end').find('input').val(Util.getTimeStrFromUnixYMD(this._singleGraph.getEndTime()));
+    
+
     // 时间轴
+    if (this._dateSilderObj) {
+      this._dateSilderObj.dateRangeSlider("destroy");
+    }
     this._dateSilderObj = $('#tag_single_timeslider').dateRangeSlider({
       arrows: false, //是否显示左右箭头
       bounds: { min: new Date(this._singleGraph.getStartTime() * 1000), max: new Date(this._singleGraph.getEndTime() * 1000) }, //最大 最少日期
@@ -94,7 +104,32 @@ class TagSingle {
     });
 
     this._singleGraph.updateGraph(this._singleGraph.getStartTime(), this._singleGraph.getEndTime());
+  }
 
+  _updateTable(tableId) {
+    var self = this;
+    var data = this._singleGraph.getTableData();
+    if(data && data.length) {
+      $('#' + tableId).bootstrapTable('destroy');
+      $('#' + tableId).bootstrapTable({
+        columns: [{
+          field: 'id',
+          title: '序号'
+        }, {
+          field: 'title',
+          title: '标题'
+        }, {
+          field: 'create_time',
+          title: '时间'
+        }],
+        onClickRow: function (row, $element, field) {
+          console.log(row);
+        },
+        data: data,
+        sortable: true,
+        height: 500
+      });
+    }
   }
 
 }

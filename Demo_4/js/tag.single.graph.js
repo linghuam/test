@@ -44,6 +44,10 @@ class TagSingleGraph {
     }
   }
 
+  getTableData () {
+    return this._docData;
+  }
+
   _callbackFunc() {
     $('#loading').css('display', 'none');
     let { startTime, endTime } = this.getStartEndTime();
