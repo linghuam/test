@@ -134,7 +134,7 @@ class TagSingle {
   }
 
   _updateLinkDocTable (tableId, data) {
-        var self = this;
+    var self = this;
     if(data && data.length) {
       $('#' + tableId).bootstrapTable('destroy');
       $('#' + tableId).bootstrapTable({
