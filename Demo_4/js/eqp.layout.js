@@ -46,6 +46,7 @@ class EquipMentLayout {
     _updateTimeSlider(eqpName) {
         var self = this;
         var { startTime, endTime } = this._eqpGraph.getStartEndTime(eqpName);
+        endTime = new Number(endTime)+24*3600;
         // 时间轴
         if(this._dateSilderObj) {
             this._dateSilderObj.dateRangeSlider("destroy");

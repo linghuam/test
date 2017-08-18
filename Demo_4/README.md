@@ -1,12 +1,9 @@
-jQuery滑块插件slider:http://www.jq22.com/jquery-info6088
-jQuery左右滑动 选取数值:http://www.jq22.com/jquery-info2517
+# echarts demo 
 
-基于Bootstrap的炫酷jQuery slider插件http://www.jq22.com/yanshi9075
+使用 Bootstrap + Echarts + ES6 + Paparse + linqToJavascript 快速搭建的
+一个数据分析展示demo
 
-jQuery横向时间轴插件:http://www.jq22.com/jquery-info2833
+[Demo访问地址]()
 
-
-词云生成：https://github.com/jasondavies/d3-cloud
-
-关联图生成：http://echarts.baidu.com/echarts2/doc/example/force.html
-
+![截图1](image/1.png)
+![截图2](image/2.png)
