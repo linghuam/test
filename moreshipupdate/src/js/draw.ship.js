@@ -36,12 +36,14 @@ export var Draw = L.Class.extend({
 
     this._bufferShips = [];
     this._selectMarker = null;
-    // this._hidedivs = L.featureGroup().addTo(map); //不行，卡顿
+    this._hidediv = null;
 
     this._canvasLayer.on('update', this._shipLayerUpdate, this);
     this._map.on('click', this._onMouseClickEvt, this);
-    this._map.on('contextmenu', this._contextClickEvt, this);
+    this._map.on('contextmenu', this._onContextClickEvt, this);
     this._map.on('mousemove', this._onMouseMoveEvt, this);
+
+    this._initContextMenu();
   },
 
   drawShips: function (data) {
@@ -75,15 +77,26 @@ export var Draw = L.Class.extend({
     var target = this._getTriggerTarget(e.layerPoint);
     if(target) {
       let latlng = L.latLng(target.lat, target.lng);
-      if(this._map.hasLayer(this._selectMarker)) {
-        this._map.removeLayer(this._selectMarker);
-      }
-      this._selectMarker = L.marker(latlng, { icon: L.divIcon(this.iconOptions) }).addTo(this._map);
+      this._removeSelectMarker();
+      this._addSelectMarker(latlng);
       this._opentoolTip(target);
     }
   },
 
-  _contextClickEvt: function (e) {},
+  _onContextClickEvt: function (e) {
+    var target = this._getTriggerTarget(e.layerPoint);
+    this._removeHideDiv();
+    if(target) {
+      let latlng = L.latLng(target.lat, target.lng);
+      this._addHideDiv(latlng);
+      var mapcontainer = this._map.getContainer();
+      var x = e.containerPoint.x + mapcontainer.offsetLeft;
+      var y = e.containerPoint.y + mapcontainer.offsetTop;
+      $('#leaflet-map').contextMenu(false);
+      $('.leaflet-marker-rightclick-icon').contextMenu(true);
+      $('.leaflet-marker-rightclick-icon').contextMenu({ x: x, y: y });
+    }
+  },
 
   _onMouseMoveEvt: function (e) {
     var target = this._getTriggerTarget(e.layerPoint);
@@ -92,6 +105,41 @@ export var Draw = L.Class.extend({
     } else {
       this._canvas.style.cursor = 'default'
     }
+  },
+
+  _initContextMenu: function () {
+    $.contextMenu({
+      selector: '.leaflet-marker-rightclick-icon', // 选择右键菜单触发的元素
+      trigger: 'none',
+      callback: function (key, options) {
+        // self._rightClickCallback(key, options)
+      }.bind(this),
+      items: {
+        'bpxs': {
+          'name': '标牌显示',
+          'items': {
+            'bpxs-shipname': { 'name': '船名' },
+            'bpxs-ph': { 'name': '批号' },
+            'bpxs-all': { 'name': '目标信息' }, // test
+            'bpxs-close': { 'name': '关闭显示' }
+          }
+        },
+        'hjxs': { 'name': '航迹显示' },
+        'xskz': {
+          'name': '显示控制',
+          'items': {
+            'xskz-key1': { 'name': '全航迹' },
+            'xskz-key2': { 'name': '10点' },
+            'xskz-key3': { 'name': '100点' },
+            'xskz-key4': { 'name': '1000点' }
+          }
+        },
+        'tshf': { 'name': '态势回放' },
+        'addhf': { 'name': '加入回放列表' },
+        'mbkc': { 'name': '目标开窗' }
+        // "qykc": { "name": "区域开窗" }
+      }
+    })
   },
 
   _getTriggerTarget: function (point) {
@@ -125,18 +173,32 @@ export var Draw = L.Class.extend({
       } else {
         this._drawShip(data[i]);
       }
-      // this._drawHideDiv(data[i]);
     }
   },
 
-  _drawHideDiv: function (shipobj) {
-    var latlng = L.latLng(shipobj.lat, shipobj.lng);
-    var divicon = L.marker(latlng, {
+  _removeHideDiv: function () {
+    if(this._map.hasLayer(this._hidediv)) {
+      this._map.removeLayer(this._hidediv);
+    }
+  },
+
+  _addHideDiv: function (latlng) {
+    this._hidediv = L.marker(latlng, {
       icon: L.divIcon({
         className: 'leaflet-marker-rightclick-icon'
       })
     });
-    this._hidedivs.addLayer(divicon);
+    this._map.addLayer(this._hidediv);
+  },
+
+  _addSelectMarker: function (latlng) {
+    this._selectMarker = L.marker(latlng, { icon: L.divIcon(this.iconOptions) }).addTo(this._map);
+  },
+
+  _removeSelectMarker: function () {
+    if(this._map.hasLayer(this._selectMarker)) {
+      this._map.removeLayer(this._selectMarker);
+    }
   },
 
   _drawShip: function (shipobj) {
@@ -216,9 +278,8 @@ export var Draw = L.Class.extend({
     } else {
       this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
     }
-    if(this._map.hasLayer(this._selectMarker)) {
-      this._map.removeLayer(this._selectMarker);
-    }
+    this._removeHideDiv();
+    this._removeSelectMarker();
   }
 
 })
