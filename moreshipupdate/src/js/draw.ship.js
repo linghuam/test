@@ -42,6 +42,17 @@ export var Draw = L.Class.extend({
     this._shipLayerUpdate()
   },
 
+  removeLayer: function () {
+    if(this._map.hasLayer(this._canvasLayer)) {
+      this._map.removeLayer(this._canvasLayer)
+    }
+  },  
+
+  clear: function () {
+    this._clearLayer()
+    this._bufferShips = []
+  },  
+
   _shipLayerUpdate: function () {
     if(this._bufferShips.length) {
       this._clearLayer()
@@ -149,12 +160,6 @@ export var Draw = L.Class.extend({
     return content;
   },
 
-  removeLayer: function () {
-    if(this._map.hasLayer(this._canvasLayer)) {
-      this._map.removeLayer(this._canvasLayer)
-    }
-  },
-
   _clearLayer: function () {
     var bounds = this._canvasLayer.getBounds()
     if(bounds) {
@@ -163,11 +168,6 @@ export var Draw = L.Class.extend({
     } else {
       this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
     }
-  },
-
-  clear: function () {
-    this._clearLayer()
-    this._bufferShips = []
   }
 
 })
