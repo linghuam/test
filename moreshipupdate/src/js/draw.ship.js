@@ -33,7 +33,8 @@ export var Draw = L.Class.extend({
     this._canvasLayer = new CanvasLayer().addTo(map);
     this._canvas = this._canvasLayer.getContainer();
     this._ctx = this._canvas.getContext('2d');
-
+    
+    this._clickRadius = 5;
     this._bufferShips = [];
     this._selectMarker = null;
     this._hidediv = null;
@@ -146,7 +147,7 @@ export var Draw = L.Class.extend({
     if(this._bufferShips.length) {
       for(let i = 0, len = this._bufferShips.length; i < len; i++) {
         let tpoint = this._map.latLngToLayerPoint(L.latLng(this._bufferShips[i].lat, this._bufferShips[i].lng))
-        if(point.distanceTo(tpoint) <= 5) {
+        if(point.distanceTo(tpoint) <= this._clickRadius) {
           return this._bufferShips[i];
         }
       }

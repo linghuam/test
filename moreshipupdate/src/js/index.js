@@ -28,6 +28,7 @@ $(function () {
   		 	];
   		 	newdata.push(obj);
   		 }
+  		 draw.clear();
   		 draw.drawShips(newdata);
          tag = true;
          index++;
