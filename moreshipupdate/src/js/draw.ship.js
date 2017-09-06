@@ -67,6 +67,7 @@ export var Draw = L.Class.extend({
       for(let i = 0, len = this._bufferShips.length; i < len; i++) {
           let tpoint = this._map.latLngToLayerPoint(L.latLng(this._bufferShips[i].lat, this._bufferShips[i].lng))
           if(point.distanceTo(tpoint) <= 5) {
+            // this._drawDashRect(tpoint,24,24);
             this._opentoolTip(this._bufferShips[i])
             return;
           }
@@ -157,6 +158,15 @@ export var Draw = L.Class.extend({
       this._ctx.restore()
     }.bind(this)
     img.src = this.shipOptions.imgUrl
+  },
+
+  _drawDashRect: function (point, width, height) {
+      this._ctx.save();
+      this._ctx.setLineDash([6]);
+      this._ctx.strokeStyle = '#f00';
+      this._ctx.lineWidth = 4;
+      this._ctx.strokeRect(point.x - width/2, point.y - height/2, width, height);
+      this._ctx.restore();
   },
 
   _getTooltipText: function (targetobj) {
