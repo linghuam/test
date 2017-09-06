@@ -18,8 +18,8 @@ export var Draw = L.Class.extend({
     permanent: false
   },
 
-  initialize: function (map, options) {
-
+  initialize: function (map, options = {}) {
+  
     this.shipOptions = L.extend(this.shipOptions, options.shipOptions)
     this.toolTipOptions = L.extend(this.toolTipOptions, options.toolTipOptions)
 
