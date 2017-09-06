@@ -26,40 +26,42 @@ export var Draw = L.Class.extend({
 
   initialize: function (map, options = {}) {
 
-    this.shipOptions = L.extend(this.shipOptions, options.shipOptions)
-    this.toolTipOptions = L.extend(this.toolTipOptions, options.toolTipOptions)
+    this.shipOptions = L.extend(this.shipOptions, options.shipOptions);
+    this.toolTipOptions = L.extend(this.toolTipOptions, options.toolTipOptions);
 
-    this._map = map
-    this._canvasLayer = new CanvasLayer().addTo(map)
-    this._canvas = this._canvasLayer.getContainer()
-    this._ctx = this._canvas.getContext('2d')
+    this._map = map;
+    this._canvasLayer = new CanvasLayer().addTo(map);
+    this._canvas = this._canvasLayer.getContainer();
+    this._ctx = this._canvas.getContext('2d');
 
-    this._bufferShips = []
+    this._bufferShips = [];
     this._selectMarker = null;
+    // this._hidedivs = L.featureGroup().addTo(map); //不行，卡顿
 
-    this._canvasLayer.on('update', this._shipLayerUpdate, this)
-    this._map.on('click', this._onMouseClickEvt, this)
-    this._map.on('mousemove', this._onMouseMoveEvt, this)
+    this._canvasLayer.on('update', this._shipLayerUpdate, this);
+    this._map.on('click', this._onMouseClickEvt, this);
+    this._map.on('contextmenu', this._contextClickEvt, this);
+    this._map.on('mousemove', this._onMouseMoveEvt, this);
   },
 
   drawShips: function (data) {
-    this._bufferShips = data
-    this._drawShips(data)
+    this._bufferShips = data;
+    this._drawShips(data);
   },
 
   update: function () {
-    this._shipLayerUpdate()
+    this._shipLayerUpdate();
   },
 
   removeLayer: function () {
     if(this._map.hasLayer(this._canvasLayer)) {
-      this._map.removeLayer(this._canvasLayer)
+      this._map.removeLayer(this._canvasLayer);
     }
   },
 
   clear: function () {
-    this._clearLayer()
-    this._bufferShips = []
+    this._clearLayer();
+    this._bufferShips = [];
   },
 
   _shipLayerUpdate: function () {
@@ -70,36 +72,37 @@ export var Draw = L.Class.extend({
   },
 
   _onMouseClickEvt: function (e) {
-    var point = e.layerPoint
-    if(this._bufferShips.length) {
-      for(let i = 0, len = this._bufferShips.length; i < len; i++) {
-        let latlng = L.latLng(this._bufferShips[i].lat, this._bufferShips[i].lng);
-        let tpoint = this._map.latLngToLayerPoint(latlng)
-        if(point.distanceTo(tpoint) <= 5) {
-          if(this._map.hasLayer(this._selectMarker)) {
-            this._map.removeLayer(this._selectMarker)
-          }
-          this._selectMarker = L.marker(latlng, { icon: L.divIcon(this.iconOptions) }).addTo(this._map);
-          this._opentoolTip(this._bufferShips[i])
-          return;
-        }
+    var target = this._getTriggerTarget(e.layerPoint);
+    if(target) {
+      let latlng = L.latLng(target.lat, target.lng);
+      if(this._map.hasLayer(this._selectMarker)) {
+        this._map.removeLayer(this._selectMarker);
       }
+      this._selectMarker = L.marker(latlng, { icon: L.divIcon(this.iconOptions) }).addTo(this._map);
+      this._opentoolTip(target);
     }
-    this._canvas.style.cursor = 'pointer'
   },
 
+  _contextClickEvt: function (e) {},
+
   _onMouseMoveEvt: function (e) {
-    var point = e.layerPoint
+    var target = this._getTriggerTarget(e.layerPoint);
+    if(target) {
+      this._canvas.style.cursor = 'pointer';
+    } else {
+      this._canvas.style.cursor = 'default'
+    }
+  },
+
+  _getTriggerTarget: function (point) {
     if(this._bufferShips.length) {
       for(let i = 0, len = this._bufferShips.length; i < len; i++) {
         let tpoint = this._map.latLngToLayerPoint(L.latLng(this._bufferShips[i].lat, this._bufferShips[i].lng))
         if(point.distanceTo(tpoint) <= 5) {
-          this._canvas.style.cursor = 'default'
-          return;
+          return this._bufferShips[i];
         }
       }
     }
-    this._canvas.style.cursor = 'pointer'
   },
 
   _opentoolTip: function (shipobj) {
@@ -118,11 +121,22 @@ export var Draw = L.Class.extend({
     // 画船
     for(let i = 0, len = data.length; i < len; i++) {
       if(this.shipOptions.useImg) {
-        this._drawShip2(data[i])
+        this._drawShip2(data[i]);
       } else {
-        this._drawShip(data[i])
+        this._drawShip(data[i]);
       }
+      // this._drawHideDiv(data[i]);
     }
+  },
+
+  _drawHideDiv: function (shipobj) {
+    var latlng = L.latLng(shipobj.lat, shipobj.lng);
+    var divicon = L.marker(latlng, {
+      icon: L.divIcon({
+        className: 'leaflet-marker-rightclick-icon'
+      })
+    });
+    this._hidedivs.addLayer(divicon);
   },
 
   _drawShip: function (shipobj) {
@@ -201,6 +215,9 @@ export var Draw = L.Class.extend({
       this._ctx.clearRect(bounds.min.x, bounds.min.y, size.x, size.y);
     } else {
       this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    }
+    if(this._map.hasLayer(this._selectMarker)) {
+      this._map.removeLayer(this._selectMarker);
     }
   }
 
