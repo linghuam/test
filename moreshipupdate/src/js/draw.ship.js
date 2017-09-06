@@ -18,8 +18,14 @@ export var Draw = L.Class.extend({
     permanent: false
   },
 
+  iconOptions: {
+    iconSize: [20, 20],
+    iconAnchor: [12, 12],
+    className: 'ict_markerselect_divicon'
+  },
+
   initialize: function (map, options = {}) {
-  
+
     this.shipOptions = L.extend(this.shipOptions, options.shipOptions)
     this.toolTipOptions = L.extend(this.toolTipOptions, options.toolTipOptions)
 
@@ -27,7 +33,9 @@ export var Draw = L.Class.extend({
     this._canvasLayer = new CanvasLayer().addTo(map)
     this._canvas = this._canvasLayer.getContainer()
     this._ctx = this._canvas.getContext('2d')
+
     this._bufferShips = []
+    this._selectMarker = null;
 
     this._canvasLayer.on('update', this._shipLayerUpdate, this)
     this._map.on('click', this._onMouseClickEvt, this)
@@ -47,12 +55,12 @@ export var Draw = L.Class.extend({
     if(this._map.hasLayer(this._canvasLayer)) {
       this._map.removeLayer(this._canvasLayer)
     }
-  },  
+  },
 
   clear: function () {
     this._clearLayer()
     this._bufferShips = []
-  },  
+  },
 
   _shipLayerUpdate: function () {
     if(this._bufferShips.length) {
@@ -65,32 +73,33 @@ export var Draw = L.Class.extend({
     var point = e.layerPoint
     if(this._bufferShips.length) {
       for(let i = 0, len = this._bufferShips.length; i < len; i++) {
-          let tpoint = this._map.latLngToLayerPoint(L.latLng(this._bufferShips[i].lat, this._bufferShips[i].lng))
-          if(point.distanceTo(tpoint) <= 5) {
-            // this._drawDashRect(tpoint,24,24);
-            this._opentoolTip(this._bufferShips[i])
-            return;
+        let latlng = L.latLng(this._bufferShips[i].lat, this._bufferShips[i].lng);
+        let tpoint = this._map.latLngToLayerPoint(latlng)
+        if(point.distanceTo(tpoint) <= 5) {
+          if(this._map.hasLayer(this._selectMarker)) {
+            this._map.removeLayer(this._selectMarker)
           }
+          this._selectMarker = L.marker(latlng, { icon: L.divIcon(this.iconOptions) }).addTo(this._map);
+          this._opentoolTip(this._bufferShips[i])
+          return;
+        }
       }
-    }
-    if(this._map.hasLayer(this._tooltip)) {
-      this._map.removeLayer(this._tooltip)
     }
     this._canvas.style.cursor = 'pointer'
   },
-  
+
   _onMouseMoveEvt: function (e) {
     var point = e.layerPoint
     if(this._bufferShips.length) {
       for(let i = 0, len = this._bufferShips.length; i < len; i++) {
-          let tpoint = this._map.latLngToLayerPoint(L.latLng(this._bufferShips[i].lat, this._bufferShips[i].lng))
-          if(point.distanceTo(tpoint) <= 5) {
-            this._canvas.style.cursor = 'default'
-            return;
-          }
+        let tpoint = this._map.latLngToLayerPoint(L.latLng(this._bufferShips[i].lat, this._bufferShips[i].lng))
+        if(point.distanceTo(tpoint) <= 5) {
+          this._canvas.style.cursor = 'default'
+          return;
+        }
       }
     }
-    this._canvas.style.cursor = 'pointer'    
+    this._canvas.style.cursor = 'pointer'
   },
 
   _opentoolTip: function (shipobj) {
@@ -161,12 +170,12 @@ export var Draw = L.Class.extend({
   },
 
   _drawDashRect: function (point, width, height) {
-      this._ctx.save();
-      this._ctx.setLineDash([6]);
-      this._ctx.strokeStyle = '#f00';
-      this._ctx.lineWidth = 4;
-      this._ctx.strokeRect(point.x - width/2, point.y - height/2, width, height);
-      this._ctx.restore();
+    this._ctx.save();
+    this._ctx.setLineDash([6]);
+    this._ctx.strokeStyle = '#f00';
+    this._ctx.lineWidth = 4;
+    this._ctx.strokeRect(point.x - width / 2, point.y - height / 2, width, height);
+    this._ctx.restore();
   },
 
   _getTooltipText: function (targetobj) {
