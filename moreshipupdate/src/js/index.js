@@ -9,8 +9,8 @@ $(function () {
   var draw = new Draw(map);
   var tag = false;
   var index = 1;
-  var getDataFunc = function (index) {
-  	$.getJSON('src/data/'+ index + '.json',function (data) {
+  var getDataFunc = function (indexs) {
+  	$.getJSON('src/data/'+ indexs + '.json',function (data) {
   		console.log('本次获取的总目标数：'+ data.msg.shipList.length);
   		 data = data.msg.shipList;
   		 let newdata = [];
@@ -19,6 +19,13 @@ $(function () {
   		 	obj.lat = data[i].la/600000;
   		 	obj.lng = data[i].lo/600000;
   		 	obj.dir = parseInt(data[i].di/10);
+  		 	obj.info = [
+  		 	  {key: 'mmsi', value:data[i].ti},
+  		 	  {key: '船名', value:data[i].sn},
+  		 	  {key: '经度', value:data[i].lo/600000},
+  		 	  {key: '纬度', value:data[i].la/600000},
+  		 	  {key: '航向', value:parseInt(data[i].di/10)}
+  		 	];
   		 	newdata.push(obj);
   		 }
   		 draw.drawShips(newdata);
@@ -35,5 +42,5 @@ $(function () {
   		tag = false;
   		getDataFunc(index);
   	}
-  } , 1000);
+  } , 3*1000);
 });

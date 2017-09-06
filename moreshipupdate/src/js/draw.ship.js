@@ -13,7 +13,7 @@ export var Draw = L.Class.extend({
   },
 
   toolTipOptions: {
-    offset: [0, 0],
+    offset: [0, -14],
     direction: 'top',
     permanent: false
   },
@@ -30,7 +30,8 @@ export var Draw = L.Class.extend({
     this._bufferShips = []
 
     this._canvasLayer.on('update', this._shipLayerUpdate, this)
-    this._map.on('mousemove', this._onmousemoveEvt, this)
+    this._map.on('click', this._onMouseClickEvt, this)
+    this._map.on('mousemove', this._onMouseMoveEvt, this)
   },
 
   drawShips: function (data) {
@@ -60,12 +61,12 @@ export var Draw = L.Class.extend({
     }
   },
 
-  _onmousemoveEvt: function (e) {
+  _onMouseClickEvt: function (e) {
     var point = e.layerPoint
     if(this._bufferShips.length) {
       for(let i = 0, len = this._bufferShips.length; i < len; i++) {
           let tpoint = this._map.latLngToLayerPoint(L.latLng(this._bufferShips[i].lat, this._bufferShips[i].lng))
-          if(point.distanceTo(tpoint) <= 3) {
+          if(point.distanceTo(tpoint) <= 5) {
             this._opentoolTip(this._bufferShips[i])
             return;
           }
@@ -75,6 +76,20 @@ export var Draw = L.Class.extend({
       this._map.removeLayer(this._tooltip)
     }
     this._canvas.style.cursor = 'pointer'
+  },
+  
+  _onMouseMoveEvt: function (e) {
+    var point = e.layerPoint
+    if(this._bufferShips.length) {
+      for(let i = 0, len = this._bufferShips.length; i < len; i++) {
+          let tpoint = this._map.latLngToLayerPoint(L.latLng(this._bufferShips[i].lat, this._bufferShips[i].lng))
+          if(point.distanceTo(tpoint) <= 5) {
+            this._canvas.style.cursor = 'default'
+            return;
+          }
+      }
+    }
+    this._canvas.style.cursor = 'pointer'    
   },
 
   _opentoolTip: function (shipobj) {
