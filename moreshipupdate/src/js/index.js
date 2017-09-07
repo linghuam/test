@@ -36,7 +36,7 @@ $(function () {
   };
   getDataFunc(1);
   setInterval(function () {
-  	if (index > 1 ) {
+  	if (index > 3 ) {
   		index = 1;
   	}
   	if (tag) {
