@@ -113,11 +113,12 @@ export var Ajax = L.Class.extend({
   },
 
   _isCrossDomain: function (url) {
-    if(url.indexOf("http") == -1) return false;
-    if(!this._isSamePort(url)) return true;
-    var curHost = window.location.hostname;
-    var targetHost = url.split('/')[2].split(':')[0];
-    return curHost.toLowerCase() !== targetHost.toLowerCase();
+    return false;
+    // if(url.indexOf("http") == -1) return false;
+    // if(!this._isSamePort(url)) return true;
+    // var curHost = window.location.hostname;
+    // var targetHost = url.split('/')[2].split(':')[0];
+    // return curHost.toLowerCase() !== targetHost.toLowerCase();
   },
 
   _request: function (options) {
