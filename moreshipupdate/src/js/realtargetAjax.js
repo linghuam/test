@@ -12,6 +12,10 @@ export class RealTarget {
     this._draw = new Draw(map, this);
     this._ajax = new Ajax();
     this._alltargets = [];
+
+    this._map.on('moveend', function () {
+      this.getData();
+    }, this);
   }
 
   getData() {
@@ -45,6 +49,7 @@ export class RealTarget {
       console.error('未获取指定区域目标！');
       return;
     }
+    console.log('获取目标总数:' + data.msg.shipList.length);
     this._update(data);
   }
 
@@ -120,7 +125,7 @@ export class RealTarget {
     onetarget.infotype = oneinfo.mt // 信息类型 int
     onetarget.infosrc = oneinfo.ms // 信息来源 int 0;1,2,3
     onetarget.num = oneinfo.nu // 目标编号num int
-    onetarget.lon = parseFloat(oneinfo.lo / 600000) // 经度
+    onetarget.lng = parseFloat(oneinfo.lo / 600000) // 经度
     onetarget.lat = parseFloat(oneinfo.la / 600000) // 纬度
     onetarget.dir = parseFloat((oneinfo.di / 10).toFixed(1)) // 船航向 int
     onetarget.heading = oneinfo.he // 船首向 int

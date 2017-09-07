@@ -49,11 +49,13 @@ export var Draw = L.Class.extend({
   },
 
   drawShips: function (data) {
+    this._clearLayer();
     this._bufferShips = data;
     this._drawShips(data);
   },
 
   drawShips2: function () {
+    this._clearLayer();
     var data = this._realtargetInstance._alltargets;
     this._drawShips(data);
   },  
