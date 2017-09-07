@@ -33,7 +33,7 @@ export var Draw = L.Class.extend({
     this._canvasLayer = new CanvasLayer().addTo(map);
     this._canvas = this._canvasLayer.getContainer();
     this._ctx = this._canvas.getContext('2d');
-    
+
     this._realtargetInstance = realtargetInstance;
     this._clickRadius = 5;
     // this._bufferShips = [];
@@ -48,17 +48,11 @@ export var Draw = L.Class.extend({
     this._initContextMenu();
   },
 
-  drawShips: function (data) {
-    this._clearLayer();
-    this._bufferShips = data;
-    this._drawShips(data);
-  },
-
-  drawShips2: function () {
+  drawShips: function () {
     this._clearLayer();
     var data = this._realtargetInstance._alltargets;
     this._drawShips(data);
-  },  
+  },
 
   update: function () {
     this._shipLayerUpdate();
@@ -72,18 +66,13 @@ export var Draw = L.Class.extend({
 
   clear: function () {
     this._clearLayer();
-    // this._bufferShips = [];
   },
 
   _shipLayerUpdate: function () {
-    // if(this._bufferShips.length) {
-    //   this._clearLayer()
-    //   this._drawShips(this._bufferShips)
-    // }
     if(this._realtargetInstance._alltargets.length) {
       this._clearLayer()
       this._drawShips(this._realtargetInstance._alltargets)
-    }    
+    }
   },
 
   _onMouseClickEvt: function (e) {
@@ -93,6 +82,7 @@ export var Draw = L.Class.extend({
       this._removeSelectMarker();
       this._addSelectMarker(latlng);
       this._opentoolTip(target);
+      this._realtargetInstance.updateSelectState(target);
     }
   },
 
@@ -186,6 +176,15 @@ export var Draw = L.Class.extend({
       } else {
         this._drawShip(data[i]);
       }
+      this._drawSelect(data[i]);
+    }
+  },
+
+  _drawSelect: function (shipobj) {
+    if(shipobj.eventTag.isSelect) {
+      let latlng = L.latLng(shipobj.lat, shipobj.lng);
+      this._removeSelectMarker();
+      this._addSelectMarker(latlng);
     }
   },
 

@@ -40,6 +40,17 @@ export class RealTarget {
   	return this._alltargets;
   }
 
+  updateSelectState (obj) {
+    for (let i  = 0, len = this._alltargets.length; i < len; i++) {
+      let target = this._alltargets[i];
+      if (obj.id === target.id) {
+         target.eventTag.isSelect = 1;
+      } else {
+        target.eventTag.isSelect = 0;
+      }
+    }
+  }
+
   _getRectTargetCallback(data, error) {
     this.isAjaxComplete = 1;
     if(error) {
@@ -57,12 +68,13 @@ export class RealTarget {
     var newlist = this._convertShipList(data);
     this._removeInvalidTarget(newlist);
     this._updateAllTargets(newlist);
-    this._draw.drawShips2();
+    this._draw.drawShips();
   }
 
   _removeInvalidTarget(newlist) {
     this._alltargets = this._alltargets.filter(function (value) {
-      return this._isContain(value, newlist);
+      // 选中状态的目标暂不清除
+      return this._isContain(value, newlist) || value.eventTag.isSelect;
     }.bind(this));
   }
 
@@ -79,12 +91,15 @@ export class RealTarget {
       // 如果当前图层有新目标，更新
       if(data.id === obj.id) {
         iscontain = true;
-        this._alltargets[i] = obj;
+        this._alltargets[i] = L.extend(data, obj);
         break;
       }
     }
     // 如果当前图层没有新目标，添加（可以加上个数限制）
     if(!iscontain) {
+      obj.eventTag = {
+        isSelect: 0
+      };
       this._alltargets.push(obj);
     }
   }
