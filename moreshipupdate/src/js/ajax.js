@@ -1,5 +1,6 @@
 import L from 'leaflet'
 import $ from 'jquery'
+import { Config } from '../config/index.js'
 
 export var Ajax = L.Class.extend({
 
@@ -51,7 +52,7 @@ export var Ajax = L.Class.extend({
   post: function (url, data, async, context, success, error) {
     if(!error) error = this.error;
     if(this._isCrossDomain(url))
-      url = Project_ParamConfig.defaultAjaxProxy + '?' + url;
+      url = Config.defaultAjaxProxy + '?' + url;
     return this._request({
       url: url,
       data: data,

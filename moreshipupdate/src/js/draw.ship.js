@@ -24,7 +24,7 @@ export var Draw = L.Class.extend({
     className: 'ict_markerselect_divicon'
   },
 
-  initialize: function (map, options = {}) {
+  initialize: function (map, realtargetInstance, options = {}) {
 
     this.shipOptions = L.extend(this.shipOptions, options.shipOptions);
     this.toolTipOptions = L.extend(this.toolTipOptions, options.toolTipOptions);
@@ -34,8 +34,9 @@ export var Draw = L.Class.extend({
     this._canvas = this._canvasLayer.getContainer();
     this._ctx = this._canvas.getContext('2d');
     
+    this._realtargetInstance = realtargetInstance;
     this._clickRadius = 5;
-    this._bufferShips = [];
+    // this._bufferShips = [];
     this._selectMarker = null;
     this._hidediv = null;
 
@@ -52,6 +53,11 @@ export var Draw = L.Class.extend({
     this._drawShips(data);
   },
 
+  drawShips2: function () {
+    var data = this._realtargetInstance._alltargets;
+    this._drawShips(data);
+  },  
+
   update: function () {
     this._shipLayerUpdate();
   },
@@ -64,14 +70,18 @@ export var Draw = L.Class.extend({
 
   clear: function () {
     this._clearLayer();
-    this._bufferShips = [];
+    // this._bufferShips = [];
   },
 
   _shipLayerUpdate: function () {
-    if(this._bufferShips.length) {
+    // if(this._bufferShips.length) {
+    //   this._clearLayer()
+    //   this._drawShips(this._bufferShips)
+    // }
+    if(this._realtargetInstance._alltargets.length) {
       this._clearLayer()
-      this._drawShips(this._bufferShips)
-    }
+      this._drawShips(this._realtargetInstance._alltargets)
+    }    
   },
 
   _onMouseClickEvt: function (e) {
@@ -144,11 +154,11 @@ export var Draw = L.Class.extend({
   },
 
   _getTriggerTarget: function (point) {
-    if(this._bufferShips.length) {
-      for(let i = 0, len = this._bufferShips.length; i < len; i++) {
-        let tpoint = this._map.latLngToLayerPoint(L.latLng(this._bufferShips[i].lat, this._bufferShips[i].lng))
+    if(this._realtargetInstance._alltargets.length) {
+      for(let i = 0, len = this._realtargetInstance._alltargets.length; i < len; i++) {
+        let tpoint = this._map.latLngToLayerPoint(L.latLng(this._realtargetInstance._alltargets[i].lat, this._realtargetInstance._alltargets[i].lng))
         if(point.distanceTo(tpoint) <= this._clickRadius) {
-          return this._bufferShips[i];
+          return this._realtargetInstance._alltargets[i];
         }
       }
     }

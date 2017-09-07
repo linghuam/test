@@ -6,15 +6,15 @@ import { Draw } from './draw.ship.js'
 
 export class RealTarget {
 
-  constructor (map) {
+  constructor(map) {
 
     this._map = map;
-    this._draw = new Draw(map);
+    this._draw = new Draw(map, this);
     this._ajax = new Ajax();
     this._alltargets = [];
   }
 
-  getData () {
+  getData() {
     var url = Config.shipRealUrl;
     var data = {};
     data.limit = Config.limit;
@@ -32,7 +32,11 @@ export class RealTarget {
     }.bind(this), Config.updatetime * 1000)
   }
 
-  _getRectTargetCallback (data, error) {
+  getAllTargets () {
+  	return this._alltargets;
+  }
+
+  _getRectTargetCallback(data, error) {
     this.isAjaxComplete = 1;
     if(error) {
       return;
@@ -44,54 +48,41 @@ export class RealTarget {
     this._update(data);
   }
 
-  _update (data) {
-    var newlist = this.convertShipList(data);
-    this.removeInvalidTarget(newlist);
-    this.updateAllTargets(newlist);
+  _update(data) {
+    var newlist = this._convertShipList(data);
+    this._removeInvalidTarget(newlist);
+    this._updateAllTargets(newlist);
+    this._draw.drawShips2();
   }
 
-  removeInvalidTarget (newlist) {
+  _removeInvalidTarget(newlist) {
     this._alltargets = this._alltargets.filter(function (value) {
       return this._isContain(value, newlist);
     }.bind(this));
   }
 
-  updateAllTargets (newlist) {
+  _updateAllTargets(newlist) {
     for(let i = 0, len = newlist.length; i < len; i++) {
-      this.updateOneTarget(newlist[i]);
+      this._updateOneTarget(newlist[i]);
     }
   }
 
-    updateOneTarget (obj) {
-      var iscontain = false
-      var layers = this.realtargetFeatureGroup.getLayers()
-      for (var i = 0, len = layers.length; i < len; i++) {
-        var layer = layers[i]
-        var data = layer.options.data
-                // 如果当前图层有新目标，更新
-        if (data.id === obj.id) {
-          iscontain = true
-          if (this.isChange(data, obj)) { // 如果目标状态发生改变
-            var latlng = L.latLng(obj.lat, obj.lon)
-            layer.options.data = L.extend(layer.options.data, obj)
-            layer.setLatLng(latlng)
-            layer.setRotationAngle(obj.dir)
-            layer.setIcon(this.getTargetIcon(obj.shiptype))
-          }
-          break
-        }
-      }
-
-            // 如果当前图层没有新目标，添加（可以加上个数限制）
-      if (!iscontain && layers.length < this.config.limit && (this._beforeMode === Project_ParamConfig.CurrentMode)) {
-        var marker = this.createMarker(obj, true)
-        if (!this.isShowNewTarget(obj)) { // 如果不符合过滤条件或达不到显示级别
-          marker.setOpacity(0)
-                    // this.removeTargetEvt(marker);
-        }
-        this.realtargetFeatureGroup.addLayer(marker)
+  _updateOneTarget(obj) {
+    var iscontain = false;
+    for(let i = 0, len = this._alltargets.length; i < len; i++) {
+      let data = this._alltargets[i];
+      // 如果当前图层有新目标，更新
+      if(data.id === obj.id) {
+        iscontain = true;
+        this._alltargets[i] = obj;
+        break;
       }
     }
+    // 如果当前图层没有新目标，添加（可以加上个数限制）
+    if(!iscontain) {
+      this._alltargets.push(obj);
+    }
+  }
 
   _isContain(obj, arr) {
     var iscontain = false;
@@ -104,17 +95,25 @@ export class RealTarget {
     return iscontain;
   }
 
-  convertShipList(data) {
+  _isChange(oldtarget, newtarget) {
+    var ischange = false;
+    if(newtarget.lat !== oldtarget.lat || newtarget.lon !== oldtarget.lon) {
+      ischange = true;
+    }
+    return ischange;
+  }
+
+  _convertShipList(data) {
     var shiplist = data.msg.shipList;
     var newlist = [];
     for(let i = 0, len = shiplist.length; i < len; i++) {
-      let targetobj = this.convertTargetObj(shiplist[i]);
-      newlist.push(targetobj)
+      let targetobj = this._convertTargetObj(shiplist[i]);
+      newlist.push(targetobj);
     }
     return newlist;
   }
 
-  convertTargetObj(oneinfo) {
+  _convertTargetObj(oneinfo) {
     var onetarget = {}
     onetarget.country = this.getDetialConvertName(oneinfo.co, 'country') // 国别country 中文（过滤）
     onetarget.countryOrig = oneinfo.co.replace(/@/g, '') // 监控统计需要原始的国家名
@@ -130,8 +129,8 @@ export class RealTarget {
     onetarget.time = oneinfo.ti
     onetarget.speed = oneinfo.sp / 10 || ''
     // 自定义属性
-    onetarget.id = this.getShipIdMode(oneinfo).id // 计算后的id，作为船舶的唯一id
-    onetarget.mode = this.getShipIdMode(oneinfo).mode // 自定义 当前模式
+    onetarget.id = this._getShipIdMode(oneinfo).id // 计算后的id，作为船舶的唯一id
+    onetarget.mode = this._getShipIdMode(oneinfo).mode // 自定义 当前模式
     onetarget.filterSrc = this.getShipSrc(oneinfo)
     return onetarget
   }
@@ -346,7 +345,7 @@ export class RealTarget {
     return res
   }
 
-  getShipIdMode(targetobj) {
+  _getShipIdMode(targetobj) {
     var idmo = { id: null, mode: null }
     if(Config.CurrentMode === 0) {
       idmo.id = targetobj.nu
@@ -358,7 +357,7 @@ export class RealTarget {
     return idmo
   }
 
-  getShipIdMode2(targetobj) {
+  _getShipIdMode2(targetobj) {
     var idmo = { id: null, mode: null }
     if(Config.CurrentMode === 0) {
       idmo.id = targetobj.target_id

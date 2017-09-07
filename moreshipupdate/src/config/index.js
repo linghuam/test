@@ -4,5 +4,6 @@ export var Config = {
   timeout: 1000000, //消批时间(分钟)【待确认】
   bufferRatio: 0,
   updatetime: 1,
-  CurrentMode: 1
+  CurrentMode: 1,
+  defaultAjaxProxy:''
 };
