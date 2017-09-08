@@ -36,15 +36,15 @@ export class RealTarget {
     }.bind(this), Config.updatetime * 1000)
   }
 
-  getAllTargets () {
-  	return this._alltargets;
+  getAllTargets() {
+    return this._alltargets;
   }
 
-  updateSelectState (obj) {
-    for (let i  = 0, len = this._alltargets.length; i < len; i++) {
+  updateSelectState(obj) {
+    for(let i = 0, len = this._alltargets.length; i < len; i++) {
       let target = this._alltargets[i];
-      if (obj.id === target.id) {
-         target.eventTag.isSelect = 1;
+      if(obj.id === target.id) {
+        target.eventTag.isSelect = 1;
       } else {
         target.eventTag.isSelect = 0;
       }
@@ -66,9 +66,25 @@ export class RealTarget {
 
   _update(data) {
     var newlist = this._convertShipList(data);
+    this.checkIdRepeat(newlist);
     this._removeInvalidTarget(newlist);
     this._updateAllTargets(newlist);
     this._draw.drawShips();
+  }
+
+  checkIdRepeat(arr) {
+    var ids = [];
+    arr.forEach(function (v) {
+      ids.push(v.id);
+    });
+    var hash = {};
+    for(var i in ids) {
+      if(hash[ids[i]]) {
+        console.log('出现重复id,值为:' + ids[i]);
+        return 1;
+      }
+      hash[ids[i]] = true;
+    }
   }
 
   _removeInvalidTarget(newlist) {
@@ -135,6 +151,7 @@ export class RealTarget {
 
   _convertTargetObj(oneinfo) {
     var onetarget = {}
+    onetarget.originalObj = oneinfo;
     onetarget.country = this.getDetialConvertName(oneinfo.co, 'country') // 国别country 中文（过滤）
     onetarget.countryOrig = oneinfo.co.replace(/@/g, '') // 监控统计需要原始的国家名
     onetarget.infotype = oneinfo.mt // 信息类型 int
@@ -366,15 +383,15 @@ export class RealTarget {
   }
 
   _getShipIdMode(targetobj) {
-    var idmo = { id: null, mode: null }
+    var idmo = { id: null, mode: null };
     if(Config.CurrentMode === 0) {
-      idmo.id = targetobj.nu
-      idmo.mode = 0
+      idmo.id = targetobj.nu;
+      idmo.mode = 0;
     } else {
-      idmo.id = targetobj.nu
-      idmo.mode = targetobj.mt
+      idmo.id = targetobj.ms.toString() + targetobj.mt.toString() + targetobj.nu.toString();
+      idmo.mode = targetobj.mt;
     }
-    return idmo
+    return idmo;
   }
 
   _getShipIdMode2(targetobj) {

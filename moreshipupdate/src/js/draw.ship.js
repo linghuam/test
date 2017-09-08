@@ -68,6 +68,24 @@ export var Draw = L.Class.extend({
     this._clearLayer();
   },
 
+  _getShipColorByType: function (type) {
+    var color = '#FFD800';
+    switch (type) {
+      case 1 : color = '#EC1411'; break;
+      case 2 : color = '#F56C11'; break;
+      case 3 : color = '#EE2EFF'; break;
+      // case 4 : color = '#1F84FF'; break;
+      case 5 : color = '#36CDFF'; break;
+      case 6 : color = '#1F84FF'; break;
+      case 7 : color = '#00EBC2'; break;
+      case 8 : color = '#74EB0B'; break;
+      // case 9 : color = '#f0f'; break;
+      // case 10 : color = '#f0f'; break;
+      // case 11 : color = '#f0f'; break;
+    }
+    return color;
+  },
+
   _shipLayerUpdate: function () {
     if(this._realtargetInstance._alltargets.length) {
       this._clearLayer()
@@ -104,9 +122,9 @@ export var Draw = L.Class.extend({
   _onMouseMoveEvt: function (e) {
     var target = this._getTriggerTarget(e.layerPoint);
     if(target) {
-      this._canvas.style.cursor = 'pointer';
+      this._canvas.style.cursor = 'default';
     } else {
-      this._canvas.style.cursor = 'default'
+      this._canvas.style.cursor = 'pointer'
     }
   },
 
@@ -221,7 +239,7 @@ export var Draw = L.Class.extend({
     var dh = h / 3
 
     this._ctx.save()
-    this._ctx.fillStyle = this.shipOptions.fillColor
+    this._ctx.fillStyle = this._getShipColorByType(shipobj.originalObj.st);
     this._ctx.strokeStyle = this.shipOptions.color
     this._ctx.translate(point.x, point.y)
     this._ctx.rotate((Math.PI / 180) * rotate)
