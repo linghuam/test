@@ -11,11 +11,14 @@ export class RealTarget {
     this._map = map;
     this._draw = new Draw(map, this);
     this._ajax = new Ajax();
+    this._webworker = new Worker('webworker.js');
     this._alltargets = [];
 
     this._map.on('moveend', function () {
       this.getData();
     }, this);
+
+    this._webworker.onmessage = this._onWebworkerMessage.bind(this);
   }
 
   getData() {
@@ -61,12 +64,20 @@ export class RealTarget {
     this._update(data);
   }
 
+  _onWebworkerMessage (e) {
+
+  }
+
   _update(data) {
+    console.time('datahandler');
     var newlist = this._convertShipList(data);
     this.checkIdRepeat(newlist);
     this._removeInvalidTarget(newlist);
     this._updateAllTargets(newlist);
+    console.timeEnd('datahandler');
+    console.time('draw');
     this._draw.drawShips();
+    console.timeEnd('draw');
   }
 
   checkIdRepeat(arr) {
