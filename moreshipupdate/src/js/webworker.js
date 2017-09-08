@@ -1,19 +1,23 @@
+var Config = {
+    CurrentMode: 1
+};
+
 class DataHandler {
 
     constructor() {
-        console.log('class test init!');
+        this._alltargets = [];
     }
 
-    _update(data) {
+    _update(olddata = [], newdata = []) {
         console.time('datahandler');
-        var newlist = this._convertShipList(data);
+        this._alltargets = olddata;
+        var newlist = this._convertShipList(newdata);
         this.checkIdRepeat(newlist);
         this._removeInvalidTarget(newlist);
         this._updateAllTargets(newlist);
         console.timeEnd('datahandler');
-        console.time('draw');
-        this._draw.drawShips();
-        console.timeEnd('draw');
+        console.log('Webworker - Posting message');
+        postMessage(this._alltargets);
     }
 
     checkIdRepeat(arr) {
@@ -51,7 +55,7 @@ class DataHandler {
             // 如果当前图层有新目标，更新
             if(data.id === obj.id) {
                 iscontain = true;
-                this._alltargets[i] = L.extend(data, obj);
+                this._alltargets[i] = Object.assign({}, data, obj);
                 break;
             }
         }
@@ -75,16 +79,8 @@ class DataHandler {
         return iscontain;
     }
 
-    _isChange(oldtarget, newtarget) {
-        var ischange = false;
-        if(newtarget.lat !== oldtarget.lat || newtarget.lon !== oldtarget.lon) {
-            ischange = true;
-        }
-        return ischange;
-    }
-
     _convertShipList(data) {
-        var shiplist = data.msg.shipList;
+        var shiplist = this.isArray(data) ? data : data.msg.shipList;
         var newlist = [];
         for(let i = 0, len = shiplist.length; i < len; i++) {
             let targetobj = this._convertTargetObj(shiplist[i]);
@@ -118,7 +114,7 @@ class DataHandler {
 
     getDetialConvertName(code, type) {
         var res = '';
-        if(code.toString) code = code.toString()
+        code = '' + code + '';
         if(type == 'ship_type') { // 船舶类型（过滤）
             switch(code) {
             case '1':
@@ -338,18 +334,6 @@ class DataHandler {
         return idmo;
     }
 
-    _getShipIdMode2(targetobj) {
-        var idmo = { id: null, mode: null }
-        if(Config.CurrentMode === 0) {
-            idmo.id = targetobj.target_id
-            idmo.mode = 0
-        } else {
-            idmo.id = targetobj.target_id_orig
-            idmo.mode = targetobj.targetIDOrig_Type
-        }
-        return idmo
-    }
-
     getShipSrc(targetobj) {
         var src = -1
         if(targetobj.ms === 3 && targetobj.mt === 7) {
@@ -376,13 +360,14 @@ class DataHandler {
         return src
     }
 
+    isArray(o) {
+        return Object.prototype.toString.call(o) == '[object Array]';
+    }
 }
 
 var dataHandlerInstance = new DataHandler();
 
 onmessage = function (e) {
-    console.log('Message received from main script');
-    var workerResult = 'Result: ' + (e.data[0] * e.data[1]);
-    console.log('Posting message back to main script');
-    postMessage(workerResult);
+    console.log('Webworker - Message received');
+    dataHandlerInstance._update(e.data.olddata, e.data.newdata);
 }
