@@ -36,10 +36,6 @@ export class RealTarget {
     }.bind(this), Config.updatetime * 1000)
   }
 
-  getAllTargets() {
-    return this._alltargets;
-  }
-
   updateSelectState(obj) {
     for(let i = 0, len = this._alltargets.length; i < len; i++) {
       let target = this._alltargets[i];
@@ -54,6 +50,7 @@ export class RealTarget {
   _getRectTargetCallback(data, error) {
     this.isAjaxComplete = 1;
     if(error) {
+      console.error('获取目标错误！');
       return;
     }
     if(data.state !== 1) {
