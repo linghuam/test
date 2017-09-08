@@ -11,7 +11,7 @@ export class RealTarget {
     this._map = map;
     this._draw = new Draw(map, this);
     this._ajax = new Ajax();
-    this._webworker = new Worker('webworker.js');
+    this._webworker = new Worker('src/js/webworker.js');
     this._alltargets = [];
 
     this._map.on('moveend', function () {
@@ -65,7 +65,7 @@ export class RealTarget {
   }
 
   _onWebworkerMessage (e) {
-
+    console.log('get messsage');
   }
 
   _update(data) {
