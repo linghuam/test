@@ -14,8 +14,11 @@ export class RealTarget {
         this._webworker = new Worker('src/js/webworker.js');
         this._alltargets = [];
 
+        this._isAjaxComplete = 0;
+        this._lastFpsUpdateTime = 0;
+
         this._map.on('moveend', function () {
-            this.getData();
+          this.getData(false);
         }, this);
 
         this._webworker.onmessage = this._onWebworkerMessage.bind(this);
@@ -52,26 +55,48 @@ export class RealTarget {
         return obj
     }
 
-    getData() {
+    getData(isAtOnce = true) {
+        // 限制发送请求的频率，改善用户体验
+        if(!isAtOnce) {
+            var timestamp = this._caculatefpsTime(+new Date());
+            if(timestamp >= 2 * 1000 && this._isAjaxComplete === 1) {
+                this._isAjaxComplete = 0;
+                this._getData();
+            }
+        } else {
+          this._getData();
+        }
+    }
+
+    _getData() {
         var url = Config.shipRealUrl;
         var data = {};
         data.limit = Config.limit;
         data.timeout = Config.timeout;
         data.mode = Config.CurrentMode;
         data = L.extend(data, this.getCurRectExtend());
-        this.isAjaxComplete = 0;
         this._ajax.post(url, data, true, this, this._getRectTargetCallback);
         this._stopInterval();
         this._interval = window.setInterval(function () {
-            if(this.isAjaxComplete === 1) {
-                this.isAjaxComplete = 0;
+            if(this._isAjaxComplete === 1) {
+                this._isAjaxComplete = 0;
                 this._ajax.post(url, data, true, this, this._getRectTargetCallback)
             }
-        }.bind(this), Config.updatetime * 1000)
+        }.bind(this), Config.updatetime * 1000);
+    }
+
+    // 计算两帧时间间隔，单位：毫秒
+    _caculatefpsTime(now) {
+        var time = now - this._lastFpsUpdateTime;
+        if(this._lastFpsUpdateTime === 0) {
+            time = 0;
+        }
+        this._lastFpsUpdateTime = now;
+        return time;
     }
 
     _getRectTargetCallback(data, error) {
-        this.isAjaxComplete = 1;
+        this._isAjaxComplete = 1;
         if(error) {
             console.error('获取目标错误！');
             return;
@@ -88,8 +113,10 @@ export class RealTarget {
     }
 
     _onWebworkerMessage(e) {
-        this._alltargets = e.data;
-        this._draw.drawShips();
+        // this._alltargets = e.data;
+        this._draw.drawShips(e.data, function () {
+            this._alltargets = e.data;
+        }.bind(this));
     }
 
     _stopInterval() {

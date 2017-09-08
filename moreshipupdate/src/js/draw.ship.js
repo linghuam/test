@@ -36,9 +36,10 @@ export var Draw = L.Class.extend({
 
         this._realtargetInstance = realtargetInstance;
         this._clickRadius = 5;
-        // this._bufferShips = [];
         this._selectMarker = null;
         this._hidediv = null;
+
+        this._lastFpsUpdateTime = 0;
 
         this._canvasLayer.on('update', this._shipLayerUpdate, this);
         this._map.on('click', this._onMouseClickEvt, this);
@@ -48,12 +49,13 @@ export var Draw = L.Class.extend({
         this._initContextMenu();
     },
 
-    drawShips: function () {
-        window.requestAnimationFrame(function () {
-            this._clearLayer();
-            var data = this._realtargetInstance._alltargets;
-            this._drawShips(data);
-        }.bind(this));
+    drawShips: function (data, drawEndCallback) {
+        var timestamp = this._caculatefpsTime(+ new Date());
+        if (timestamp === 0 || timestamp >= 1000) {
+          this._clearLayer();
+          this._drawShips(data);
+          drawEndCallback();          
+        }
     },
 
     update: function () {
@@ -68,6 +70,16 @@ export var Draw = L.Class.extend({
 
     clear: function () {
         this._clearLayer();
+    },
+
+    // 计算两帧时间间隔，单位：毫秒
+    _caculatefpsTime: function (now) {
+        var time = now - this._lastFpsUpdateTime;
+        if(this._lastFpsUpdateTime === 0) {
+            time = 0;
+        }
+        this._lastFpsUpdateTime = now;
+        return time;
     },
 
     _getShipColorByType: function (type) {
