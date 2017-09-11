@@ -18,7 +18,7 @@ export class RealTarget {
         this._lastFpsUpdateTime = 0;
 
         this._map.on('moveend', function () {
-          this.getData(false);
+            this.getData();
         }, this);
 
         this._webworker.onmessage = this._onWebworkerMessage.bind(this);
@@ -64,7 +64,7 @@ export class RealTarget {
                 this._getData();
             }
         } else {
-          this._getData();
+            this._getData();
         }
     }
 
@@ -113,10 +113,25 @@ export class RealTarget {
     }
 
     _onWebworkerMessage(e) {
-        // this._alltargets = e.data;
+        // 先更新数据再绘制，不然会丢失绘制之前的事件状态
+        this._alltargets = this._updateEventTag(e.data);
         this._draw.drawShips(e.data, function () {
-            this._alltargets = e.data;
+            // this._alltargets = e.data;
         }.bind(this));
+    }
+
+    _updateEventTag(data = []) {
+        for(let i = 0, len = data.length; i < len; i++) {
+            let starget = data[i];
+            for(let j = 0, lenj = this._alltargets.length; j < lenj; j++) {
+                let ttarget = this._alltargets[j];
+                if(starget.id === ttarget.id) {
+                    starget.eventTag = Object.assign({}, starget.eventTag, ttarget.eventTag);
+                    break;
+                }
+            }
+        }
+        return data;
     }
 
     _stopInterval() {

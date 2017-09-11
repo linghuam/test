@@ -51,11 +51,11 @@ export var Draw = L.Class.extend({
 
     drawShips: function (data, drawEndCallback) {
         var timestamp = this._caculatefpsTime(+ new Date());
-        if (timestamp === 0 || timestamp >= 1000) {
+        // if (timestamp === 0 || timestamp >= 1000) {
           this._clearLayer();
           this._drawShips(data);
           drawEndCallback();          
-        }
+        // }
     },
 
     update: function () {
