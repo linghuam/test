@@ -8,10 +8,10 @@ wss.on('connection', function (ws) {
     ws.on('message', function (message) {
         console.log('message');
         request('http://localhost:8088/src/data/1.json',function(error, response, body){
-            setInterval(function () {
+            // setInterval(function () {
                  console.log('send data!');
                  ws.send(body);
-            }, 1000);
+            // }, 1000);
         });
     });
 });
