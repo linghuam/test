@@ -10,7 +10,7 @@ export class RealTarget {
 
         this._map = map;
         this._draw = new Draw(map, this);
-        this._ajax = new Ajax();
+        // this._ajax = new Ajax();
         this._webworker = new Worker('src/js/webworker.js');
         this._alltargets = [];
 
