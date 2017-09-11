@@ -161,7 +161,7 @@ export var Draw = L.Class.extend({
             selector: '.leaflet-marker-rightclick-icon', // 选择右键菜单触发的元素
             trigger: 'none',
             callback: function (key, options) {
-                // self._rightClickCallback(key, options)
+                this._rightClickCallback(key, options)
             }.bind(this),
             items: {
                 'bpxs': {
@@ -189,6 +189,63 @@ export var Draw = L.Class.extend({
                 // "qykc": { "name": "区域开窗" }
             }
         })
+    },
+
+    _rightClickCallback: function (key, options) {
+        var curtarget = this.currentTarget
+        var curobj = curtarget.options.data
+        if(key === 'bpxs-shipname') {
+            var shipname = curobj.shipname
+            curtarget.unbindTooltip()
+            curtarget.bindTooltip(shipname, this.getTootipOptions())
+            curtarget.openTooltip()
+        } else if(key === 'bpxs-ph') {
+            var ph = curobj.id.toString()
+            curtarget.unbindTooltip()
+            curtarget.bindTooltip(ph, this.getTootipOptions())
+            curtarget.openTooltip()
+        } else if(key === 'bpxs-all') { // 目标信息显示标签
+            var info = this.getTargetDyInfo(curobj)
+            curtarget.unbindTooltip()
+            curtarget.bindTooltip(info, this.getTootipOptions())
+            curtarget.openTooltip()
+            curtarget.off('move', this._tipmove, this)
+            curtarget.off('tooltipclose', this._tipclose, this)
+            curtarget.on('move', this._tipmove, this)
+            curtarget.on('tooltipclose', this._tipclose, this)
+        } else if(key === 'bpxs-close') {
+            curtarget.unbindTooltip()
+        } else if(key === 'hjxs') {
+            var hjxsObj = L.ICT.Func['HJCX_HJXS'].getInstance()
+            hjxsObj.start()
+        } else if(key === 'xskz-key1') {
+            var xskzObj = L.ICT.Func['HJCX_HJKZ'].getInstance()
+            xskzObj.start(0)
+        } else if(key === 'xskz-key2') {
+            var xskzObj = L.ICT.Func['HJCX_HJKZ'].getInstance()
+            xskzObj.start(10)
+        } else if(key === 'xskz-key3') {
+            var xskzObj = L.ICT.Func['HJCX_HJKZ'].getInstance()
+            xskzObj.start(100)
+        } else if(key === 'xskz-key4') {
+            var xskzObj = L.ICT.Func['HJCX_HJKZ'].getInstance()
+            xskzObj.start(1000)
+        } else if(key === 'tshf') {
+            L.ICT.Func['TSHFOneShip'].run()
+        } else if(key === 'addhf') {
+            var tshfinstance = L.ICT.Func['TSHFMoreShip'].getInstance()
+            tshfinstance.addTarget(curobj)
+            if(tshfinstance._targetPanel) {
+                tshfinstance.updateList()
+            } else {
+                L.ict.app.util.dialog.success('提示', '成功加入回放列表！')
+            }
+        } else if(key === 'mbkc') { // 目标开窗
+            this.openWindowTarget(curobj)
+        }
+        // else if(key === 'qykc'){
+        //     this.openWindowArea(curobj);//区域开窗
+        // }
     },
 
     _getTriggerTarget: function (point) {
