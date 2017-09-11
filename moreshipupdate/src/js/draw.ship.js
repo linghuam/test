@@ -50,11 +50,11 @@ export var Draw = L.Class.extend({
     },
 
     drawShips: function (data, drawEndCallback) {
-        var timestamp = this._caculatefpsTime(+ new Date());
+        var timestamp = this._caculatefpsTime(+new Date());
         // if (timestamp === 0 || timestamp >= 1000) {
-          this._clearLayer();
-          this._drawShips(data);
-          drawEndCallback();          
+        this._clearLayer();
+        this._drawShips(data);
+        drawEndCallback();
         // }
     },
 
@@ -313,6 +313,13 @@ export var Draw = L.Class.extend({
     },
 
     _getTooltipText: function (targetobj) {
+        targetobj.info = [
+            { key: 'id', value: targetobj.id },
+            { key: '船名', value: targetobj.shipname },
+            { key: '经度', value: targetobj.lng },
+            { key: '纬度', value: targetobj.lat },
+            { key: '类型', value: targetobj.shiptype }
+        ];
         var content = [];
         content.push('<table>');
         if(targetobj.info && targetobj.info.length) {
