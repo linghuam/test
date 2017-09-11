@@ -12,10 +12,6 @@
          this._websocket.onclose = function () {
              console.log("websocketClose");
          };
-
-         $(window).unload(function () {
-             this.close();
-         }.bind(this));
      }
 
      // CONNECTING 0   The connection is not yet open.
@@ -30,7 +26,9 @@
          if(typeof data === "object") {
              data = JSON.stringify(data);
          }
-         this._websocket.send(data);
+         if(this._websocket.readyState === 1) {
+             this._websocket.send(data);
+         }
      }
 
      onMessage(callback, context) {
