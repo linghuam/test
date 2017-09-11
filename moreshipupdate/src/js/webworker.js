@@ -1,16 +1,13 @@
-var Config = {
-    CurrentMode: 1
-};
-
 class DataHandler {
 
     constructor() {
         this._alltargets = [];
     }
 
-    _update(olddata = [], newdata = []) {
+    _update(olddata = [], newdata = [], mode) {
         console.time('datahandler');
         this._alltargets = olddata;
+        this._mode = mode;
         var newlist = this._convertShipList(newdata);
         this.checkIdRepeat(newlist);
         this._removeInvalidTarget(newlist);
@@ -324,7 +321,7 @@ class DataHandler {
 
     _getShipIdMode(targetobj) {
         var idmo = { id: null, mode: null };
-        if(Config.CurrentMode === 0) {
+        if(this._mode === 0) {
             idmo.id = targetobj.nu;
             idmo.mode = 0;
         } else {
@@ -369,5 +366,5 @@ var dataHandlerInstance = new DataHandler();
 
 onmessage = function (e) {
     console.log('Webworker - Message received');
-    dataHandlerInstance._update(e.data.olddata, e.data.newdata);
+    dataHandlerInstance._update(e.data.olddata, e.data.newdata, e.data.mode);
 }

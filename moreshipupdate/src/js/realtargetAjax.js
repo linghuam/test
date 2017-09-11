@@ -75,6 +75,7 @@ export class RealTarget {
         data.timeout = Config.timeout;
         data.mode = Config.CurrentMode;
         data = L.extend(data, this.getCurRectExtend());
+        this._ajax.abort();
         this._ajax.post(url, data, true, this, this._getRectTargetCallback);
         this._stopInterval();
         this._interval = window.setInterval(function () {
@@ -108,7 +109,8 @@ export class RealTarget {
         console.log('获取目标总数:' + data.msg.shipList.length);
         this._webworker.postMessage({
             newdata: data,
-            olddata: this._alltargets
+            olddata: this._alltargets,
+            mode: Config.CurrentMode
         });
     }
 
