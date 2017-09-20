@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="utf-8">
-  <title></title>
+    <meta charset="utf-8">
+    <title></title>
 </head>
+
 <body>
     <p>计数:
         <output id="result"></output>
@@ -13,19 +15,25 @@
     <br />
     <br />
     <script>
-    var w;
+    class Test {
+        get name() {
+            return 'menglnighua';
+        }
+        set name(value) {
+            this._name = value;
+        }
+    }
+    </script>
+    <script>
+    var w = new Worker("demo_workers.js");
+    var test = new Test();
+    w.onmessage = function (event) {
+        document.getElementById("result").innerHTML = event.data;
+    };
 
     function startWorker() {
-        if (typeof(Worker) !== "undefined") {
-            if (typeof(w) == "undefined") {
-                w = new Worker("demo_workers.js");
-            }
-            w.onmessage = function(event) {
-                document.getElementById("result").innerHTML = event.data;
-            };
-        } else {
-            document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Workers...";
-        }
+        var ab = new ArrayBuffer(1);
+        w.postMessage(ab,[test]);
     }
 
     function stopWorker() {
