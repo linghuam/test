@@ -12,4 +12,16 @@ export class Map {
     this._height = this._container.clientHeight;
   }
 
+  addLayer(layer){
+    if (layer) {
+      layer.onAdd(this);
+    }
+  }
+
+  removeLayer(layer){
+    if (layer) {
+    layer.onRemove(this);      
+    }
+  }
+
 }
