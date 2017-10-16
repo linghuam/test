@@ -49,7 +49,9 @@ L.tileLayer.GoogleLayer().addTo(map);
  * 2 按区域使用canvas作为切片加载
  * 将船舶批量绘制在canvas上，性能很好，但动态交互实现太复杂
  */
-// L.canvastilelayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+L.canvastilelayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+	tileSize:512
+}).addTo(map);
 
 
 /*
