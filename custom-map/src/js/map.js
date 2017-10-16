@@ -1,10 +1,12 @@
+import proj4 from 'proj4'
+
 export class Map {
 
   constructor(id, options) {
     this._container = document.getElementById(id);
     this.options = Object.assign({
-      center: [39, 40],
-      zoom: 1
+      center: [116, 39],
+      zoom: 2
     }, options);
     this._center = this.options.center;
     this._zoom = this.options.zoom;
@@ -23,5 +25,8 @@ export class Map {
     layer.onRemove(this);      
     }
   }
-
+  
+  project (latlng) {
+    return proj4('EPSG:4326', 'EPSG:3857', latlng)
+  }
 }
