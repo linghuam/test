@@ -19,23 +19,25 @@ export class TileLayer {
   onAdd(map) {
     this._map = map;
     this._initContainer();
-    this._tileCenter = this._map.project(this._map._center);
+    this._tileCenter = this._map.project(this._map._center, this._map._zoom);
     this._tileZoom = this._map._zoom;
     // 地图范围
-    var mapMinX = Math.round(this._tileCenter[0] - this._map._width / 2);
-    var mapMinY = Math.round(this._tileCenter[1] - this._map._height / 2);
-    var maxX = Math.round(this._tileCenter[0] + this._map._width / 2);
-    var maxY = Math.round(this._tileCenter[1] + this._map._height / 2);
+    this._tileCenter[0] = Math.floor(this._tileCenter[0]);
+    this._tileCenter[1] = Math.floor(this._tileCenter[1]);
+    var mapMinX = this._tileCenter[0] - this._map._width / 2;
+    var mapMinY = this._tileCenter[1] - this._map._height / 2;
+    var maxX = this._tileCenter[0] + this._map._width / 2;
+    var maxY = this._tileCenter[1] + this._map._height / 2;
     // 该范围内切片行列范围
-    var rows = [Math.floor(mapMinX / this._tileSize), Math.floor(maxX / this._tileSize)];
-    var cols = [Math.floor(mapMinY / this._tileSize), Math.floor(maxY / this._tileSize)];
+    var rows = [Math.floor(mapMinX / this._tileSize), Math.ceil(maxX / this._tileSize) - 1];
+    var cols = [Math.floor(mapMinY / this._tileSize), Math.ceil(maxY / this._tileSize) - 1];
     // 获取所有行列数据
     var coords = [];
-    for(let i = rows[0]; i <= rows[1]; i++) {
-      for(let j = cols[0]; j <= cols[1]; j++) {
+    for(let i = cols[0]; i <= cols[1]; i++) {
+      for(let j = rows[0]; j <= rows[1]; j++) {
         coords.push({
-          x: i,
-          y: j,
+          x: j,
+          y: i,
           z: this._tileZoom
         });
       }
@@ -50,6 +52,11 @@ export class TileLayer {
       img.src = this.getTileUrl(cor);
     }
 
+  }
+
+  // 墨卡托投影的比例尺
+  scale(zoom) {
+    return 256 * Math.pow(2, zoom);
   }
 
   getTileUrl(coords) {

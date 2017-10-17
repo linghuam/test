@@ -22,11 +22,23 @@ export class Map {
 
   removeLayer(layer){
     if (layer) {
-    layer.onRemove(this);      
+    layer.onRemove(this);
     }
   }
-  
-  project (latlng) {
-    return proj4('EPSG:4326', 'EPSG:3857', latlng)
+
+  project (latlng, zoom) {
+    var projPoint = proj4('EPSG:4326', 'EPSG:3857', latlng);
+    var scale = 256 * Math.pow(2, zoom);
+    return this.transform(projPoint, scale);
+  }
+
+  transform (point, scale) {
+    var a = 2.495320233665337e-8;
+    var b = 0.5;
+    var c = -2.495320233665337e-8;
+    var d = 0.5;
+    point[0] = scale * (a * point[0] + b);
+    point[1] = scale * (c * point[1] + d);
+    return point;
   }
 }
