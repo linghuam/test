@@ -1414,8 +1414,7 @@ export var Map = Evented.extend({
 
 	_getNewPixelOrigin: function (center, zoom) {
 		var viewHalf = this.getSize()._divideBy(2);
-		return this.project(center, zoom)._subtract(viewHalf)._add(this.
-      ())._round();
+		return this.project(center, zoom)._subtract(viewHalf)._add(this._getMapPanePos())._round();
 	},
 
 	_latLngToNewLayerPoint: function (latlng, zoom, center) {
