@@ -52,14 +52,30 @@ export class TileLayer {
         y:coords[i].y,
         z:coords[i].z
       });
-      var img = new Image();
-      img.onload = function () {
-        var pos = this._getTilePos(origcor);
-        this._ctx.drawImage(img,pos[0],pos[1],256,256);
-      }.bind(this);
-      img.src = this.getTileUrl(cor);
+      this.creatTile(origcor,cor);
+      // var img = new Image();
+      // img.onload = function () {
+      //   var pos = this._getTilePos(origcor);
+      //   this._ctx.drawImage(img,pos[0],pos[1],256,256);
+      // }.bind(this);
+      // var pos = this._getTilePos(origcor);
+      // img.onload = this._tileOnLoad.call(this,pos,img);
+      // img.src = this.getTileUrl(cor);
     }
 
+  }
+
+  creatTile(origcor, cor){
+      var img = new Image();
+      var pos = this._getTilePos(origcor);
+      img.onload = function () {
+        this._tileOnLoad.call(this,pos,img);
+      }.bind(this);
+      img.src = this.getTileUrl(cor);
+  }
+
+  _tileOnLoad(pos, tile){
+    this._ctx.drawImage(tile,pos[0],pos[1],256,256);
   }
 
   _getTilePos(coord){
