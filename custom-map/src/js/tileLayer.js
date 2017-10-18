@@ -22,6 +22,7 @@ export class TileLayer {
     this._tileZoom = this._map._zoom;
     this._tileCenter = this._map.project(this._map._center, this._tileZoom);
 
+    this._pixelOrigin = [Math.round(this._tileCenter[0] - this._map._width / 2), Math.round(this._tileCenter[1] - this._map._height / 2)];
     // 地图范围
     this._tileCenter[0] = Math.floor(this._tileCenter[0]);
     this._tileCenter[1] = Math.floor(this._tileCenter[1]);
@@ -45,14 +46,26 @@ export class TileLayer {
     }
     // 获取所有图片
     for(let i = 0, len = coords.length; i < len; i++) {
-      let cor = this.wrapCoords(coords[i]);
-      let img = new Image();
+      var origcor = coords[i];
+      var cor = this.wrapCoords({
+        x:coords[i].x,
+        y:coords[i].y,
+        z:coords[i].z
+      });
+      var img = new Image();
       img.onload = function () {
-        console.log(cor.x + cor.y + cor.z);
-      }
+        var pos = this._getTilePos(origcor);
+        this._ctx.drawImage(img,pos[0],pos[1],256,256);
+      }.bind(this);
       img.src = this.getTileUrl(cor);
     }
 
+  }
+
+  _getTilePos(coord){
+      var x1 = coord.x * this._tileSize;
+      var y1 = coord.y * this._tileSize;
+      return [x1 - this._pixelOrigin[0], y1 - this._pixelOrigin[1]];
   }
 
   wrapCoords(coord) {
@@ -93,5 +106,6 @@ export class TileLayer {
     this._container.setAttribute('width', this._map._width);
     this._container.setAttribute('height', this._map._height)
     this._map._container.appendChild(this._container);
+    this._ctx = this._container.getContext('2d');
   }
 }
