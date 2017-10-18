@@ -19,8 +19,9 @@ export class TileLayer {
   onAdd(map) {
     this._map = map;
     this._initContainer();
-    this._tileCenter = this._map.project(this._map._center, this._map._zoom);
     this._tileZoom = this._map._zoom;
+    this._tileCenter = this._map.project(this._map._center, this._tileZoom);
+
     // 地图范围
     this._tileCenter[0] = Math.floor(this._tileCenter[0]);
     this._tileCenter[1] = Math.floor(this._tileCenter[1]);
@@ -44,7 +45,7 @@ export class TileLayer {
     }
     // 获取所有图片
     for(let i = 0, len = coords.length; i < len; i++) {
-      let cor = coords[i];
+      let cor = this.wrapCoords(coords[i]);
       let img = new Image();
       img.onload = function () {
         console.log(cor.x + cor.y + cor.z);
@@ -52,6 +53,21 @@ export class TileLayer {
       img.src = this.getTileUrl(cor);
     }
 
+  }
+
+  wrapCoords(coord) {
+    var wrapx = [Math.floor(this._map.project([-180, 0], this._tileZoom)[0] / this._tileSize),
+      Math.ceil(this._map.project([180, 0], this._tileZoom)[0] / this._tileSize)
+    ];
+    coord.x = this.wrapNum(coord.x, wrapx);
+    return coord;
+  }
+
+  wrapNum(x, range, includeMax) {
+    var max = range[1],
+      min = range[0],
+      d = max - min;
+    return x === max && includeMax ? x : ((x - min) % d + d) % d + min;
   }
 
   // 墨卡托投影的比例尺
