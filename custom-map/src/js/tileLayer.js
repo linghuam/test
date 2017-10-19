@@ -1,11 +1,3 @@
-// 当前屏幕分辨率
-const DPI = 96;
-//英寸转厘米参数
-const IN2CM = 2.5399998;
-//切图级别对应的比例尺
-const LEVELSCALE = {
-
-};
 export class TileLayer {
 
   constructor(url, options) {
@@ -47,22 +39,13 @@ export class TileLayer {
     // 获取所有图片
     for(let i = 0, len = coords.length; i < len; i++) {
       var origcor = coords[i];
-      var cor = this.wrapCoords({
+      var cor = this.wrapCoords({ // 将超出范围的切片进行转换
         x:coords[i].x,
         y:coords[i].y,
         z:coords[i].z
       });
       this.creatTile(origcor,cor);
-      // var img = new Image();
-      // img.onload = function () {
-      //   var pos = this._getTilePos(origcor);
-      //   this._ctx.drawImage(img,pos[0],pos[1],256,256);
-      // }.bind(this);
-      // var pos = this._getTilePos(origcor);
-      // img.onload = this._tileOnLoad.call(this,pos,img);
-      // img.src = this.getTileUrl(cor);
     }
-
   }
 
   creatTile(origcor, cor){
@@ -110,10 +93,6 @@ export class TileLayer {
 
   onRemove(map) {
     this._container.remove();
-  }
-
-  getResolution(level) {
-    return LEVELSCALE[level] * IN2CM / DPI; //当前级别下屏幕上1像素代表的实际距离
   }
 
   _initContainer() {

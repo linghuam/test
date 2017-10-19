@@ -19,3 +19,5 @@ Web墨卡托坐标系
 
 问题三：投影坐标系下原有坐标缩放、平移后新的坐标位置？Leaflet-1.2.0/src/geometry/Transformation.js
 仿射变换
+
+问题四：处理地图跨180度显示？
