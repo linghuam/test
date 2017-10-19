@@ -12,6 +12,7 @@ export class TileLayer {
     this._map = map;
     this._initContainer();
     this._tileZoom = this._map._zoom;
+    // 将地图中心点转为该级别下的投影中心点
     this._tileCenter = this._map.project(this._map._center, this._tileZoom);
 
     this._pixelOrigin = [Math.round(this._tileCenter[0] - this._map._width / 2), Math.round(this._tileCenter[1] - this._map._height / 2)];
