@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>函数节流和防抖</title>
+  <style media="screen">
+    .div1 {
+      width: 300px;
+      height: 300px;
+      text-align: center;
+      line-height: 300px;
+      border:2px solid blue;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="div1" id="div1">
+
+  </div>
+  <script type="text/javascript">
+    var ele = document.getElementById('div1');
+    var count = 0;
+
+    function throttle(fn, wait) {
+      var context, args;
+      var previous = 0;
+      return function() {
+        context = this;
+        args = arguments;
+        var now = +new Date();
+        if (now - previous >= wait) {
+          fn.apply(context, args);
+          previous = now;
+        }
+      }
+    }
+
+    function throttle2 (fn, wait){
+      var context,
+          args,
+          timeoutId;
+      return function (){
+        context = this;
+        args = arguments;
+        if (!timeoutId) {
+          timeoutId = setTimeout(function (){
+            timeoutId = null;
+            fn.apply(context, args);
+          }, wait);
+        }
+      }
+    }
+
+    ele.onmousemove = throttle(function (){
+       count ++;
+       ele.innerHTML = count;
+    }, 2000);
+  </script>
+</body>
+
+</html>

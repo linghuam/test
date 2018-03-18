@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <script type="text/javascript">
+    var n = 0,
+        i = 0;
+    var interval = setInterval(function() {
+    	if(n>=10){
+    		clearInterval(interval);
+    		return;
+    	}
+        console.time('processtime');
+        i = 0;
+        while (i < 1000000000) {
+            i++;
+        }
+        console.timeEnd('processtime');
+        n++;
+    }, 0);
+    </script>
+</body>
+
+</html>

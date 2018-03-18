@@ -1,0 +1,24 @@
+/*.ict_portInfo_popupContainer {}
+.ict_portInfo_popupContainer .leaflet-popup-close-button{top:4px !important;right:2px !important;}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper{height:320px;padding:0;}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content{width:100%;margin:0;}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div{}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div .portInfo_title{width:100%;height:35px;line-height:35px;text-align:center;border-top-left-radius:12px;border-top-right-radius:12px;background-color:#244474;color:#fff;font-size:16px;font-family:"Microsoft YaHei";}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div .portInfo_table_div{padding:10px;}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div .portInfo_table_div table{width:100%;}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div .portInfo_table_div table tr{height:25px;}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div .portInfo_table_div table tr:nth-child(odd)>td {background-color:rgb(229, 239, 253);}  
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div .portInfo_table_div table td{text-align:left;padding-left:4px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+*/
+
+.ict_portInfo_popupContainer {}
+.ict_portInfo_popupContainer .leaflet-popup-close-button{top:4px !important;right:2px !important;}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper{height:320px;padding:0;}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content{width:100%;margin:0;}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div{}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div .portInfo_title{width:100%;height:35px;line-height:35px;text-align:center;border-top-left-radius:12px;border-top-right-radius:12px;background-color:#244474;color:#fff;font-size:16px;font-family:"Microsoft YaHei";}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div .portInfo_table_div{padding:10px;overflow:hidden;}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div .portInfo_table_div table{width:100%;}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div .portInfo_table_div table tr{height:25px;}
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div .portInfo_table_div table tr:nth-child(odd)>td {background-color:rgb(229, 239, 253);}  
+.ict_portInfo_popupContainer .leaflet-popup-content-wrapper .leaflet-popup-content .portInfo_Div .portInfo_table_div table td{text-align:left;padding-left:4px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}

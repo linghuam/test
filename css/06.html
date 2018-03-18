@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>层叠</title>
+    <style media="screen">
+        h1{
+          color:red;
+        }
+        body h1{
+          color:green;
+        }
+        h2.grade{
+          color:red;
+        }
+        h2{
+          color:gray;
+        }
+        .div2{
+          color:blue;
+          font-weight: bold !important;
+          font-size: 14px !important;
+        }
+        body div{
+          font-size: 20px !important;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>我是h1</h1>
+    <h2 class="grade">我是h2</h2>
+    <div class="div2" style="color:red;font-weight:normal;">
+      内联和！important
+    </div>
+  </body>
+</html>

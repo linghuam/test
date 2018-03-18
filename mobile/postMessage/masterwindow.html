@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    I am Master
+    <button type="button" onclick="Open();"> Open</button>
+    <script type="text/javascript">
+    function Open() {
+        child = window.open('childwindow.html');
+        setTimeout(function() {
+        	//向子窗口发送消息（子窗口必须存在，消息才会发送成功）
+            child.postMessage('hello child', 'childwindow.html');
+        }, 200);
+    }
+    window.addEventListener('message', function(event) {    	
+        var origin = event.origin || event.originalEvent.origin;
+        if(origin !== 'http://10.5.0.138:8080'){
+        	return;
+        }
+        var data = event.data;
+        var source = event.source;
+        alert(origin+data);
+    }, false);
+    </script>
+</body>
+
+</html>

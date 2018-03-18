@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+   <script type="text/javascript">
+   setTimeout(() => console.log('setTimeout'), 0);
+   new Promise((resolve) => {
+     console.log('a');
+     for (var i = 0; i < 10000; i++){
+       i === 99 && resolve();
+     }
+   }).then(() => console.log('then'));
+   console.log('end');
+   </script>
+  </body>
+</html>

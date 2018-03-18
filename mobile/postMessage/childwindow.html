@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    I am child
+    <button type="button" onclick="sendMsg();">Send Message</button>
+    <script type="text/javascript">
+    function sendMsg() {
+        if (window.src) {
+        	//向父窗口发送消息
+            window.src.postMessage('hello master', 'http://10.5.0.138:8080/test/postMessage/masterwindow.html');
+        }
+    }
+    window.addEventListener('message', function(event) {
+        var origin = event.origin || event.originalEvent.origin;
+        if (origin !== 'http://10.5.0.138:8080') {
+            return;
+        }
+        var data = event.data;
+        var source = window.src = event.source;
+        alert(origin + data);
+    }, false);
+    </script>
+</body>
+
+</html>
