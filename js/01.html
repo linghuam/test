@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>数组方法indexOf实现</title>
+  </head>
+  <body>
+    <script type="text/javascript">
+      Array.prototype.indexOf = function (searchElement, fromIndex){
+        var len = this.length,
+             i;
+        if (fromIndex === undefined) fromIndex = 0;
+        if (fromIndex >= len) return -1;
+        if (fromIndex < 0) fromIndex = Math.max(len + fromIndex, 0);
+        for ( i = fromIndex; i < len; i++){
+          if (this[i] === searchElement) return i;
+        }
+        return -1;
+      }
+    </script>
+  </body>
+</html>
