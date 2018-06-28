@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>background</title>
+    <style media="screen">
+        div{
+            width: 500px;
+            height: 500px;
+            border: 10px solid tan;
+            margin: 0;
+            padding: 0;
+        }
+        .div1{
+            background: url(image/200_200.png) no-repeat fixed;
+        }
+        .div111{
+            background: url(image/200_200.png) no-repeat scroll;
+        }
+        .div2{
+            background: url(image/200_200.png) no-repeat;
+        }
+        .div3{
+            background: url(image/200_200.png) repeat;
+        }
+        .div31{
+            width: 880px;
+            background: url(image/200_200.png) repeat-x;
+        }
+        .div32{
+            height: 666px;
+            background: url(image/200_200.png) repeat-y;
+        }
+        .div4 {
+            background: red url(image/200_200.png) no-repeat scroll top left;
+        }
+        .div5 {
+            background: red url(image/200_200.png) no-repeat scroll top center;
+        }
+        .div6 {
+            background: red url(image/200_200.png) no-repeat scroll top right;
+        }
+        .div7 {
+            background: red url(image/200_200.png) no-repeat scroll center left;
+        }
+        .div8 {
+            background: red url(image/200_200.png) no-repeat scroll center center;
+        }
+        .div9 {
+            background: red url(image/200_200.png) no-repeat scroll center right;
+        }
+        .div10 {
+            background: red url(image/200_200.png) no-repeat scroll bottom left;
+        }
+        .div11 {
+            background: red url(image/200_200.png) no-repeat scroll right center;
+        }
+        .div12 {
+            background: red url(image/200_200.png) no-repeat scroll bottom right;
+        }
+        .div13 {
+            background: red url(image/200_200.png) no-repeat scroll bottom center;
+        }
+        .div14 {
+            background: red url(image/200_200.png) no-repeat scroll 100px 50px;
+        }
+        .div15 {
+            background: red url(image/200_200.png) no-repeat scroll 50% 20%;
+        }
+        .div21 {
+            background: red url(image/200_200.png) no-repeat scroll 0% 0%;
+            padding: 10px;
+            background-origin: padding-box;
+        }
+        .div22 {
+            background: red url(image/200_200.png) no-repeat scroll 0% 0%;
+            padding: 10px;
+            background-origin: content-box;
+        }
+        .div23 {
+            background: red url(image/200_200.png) no-repeat scroll 0% 0%;
+            padding: 10px;
+            background-origin: border-box;
+        }
+        .div24{
+            background: red;
+            background-image: url(image/200_200.png),url(image/200_200.png),url(image/200_200.png);
+            background-size: 100px 100px, 200px 200px, 300px, 300px;
+            background-repeat: no-repeat;
+            background-position: center center;
+            border-image: url(image/200_200.png) 10 10 repeat;
+        }
+    </style>
+</head>
+
+<body>
+    <p>background-attachment: fixed</p>
+    <div class="div1"></div>
+    <p>background-attachment: scroll</p>
+    <div class="div111"></div>
+    <p>background-repeat: no-repeat</p>
+    <div class="div2"></div>
+    <p>background-repeat: repeat</p>
+    <div class="div3"></div>
+    <p>background-repeat: repeat-x</p>
+    <div class="div31"></div>
+    <p>background-repeat: repeat-y</p>
+    <div class="div32"></div>
+    <p>background-position: top left;</p>
+    <div class="div4"></div>
+    <p>background-position: top center;</p>
+    <div class="div5"></div>
+    <p>background-position: top right;</p>
+    <div class="div6"></div>
+    <p>background-position: center left;</p>
+    <div class="div7"></div>
+    <p>background-position: center center;</p>
+    <div class="div8"></div>
+    <p>background-position: center right;</p>
+    <div class="div9"></div>
+    <p>background-position: bottom left;</p>
+    <div class="div10"></div>
+    <p>background-position: right center;</p>
+    <div class="div11"></div>
+    <p>background-position: bottom right;</p>
+    <div class="div12"></div>
+    <p>background-position: bottom center;</p>
+    <div class="div13"></div>
+    <p>background-position: 100px 50px;</p>
+    <div class="div14"></div>
+    <p>background-position: 50% 20%;</p>
+    <div class="div15"></div>
+    <p>background-origin: padding-box;</p>
+    <div class="div21"></div>
+    <p>background-origin: border-box;(注意观察头顶部，看出与上图差别，因为 border 的层叠顺序在 background 之上)</p>
+    <div class="div23"></div>
+    <p>background-origin: content-box;</p>
+    <div class="div22"></div>
+    <p>background-image: url1, url2, url3;(从上到下的顺序依次是：border-image,url1, url2, url3, background-color)</p>
+    <div class="div24"></div>
+    <p>父子</p>
+    <div class="div25" style="background:teal">
+        <div class="div25child" style="width: 200px;height: 200px;"></div>
+    </div>
+    <p>background-repeat: space;</p>
+    <div class="div26" style="background: red url(image/200_200.png); background-size: 120px 120px; background-repeat: space;"></div>
+    <p>background-repeat: round;</p>
+    <div class="div26" style="background: red url(image/200_200.png); background-size: 120px 120px; background-repeat: round;"></div>
+</body>
+
+</html>
