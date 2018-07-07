@@ -1,0 +1,92 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>去除inline-block元素间间距的N种方法</title>
+        <style>
+            .menu a {
+                background: tan;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>不做处理的情况下</h2>
+        <div class="menu">
+            <a href="#">menuitem1</a>
+            <a href="#">menuitem2</a>
+            <a href="#">menuitem3</a>
+            <a href="#">menuitem4</a>
+            <a href="#">menuitem5</a>
+        </div>
+        <h2>方法之移除空格1</h2>
+        <div class="menu">
+            <a href="#">
+            menuitem1</a><a href="#">
+            menuitem2</a><a href="#">
+            menuitem3</a><a href="#">
+            menuitem4</a><a href="#">menuitem5</a>
+        </div>
+        <h2>方法之移除空格2</h2>
+        <div class="menu">
+            <a href="#">menuitem1</a
+            ><a href="#">menuitem2</a
+            ><a href="#">menuitem3</a
+            ><a href="#">menuitem4</a
+            ><a href="#">menuitem5</a>
+        </div>
+        <h2>方法之移除空格3</h2>
+        <div class="menu">
+            <a href="#">menuitem1</a><!--
+            --><a href="#">menuitem2</a><!--    
+            --><a href="#">menuitem3</a><!--                
+            --><a href="#">menuitem4</a><!--
+            --><a href="#">menuitem5</a>
+        </div>
+        <h2>方法之省略闭合标签或只写最后一个闭合标签</h2>
+        <div class="menu">
+                <a href="#">menuitem1
+                <a href="#">menuitem2
+                <a href="#">menuitem3
+                <a href="#">menuitem4
+                <a href="#">menuitem5</a>
+        </div>
+            <div class="menu">
+                    <a href="#">menuitem1
+                    <a href="#">menuitem2
+                    <a href="#">menuitem3
+                    <a href="#">menuitem4
+                    <a href="#">menuitem5
+            </div>
+            <h2>方法之父font-size:0</h2>
+            <div class="menu" style="font-size:0;"> 
+                    <a href="#" style="font-size:16px;">menuitem1</a>
+                    <a href="#" style="font-size:16px;">menuitem2</a>
+                    <a href="#" style="font-size:16px;">menuitem3</a>
+                    <a href="#" style="font-size:16px;">menuitem4</a>
+                    <a href="#" style="font-size:16px;">menuitem5</a>
+            </div>
+            <h2>方法之letter-spacing</h2>
+            <div class="menu" style="letter-spacing: -3px;display: inline-table;"> 
+                    <a href="#" style="letter-spacing: 0;">menuitem1</a>
+                    <a href="#" style="letter-spacing: 0;">menuitem2</a>
+                    <a href="#" style="letter-spacing: 0;">menuitem3</a>
+                    <a href="#" style="letter-spacing: 0;">menuitem4</a>
+                    <a href="#" style="letter-spacing: 0;">menuitem5</a>
+            </div>
+            <h2>方法之word-spacing</h2>
+            <div class="menu" style="word-spacing: -6px;display: inline-table;"> 
+                    <a href="#" style="word-spacing: 0;">menuitem1</a>
+                    <a href="#" style="word-spacing: 0;">menuitem2</a>
+                    <a href="#" style="word-spacing: 0;">menuitem3</a>
+                    <a href="#" style="word-spacing: 0;">menuitem4</a>
+                    <a href="#" style="word-spacing: 0;">menuitem5</a>
+            </div>
+            <h2>方法之flex</h2>
+            <div class="menu" style="display: inline-flex;flex-direction: row;">
+                    <a href="#">menuitem1</a>
+                    <a href="#">menuitem2</a>
+                    <a href="#">menuitem3</a>
+                    <a href="#">menuitem4</a>
+                    <a href="#">menuitem5</a>
+            </div>
+    </body>
+</html>
