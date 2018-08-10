@@ -19,3 +19,19 @@ npm run build --report
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+
+# 升级小纪
+
+## step1
+
+npm-check -u 更新 npm 包
+
+## step2 
+
+[vue-loader升级](https://vue-loader.vuejs.org/zh/migrating.html#%E5%80%BC%E5%BE%97%E6%B3%A8%E6%84%8F%E7%9A%84%E4%B8%8D%E5%85%BC%E5%AE%B9%E5%8F%98%E6%9B%B4)
+
+### step3
+
+CommonsChunkPlugin => splitChunks
+ExtractTextPlugin => MiniCssExtractPlugin
