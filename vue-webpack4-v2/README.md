@@ -1,4 +1,4 @@
-# Vue 项目升级到 webpack4.x 小纪【附完整升级后代码】
+# Vue 项目升级到 webpack4.x 小纪【附代码】
 
 自 webpack 4.x 发布以来，就独得码农恩宠。我公司的项目是基于 webpack 3.x 版本的 vue 项目，
 当时是用 vue-cli 工具构建的项目，项目开发完成后发现打包性能低下，而且项目是多页面的，需要将
@@ -6,6 +6,8 @@
 替换它，于是开始了折磨人的升级过程。
 
 现将自己的升级过程记录如下，希望能给需要升级 vue 项目的朋友一点参考价值。
+
+[升级后的代码](https://github.com/linghuam/test/tree/master/vue-webpack4-v2)
 
 ## 第一步：用 [vue-cli](https://www.npmjs.com/package/vue-cli) 工具创建一个简单的 vue webpack 项目
 
@@ -57,9 +59,9 @@ vue init webpack vue-webpack4-v2
 
 ## 总结
 
-[升级后的 Vue Webpack 配置代码](https://github.com/linghuam/test/tree/master/vue-webpack4-v2)
-
-[Vue Cli 3.0 已发布，采用 webpack 4.x，再也不用自己升级了](https://cli.vuejs.org/)
-
 经过上面四步，基本上能将项目成功运行了，但自己能力有限，有些配置的原理也似懂非懂，但成长的过程就是要敢于不断的
 失败和尝试，这样才能一步步从陌生到熟悉。正所谓”路漫漫其修远兮，吾将上下而求索“。
+
+## 参考
+- [Vue项目升级到Webpack 4.x初步踩坑总结](https://blog.csdn.net/harsima/article/details/80819747)
+- [Vue Cli 3.0 已发布，采用 webpack 4.x，再也不用自己升级了](https://cli.vuejs.org/)
