@@ -57,7 +57,9 @@ vue init webpack vue-webpack4-v2
 
 ## 总结
 
+[升级后的 Vue Webpack 配置代码](https://github.com/linghuam/test/tree/master/vue-webpack4-v2)
 
+[Vue Cli 3.0 已发布，采用 webpack 4.x，再也不用自己升级了](https://cli.vuejs.org/)
 
 经过上面四步，基本上能将项目成功运行了，但自己能力有限，有些配置的原理也似懂非懂，但成长的过程就是要敢于不断的
-失败和尝试，这样才能一步步从陌生到熟悉。
+失败和尝试，这样才能一步步从陌生到熟悉。正所谓”路漫漫其修远兮，吾将上下而求索“。
