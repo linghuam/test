@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./static/mapbox-gl.css">
+    <script src="./static/mapbox-gl.js"></script>
+    <script src="./static/deck.min.js"></script>
+    <style>
+    #map {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+    }
+    </style>
+    <title>deck_flicker</title>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        var data = [{"coordinates":[-122.123801,37.893394],"exits":"3616"},{"coordinates":[-122.271604,37.803664],"exits":"13547"},{"coordinates":[-122.419694,37.765062],"exits":"12351"},{"coordinates":[-122.269029,37.80787],"exits":"13090"},{"coordinates":[-122.418466,37.752254],"exits":"12529"},{"coordinates":[-122.26978,37.853024],"exits":"5341"},{"coordinates":[-122.447414,37.721981],"exits":"9817"},{"coordinates":[-122.126871,37.697185],"exits":"5516"},{"coordinates":[-122.075567,37.690754],"exits":"2735"},{"coordinates":[-122.413756,37.779528],"exits":"22626"},{"coordinates":[-122.466233,37.684638],"exits":"4214"},{"coordinates":[-122.197273,37.754006],"exits":"5902"},{"coordinates":[-122.029095,37.973737],"exits":"6008"},{"coordinates":[-122.469081,37.706121],"exits":"8502"},{"coordinates":[-122.268045,37.869867],"exits":"11762"},{"coordinates":[-122.317269,37.925655],"exits":"8668"},{"coordinates":[-121.900367,37.701695],"exits":"7554"},{"coordinates":[-122.396742,37.792976],"exits":"46951"},{"coordinates":[-121.9764,37.557355],"exits":"8673"},{"coordinates":[-122.224274,37.774963],"exits":"8012"},{"coordinates":[-122.434092,37.732921],"exits":"7072"},{"coordinates":[-122.087967,37.670399],"exits":"5003"},{"coordinates":[-122.265609,37.797484],"exits":"6604"},{"coordinates":[-122.267227,37.828415],"exits":"9228"},{"coordinates":[-122.38666,37.599787],"exits":"6149"},{"coordinates":[-122.401407,37.789256],"exits":"45128"},{"coordinates":[-122.283451,37.87404],"exits":"4563"},{"coordinates":[-122.024597,38.003275],"exits":"2652"},{"coordinates":[-122.183791,37.878361],"exits":"2970"},{"coordinates":[-122.056013,37.928403],"exits":"7442"},{"coordinates":[-121.945154,38.018914],"exits":"6343"},{"coordinates":[-122.299272,37.903059],"exits":"4952"},{"coordinates":[-122.406857,37.784991],"exits":"25621"},{"coordinates":[-122.353165,37.936887],"exits":"4029"},{"coordinates":[-122.251793,37.844601],"exits":"5775"},{"coordinates":[-122.161311,37.722619],"exits":"5921"},{"coordinates":[-122.416038,37.637753],"exits":"3634"},{"coordinates":[-122.392612,37.616035],"exits":"4904"},{"coordinates":[-122.057551,37.6348],"exits":"2829"},{"coordinates":[-122.444116,37.664174],"exits":"3441"},{"coordinates":[-122.017867,37.591208],"exits":"4770"},{"coordinates":[-122.067423,37.905628],"exits":"6917"},{"coordinates":[-121.928099,37.699759],"exits":"3447"},{"coordinates":[-122.294582,37.804675],"exits":"6838"}];
+    </script>
+    <script>
+        mapboxgl.accessToken =
+            'pk.eyJ1IjoibGluZ2h1YW0iLCJhIjoiY2o1dWYzYzlqMDQ4OTJxbzRiZWl5OHdtcyJ9._Ae66CF7CGUIoJlVdrXjqA';
+
+        const INITIAL_VIEW_STATE = {
+            latitude: 37.75408115730713,
+            longitude: -122.30032769568463,
+            zoom: 9,
+            bearing: 0,
+            pitch: 0
+        };
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11', 
+            // style: 'mapbox://styles/linghuam/cjxlossd012rv1ckcsbpsvrp1',
+            center: [INITIAL_VIEW_STATE.longitude, INITIAL_VIEW_STATE.latitude],
+            zoom: INITIAL_VIEW_STATE.zoom,
+            bearing: INITIAL_VIEW_STATE.bearing,
+            pitch: INITIAL_VIEW_STATE.pitch,
+            renderWorldCopies: false,
+            antialias: true,
+            interactive: true,
+        });
+        map.on('load', function(){
+            var layer1 = window.layer1 = new deck.MapboxLayer({
+                id: 'layer1',
+                type: deck.ScatterplotLayer,
+                data: data,
+                filled: true,
+                radiusScale: 6,
+                getPosition: d => d.coordinates,
+                getRadius: d => Math.sqrt(d.exits),
+                getFillColor: d => [0,255,0]
+            });
+            var layer2 = window.layer2 = new deck.MapboxLayer({
+                id: 'layer2',
+                type: deck.ScatterplotLayer,
+                data: data,
+                filled: true,
+                radiusScale: 8,
+                opacity: 0.6,
+                getPosition: d => d.coordinates,
+                getRadius: d => Math.sqrt(d.exits),
+                getFillColor: d => [255,0,0]
+            });
+            map.addLayer(layer1);
+            map.addLayer(layer2);
+        });
+    </script>
+</body>
+
+</html>
