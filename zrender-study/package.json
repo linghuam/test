@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "zrender": "^3.7.4"
+    "zrender": "^5.2.1"
   }
 }
